@@ -1,9 +1,9 @@
-Summary: Bluetooth libraries and utilities
+Summary: Bluetooth utilities
 Name: bluez
 Version: 4.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
-Group: System Environment/Libraries
+Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
@@ -20,8 +20,26 @@ BuildRequires: libsndfile-devel
 
 ExcludeArch: s390 s390x
 
+Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
+Requires: initscripts, bluez-libs = %{version}
+Requires: dbus >= 0.60
+Requires: hwdata >= 0.215
+Requires: dbus-bluez-pin-helper
+Requires(preun): /sbin/chkconfig, /sbin/service
+Requires(post): /sbin/chkconfig, /sbin/service
+
+Obsoletes: bluez-utils < 4.5-2
+Provides: bluez-utils = %{version}-%{release}
+
 %description
-Libraries and utilities for use in Bluetooth applications.
+Utilities for use in Bluetooth applications:
+	- hcitool
+	- hciattach
+	- hciconfig
+	- bluetoothd
+	- l2ping
+	- start scripts (Red Hat)
+	- pcmcia configuration files
 
 The BLUETOOTH trademarks are owned by Bluetooth SIG, Inc., U.S.A.
 
@@ -36,40 +54,33 @@ Requires: bluez-libs = %{version}
 Requires: pkgconfig
 Obsoletes: bluez-sdp-devel < 4.0
 
-%package utils-cups
+%package cups
 Summary: CUPS printer backend for Bluetooth printers
 Group: System Environment/Daemons
+Obsoletes: bluez-utils-cups
+Provides: bluez-utils-cups = %{version}-%{release}
 Requires: bluez-libs = %{version}
 Requires: cups
 
-%package utils-gstreamer
+%package gstreamer
 Summary: GStreamer support for SBC audio format
 Group: System Environment/Daemons
+Obsoletes: bluez-utils-gstreamer
+Provides: bluez-utils-gstreamer = %{version}-%{release}
 Requires: bluez-libs = %{version}
 
-%package utils-alsa
+%package alsa
 Summary: ALSA support for Bluetooth audio devices
 Group: System Environment/Daemons
 Requires: bluez-libs = %{version}
 
-%package utils
-Summary: Bluetooth utilities
-Group: Applications/System
-Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
-Requires: initscripts, bluez-libs = %{version}
-Requires: dbus >= 0.60
-Requires: hwdata >= 0.215
-Requires: dbus-bluez-pin-helper
-Requires(preun): /sbin/chkconfig, /sbin/service
-Requires(post): /sbin/chkconfig, /sbin/service
-
-%description utils-cups
+%description cups
 This package contains the CUPS backend 
 
-%description utils-gstreamer
+%description gstreamer
 This package contains gstreamer plugins for the Bluetooth SBC audio format
 
-%description utils-alsa
+%description alsa
 This package contains ALSA support for Bluetooth audio devices
 
 %description libs
@@ -78,16 +89,6 @@ Libraries for use in Bluetooth applications.
 %description libs-devel
 bluez-libs-devel contains development libraries and headers for
 use in Bluetooth applications.
-
-%description utils
-Bluetooth utilities (bluez-utils):
-	- hcitool
-	- hciattach
-	- hciconfig
-	- hcid
-	- l2ping
-	- start scripts (Red Hat)
-	- pcmcia configuration files
 
 %prep
 
@@ -107,7 +108,6 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
 	$RPM_BUILD_ROOT/%{_libdir}/alsa-lib/*.la		\
 	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
 	$RPM_BUILD_ROOT/%{_libdir}/gstreamer-0.10/*.la
-rm -f $RPM_BUILD_ROOT/usr/share/aclocal/bluez.m4
 
 install -D -m0755 %SOURCE1 $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/bluetooth
 install -D -m0644 %SOURCE2 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/bluetooth
@@ -124,11 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post libs -p /sbin/ldconfig
 
-%post utils
-/sbin/chkconfig --del hidd >/dev/null 2>&1 || :
-/sbin/chkconfig --del dund >/dev/null 2>&1 || :
-/sbin/chkconfig --del pand >/dev/null 2>&1 || :
-
+%post
 /sbin/chkconfig --add bluetooth
 if [ "$1" -ge "1" ]; then
 	/sbin/service bluetooth condrestart >/dev/null 2>&1 || :
@@ -137,17 +133,13 @@ exit 0
 
 %postun libs -p /sbin/ldconfig
 
-%preun utils
+%preun
 if [ "$1" = "0" ]; then
 	/sbin/service bluetooth stop >/dev/null 2>&1 || :
-	/sbin/service dund stop >/dev/null 2>&1 || :
-	/sbin/service pand stop >/dev/null 2>&1 || :
 	/sbin/chkconfig --del bluetooth
-	/sbin/chkconfig --del dund 2>&1 || :
-	/sbin/chkconfig --del pand 2>&1 || :
 fi
 
-%files utils
+%files
 %defattr(-, root, root)
 %{_bindir}/*
 %{_sbindir}/*
@@ -174,19 +166,23 @@ fi
 %{_includedir}/bluetooth/*
 %{_libdir}/pkgconfig/bluez.pc
 
-%files utils-cups
+%files cups
 %defattr(-, root, root)
 /usr/lib/cups/backend/bluetooth
 
-%files utils-gstreamer
+%files gstreamer
 %defattr(-, root, root)
 %{_libdir}/gstreamer-*/*.so
 
-%files utils-alsa
+%files alsa
 %defattr(-, root, root)
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Sep 12 2008 - David Woodhouse <David.Woodhouse@intel.com> - 4.5-2
+- Change main utils package name to 'bluez'; likewise its subpackages
+- Remove references to obsolete initscripts (hidd,pand,dund)
+
 * Fri Sep 12 2008 - Bastien Nocera <bnocera@redhat.com> - 4.5-1
 - Update to 4.5
 - Fix initscript to actually start bluetoothd by hand
