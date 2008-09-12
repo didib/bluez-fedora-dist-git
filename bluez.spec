@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -57,7 +57,7 @@ Obsoletes: bluez-sdp-devel < 4.0
 %package cups
 Summary: CUPS printer backend for Bluetooth printers
 Group: System Environment/Daemons
-Obsoletes: bluez-utils-cups
+Obsoletes: bluez-utils-cups < 4.5-2
 Provides: bluez-utils-cups = %{version}-%{release}
 Requires: bluez-libs = %{version}
 Requires: cups
@@ -65,12 +65,14 @@ Requires: cups
 %package gstreamer
 Summary: GStreamer support for SBC audio format
 Group: System Environment/Daemons
-Obsoletes: bluez-utils-gstreamer
+Obsoletes: bluez-utils-gstreamer < 4.5-2
 Provides: bluez-utils-gstreamer = %{version}-%{release}
 Requires: bluez-libs = %{version}
 
 %package alsa
 Summary: ALSA support for Bluetooth audio devices
+Obsoletes: bluez-utils-alsa < 4.5-2
+Provides: bluez-utils-alsa = %{version}-%{release}
 Group: System Environment/Daemons
 Requires: bluez-libs = %{version}
 
@@ -179,6 +181,10 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Sep 12 2008 - David Woodhouse <David.Woodhouse@intel.com> - 4.5-3
+- Bluez-alsa needs to provide/obsolete bluez-utils-alsa
+- Use versioned Obsoletes:
+
 * Fri Sep 12 2008 - David Woodhouse <David.Woodhouse@intel.com> - 4.5-2
 - Change main utils package name to 'bluez'; likewise its subpackages
 - Remove references to obsolete initscripts (hidd,pand,dund)
