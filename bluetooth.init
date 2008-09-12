@@ -1,5 +1,9 @@
 #!/bin/sh
-
+#
+# chkconfig: 345 50 83
+# description: Bluetooth services for service discovery, authentication, \
+#	       Human Interface Devices, etc.
+#
 ### BEGIN INIT INFO
 # Required-Start: $syslog messagebus
 # Short-Description: Bluetooth services
@@ -15,6 +19,9 @@
 start()
 {
 	echo -n $"Starting Bluetooth services:"
+	daemon /usr/sbin/bluetoothd
+	RETVAL=$?
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/bluetoothd
 	[ "$HID2HCI_ENABLE" = "true" ] && hid2hci --tohci > /dev/null 2>&1 || :
 	touch /var/lock/subsys/bluetooth
 	echo ""
@@ -25,7 +32,10 @@ stop()
 {
 	echo -n "Stopping Bluetooth services:"
 	[ "$HID2HCI_UNDO" = "true" ] && hid2hci --tohid > /dev/null 2>&1 || :
+	killproc bluetoothd
+	RETVAL=$?
 	rm -f /var/lock/subsys/bluetooth
+	rm -f /var/lock/subsys/bluetoothd
 	echo ""
 	return $RETVAL
 }
@@ -45,7 +55,7 @@ case "$1" in
         [ -e /var/lock/subsys/bluetooth ] && (stop; start)
         ;;
   status)
-        status hcid
+        status bluetoothd
 	RETVAL=$?
         ;;
   *)

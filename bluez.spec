@@ -1,14 +1,13 @@
 Summary: Bluetooth libraries and utilities
 Name: bluez
-Version: 4.4
-Release: 2%{?dist}
+Version: 4.5
+Release: 1%{?dist}
 License: GPLv2+
 Group: System Environment/Libraries
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
 Patch1: bluez-utils-oui-usage.patch
-Patch2: bluez-4.4-input.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -94,7 +93,6 @@ Bluetooth utilities (bluez-utils):
 
 %setup -q
 %patch1 -p0 -b .oui
-%patch2 -p1 -b .input
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -189,6 +187,11 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Sep 12 2008 - Bastien Nocera <bnocera@redhat.com> - 4.5-1
+- Update to 4.5
+- Fix initscript to actually start bluetoothd by hand
+- Add chkconfig information to the initscript
+
 * Tue Sep 09 2008 - David Woodhouse <David.Woodhouse@intel.com> - 4.4-2
 - Fix rpmlint problems
 - Fix input device handling
