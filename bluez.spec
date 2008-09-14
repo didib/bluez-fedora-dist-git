@@ -1,14 +1,13 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.5
-Release: 4%{?dist}
+Version: 4.6
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
 Patch1: bluez-utils-oui-usage.patch
-Patch2: bluez-4.5-browse-fixes.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -97,7 +96,6 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
-%patch2 -p1
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -183,6 +181,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Sun Sep 14 2008 - David Woodhouse <David.Woodhouse@intel.com> - 4.6-1
+- Update to 4.6
+
 * Fri Sep 12 2008 - David Woodhouse <David.Woodhouse@intel.com> - 4.5-4
 - SDP browse fixes
 
