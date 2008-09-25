@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.6
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -99,7 +99,7 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
-%patch2 -p0 -b .security
+%patch2 -p1 -b .security
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -185,6 +185,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Wed Sep 24 2008 - Bastien Nocera <bnocera@redhat.com> - 4.6-4
+- Fix patch application
+
 * Wed Sep 24 2008 - Bastien Nocera <bnocera@redhat.com> - 4.6-3
 - Add fuzz
 
