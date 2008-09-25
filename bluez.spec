@@ -1,7 +1,9 @@
+%define _default_patch_fuzz 2
+
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -183,6 +185,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Wed Sep 24 2008 - Bastien Nocera <bnocera@redhat.com> - 4.6-3
+- Add fuzz
+
 * Wed Sep 24 2008 - Bastien Nocera <bnocera@redhat.com> - 4.6-2
 - Fix possible crasher on resume from suspend
 
