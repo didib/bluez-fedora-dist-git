@@ -1,13 +1,14 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.13
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
 Patch1: bluez-utils-oui-usage.patch
+Patch2: 0001-Fix-PS3-BD-remote-input-event-generation.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -96,6 +97,7 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
+%patch2 -p1 -b .ps3
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -181,6 +183,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Oct 13 2008 - Bastien Nocera <bnocera@redhat.com> - 4.13-2
+- Fix PS3 BD remote input event generation
+
 * Fri Oct 10 2008 - Bastien Nocera <bnocera@redhat.com> - 4.13-1
 - Update to 4.13
 
