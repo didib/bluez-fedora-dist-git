@@ -1,14 +1,19 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.13
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
 Patch1: bluez-utils-oui-usage.patch
-Patch2: 0001-Fix-PS3-BD-remote-input-event-generation.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/561
+Patch2: 0001-Update-udev-rules-for-udev-098-and-newer.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/562
+Patch3: 0002-Better-debug-when-failing-to-probe-a-device.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/554
+Patch4: 0001-Fix-PS3-BD-remote-input-event-generation.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -97,7 +102,9 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
-%patch2 -p1 -b .ps3
+%patch2 -p1 -b .udev
+%patch3 -p1 -b .debug
+%patch4 -p1 -b .ps3
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -183,6 +190,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Tue Oct 14 2008 - Bastien Nocera <bnocera@redhat.com> - 4.13-3
+- Update udev rules (#246840)
+
 * Mon Oct 13 2008 - Bastien Nocera <bnocera@redhat.com> - 4.13-2
 - Fix PS3 BD remote input event generation
 
