@@ -1,12 +1,13 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.14
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
+Source3: bluez-uinput.modules
 Patch1: bluez-utils-oui-usage.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
@@ -121,6 +122,8 @@ install -D -m0755 cups/bluetooth ${RPM_BUILD_ROOT}/usr/lib/cups/backend/bluetoot
 install -D -m0755 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
+install -D -m0755 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -181,6 +184,10 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Oct 17 2008 - Bastien Nocera <bnocera@redhat.com> - 4.14-2
+- Add script to autoload uinput on startup, so the PS3 remote
+  works out-of-the-box
+
 * Fri Oct 17 2008 - Bastien Nocera <bnocera@redhat.com> - 4.14-1
 - Update to 4.14
 
