@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.14
-Release: 2%{?dist}
+Version: 4.15
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -184,6 +184,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Oct 20 2008 - Bastien Nocera <bnocera@redhat.com> - 4.15-1
+- Update to 4.15
+
 * Fri Oct 17 2008 - Bastien Nocera <bnocera@redhat.com> - 4.14-2
 - Add script to autoload uinput on startup, so the PS3 remote
   works out-of-the-box
