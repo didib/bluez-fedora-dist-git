@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.17
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -124,6 +124,8 @@ install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_
 
 install -D -m0755 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
+install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -158,6 +160,7 @@ fi
 /lib/udev/bluetooth_serial
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 /etc/rc.d/init.d/*
+%{_localstatedir}/lib/bluetooth
 
 %files libs
 %defattr(-, root, root)
@@ -184,6 +187,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Oct 27 2008 - Bastien Nocera <bnocera@redhat.com> - 4.17-2
+- Own /var/lib/bluetooth (#468717)
+
 * Sun Oct 26 2008 - Bastien Nocera <bnocera@redhat.com> - 4.17-1
 - Update to 4.17
 
