@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.17
-Release: 2%{?dist}
+Version: 4.18
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -187,6 +187,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Nov 17 2008 - Bastien Nocera <bnocera@redhat.com> - 4.18-1
+- Update to 4.18
+
 * Mon Oct 27 2008 - Bastien Nocera <bnocera@redhat.com> - 4.17-2
 - Own /var/lib/bluetooth (#468717)
 
