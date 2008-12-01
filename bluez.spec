@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.19
+Version: 4.21
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -9,6 +9,7 @@ Source1: bluetooth.init
 Source2: bluetooth.conf
 Source3: bluez-uinput.modules
 Patch1: bluez-utils-oui-usage.patch
+Patch2: 0001-Add-icon-for-other-audio-device.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -97,6 +98,7 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
+%patch2 -p1
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -187,6 +189,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Dec 01 2008 - Bastien Nocera <bnocera@redhat.com> - 4.21-1
+- Update to 4.21
+
 * Fri Nov 21 2008 - Bastien Nocera <bnocera@redhat.com> - 4.19-1
 - Update to 4.19
 
