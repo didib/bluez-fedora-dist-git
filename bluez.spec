@@ -1,14 +1,13 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.22
-Release: 2%{?dist}
+Version: 4.25
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source2: bluetooth.conf
 Source3: bluez-uinput.modules
-Source4: dbus-bluetooth.conf
 Patch1: bluez-utils-oui-usage.patch
 Patch2: 0001-Add-icon-for-other-audio-device.patch
 
@@ -101,8 +100,6 @@ use in Bluetooth applications.
 %patch1 -p0 -b .oui
 %patch2 -p1
 
-cp -a %{SOURCE4} src/bluetooth.conf
-
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
 make
@@ -192,6 +189,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Sat Jan 03 2009 - Bastien Nocera <bnocera@redhat.com> - 4.25-1
+- Update to 4.25
+
 * Tue Dec 09 2008 - Bastien Nocera <bnocera@redhat.com> - 4.22-2
 - Fix D-Bus configuration for latest D-Bus (#475069)
 
