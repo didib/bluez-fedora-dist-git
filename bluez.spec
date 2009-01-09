@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.25
+Version: 4.26
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -189,6 +189,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Jan 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.26-1
+- Update to 4.26
+
 * Sat Jan 03 2009 - Bastien Nocera <bnocera@redhat.com> - 4.25-1
 - Update to 4.25
 
