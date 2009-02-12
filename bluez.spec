@@ -96,7 +96,7 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
-%patch2 -p1
+#patch2 -p1
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -190,6 +190,7 @@ fi
 * Thu Feb 12 2009 Karsten Hopp <karsten@redhat.com> 4.29-2
 - bluez builds fine on s390(x) and the packages are required to build
   other packages, drop ExcludeArch
+- disable 0001-Add-icon-for-other-audio-device.patch, already upstream
 
 * Mon Feb 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.29-1
 - Update to 4.29
