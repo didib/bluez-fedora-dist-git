@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.29
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -19,8 +19,6 @@ BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
 BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
-
-ExcludeArch: s390 s390x
 
 Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
 Requires: initscripts, bluez-libs = %{version}
@@ -189,6 +187,10 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Thu Feb 12 2009 Karsten Hopp <karsten@redhat.com> 4.29-2
+- bluez builds fine on s390(x) and the packages are required to build
+  other packages, drop ExcludeArch
+
 * Mon Feb 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.29-1
 - Update to 4.29
 
