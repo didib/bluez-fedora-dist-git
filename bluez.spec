@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.29
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -187,10 +187,12 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Thu Feb 12 2009 Karsten Hopp <karsten@redhat.com> 4.29-3
+- disable 0001-Add-icon-for-other-audio-device.patch, already upstream
+
 * Thu Feb 12 2009 Karsten Hopp <karsten@redhat.com> 4.29-2
 - bluez builds fine on s390(x) and the packages are required to build
   other packages, drop ExcludeArch
-- disable 0001-Add-icon-for-other-audio-device.patch, already upstream
 
 * Mon Feb 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.29-1
 - Update to 4.29
