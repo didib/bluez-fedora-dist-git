@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.30
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -119,8 +119,10 @@ install -D -m0755 %SOURCE1 $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/bluetooth
 install -D -m0644 %SOURCE2 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/bluetooth
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
-rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
-install -D -m0755 cups/bluetooth ${RPM_BUILD_ROOT}/usr/lib/cups/backend/bluetooth
+if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
+	install -D -m0755 ${RPM_BUILD_ROOT}/usr/lib64/cups/backend/bluetooth ${RPM_BUILD_ROOT}/usr/lib/cups/backend/bluetooth
+	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
+fi
 
 install -D -m0755 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
@@ -190,6 +192,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Feb 23 2009 - Bastien Nocera <bnocera@redhat.com> - 4.30-2
+- Fix the cups backend being a libtool stub
+
 * Thu Feb 12 2009 - Bastien Nocera <bnocera@redhat.com> - 4.30-1
 - Update to 4.30
 
