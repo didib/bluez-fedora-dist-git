@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.30
-Release: 3%{?dist}
+Version: 4.31
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -187,6 +187,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Thu Feb 26 2009 Lennart Poettering <lpoetter@redhat.com> - 4.31-1
+- Update to 4.31
+
 * Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.30-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
