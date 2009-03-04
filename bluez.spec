@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -156,7 +156,7 @@ fi
 %config(noreplace) %{_sysconfdir}/bluetooth/*
 %config(noreplace) %{_sysconfdir}/sysconfig/*
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
-%{_libdir}/bluetooth/plugins/*.so
+%{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 /etc/rc.d/init.d/*
@@ -187,6 +187,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Wed Mar 04 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-2
+- Own /usr/lib*/bluetooth and children (#474632)
+
 * Mon Mar 2 2009 Lennart Poettering <lpoetter@redhat.com> - 4.32-1
 - Update to 4.32
 
