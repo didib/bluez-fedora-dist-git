@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -119,7 +119,7 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
 fi
 
-install -D -m0755 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+install -D -m0644 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
 install -D -m0755 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
@@ -187,6 +187,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Thu Mar 05 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-3
+- Fix permissions on the udev rules (#479348)
+
 * Wed Mar 04 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-2
 - Own /usr/lib*/bluetooth and children (#474632)
 
