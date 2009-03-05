@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -9,6 +9,9 @@ Source1: bluetooth.init
 Source2: bluetooth.conf
 Source3: bluez-uinput.modules
 Patch1: bluez-utils-oui-usage.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=450081
+# http://thread.gmane.org/gmane.linux.bluez.kernel/1687
+Patch2: bluez-try-utf8-harder.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -95,6 +98,7 @@ use in Bluetooth applications.
 
 %setup -q
 %patch1 -p0 -b .oui
+%patch2 -p1 -b .non-utf8-name
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -187,6 +191,10 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Thu Mar 05 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-4
+- Work-around broken devices that export their names in ISO-8859-1
+  (#450081)
+
 * Thu Mar 05 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-3
 - Fix permissions on the udev rules (#479348)
 
