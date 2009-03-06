@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -12,6 +12,8 @@ Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/1688
+Patch3: bluez-sdp-xml-with-nulls.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -99,6 +101,7 @@ use in Bluetooth applications.
 %setup -q
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
+%patch3 -p1 -b .nulls-in-sdp-text
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -191,6 +194,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Mar 06 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-5
+- Fix SDP parsing to XML when it contains NULLs
+
 * Thu Mar 05 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-4
 - Work-around broken devices that export their names in ISO-8859-1
   (#450081)
