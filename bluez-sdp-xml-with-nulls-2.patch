@@ -1,5 +1,5 @@
 diff --git a/common/sdp-xml.c b/common/sdp-xml.c
-index 0403dcd..5f314b7 100644
+index 0403dcd..c3d3934 100644
 --- a/common/sdp-xml.c
 +++ b/common/sdp-xml.c
 @@ -239,9 +239,7 @@ static void convert_raw_data_to_xml(sdp_data_t *value, int indent_level,
@@ -13,27 +13,13 @@ index 0403dcd..5f314b7 100644
  				hex = 1;
  				break;
  			}
-@@ -250,7 +248,8 @@ static void convert_raw_data_to_xml(sdp_data_t *value, int indent_level,
- 			if ((value->val.str[i] == '<') ||
- 					(value->val.str[i] == '>') ||
- 					(value->val.str[i] == '"') ||
--					(value->val.str[i] == '&'))
-+					(value->val.str[i] == '&') ||
-+					(value->val.str[i] == '\0'))
- 				num_chars_to_escape++;
- 		}
- 
-@@ -304,7 +303,13 @@ static void convert_raw_data_to_xml(sdp_data_t *value, int indent_level,
+@@ -304,7 +302,9 @@ static void convert_raw_data_to_xml(sdp_data_t *value, int indent_level,
  					strBuf[j++] = 'o';
  					strBuf[j++] = 't';
  				}
 -				else {
 +				else if (value->val.str[i] == '\0') {
-+					strBuf[j++] = '&';
-+					strBuf[j++] = '#';
-+					strBuf[j++] = '0';
-+					strBuf[j++] = '0';
-+					strBuf[j++] = ';';
++					strBuf[j++] = ' ';
 +				} else {
  					strBuf[j++] = value->val.str[i];
  				}
