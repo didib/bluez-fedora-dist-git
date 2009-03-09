@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -14,6 +14,8 @@ Patch1: bluez-utils-oui-usage.patch
 Patch2: bluez-try-utf8-harder.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1688
 Patch3: bluez-sdp-xml-with-nulls.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/1688/focus=1708
+Patch4: bluez-fix-sdp-copy-for-strings-with-nulls.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -102,6 +104,7 @@ use in Bluetooth applications.
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .nulls-in-sdp-text
+%patch4 -p1 -b .more-nulls-in-sdp-text
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -194,6 +197,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Mar 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-6
+- Fix sdp_copy_record(), so records are properly exported through D-Bus
+
 * Fri Mar 06 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-5
 - Fix SDP parsing to XML when it contains NULLs
 

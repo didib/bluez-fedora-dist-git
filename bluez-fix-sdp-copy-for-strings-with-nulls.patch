@@ -1,0 +1,74 @@
+diff --git a/lib/sdp.c b/lib/sdp.c
+index 896c5eb..66e65ca 100644
+--- a/lib/sdp.c
++++ b/lib/sdp.c
+@@ -97,6 +97,7 @@ static uint128_t bluetooth_base_uuid = {
+ #define SDP_MAX_ATTR_LEN 65535
+ 
+ static sdp_data_t *sdp_copy_seq(sdp_data_t *data);
++static int sdp_attr_add_new_with_length(sdp_record_t *rec, uint16_t attr, uint8_t dtd, const void *value, uint32_t len);
+ 
+ /* Message structure. */
+ struct tupla {
+@@ -1381,7 +1382,7 @@ static void sdp_copy_pattern(void *value, void *udata)
+ 	sdp_pattern_add_uuid(rec, uuid);
+ }
+ 
+-static void *sdp_data_value(sdp_data_t *data)
++static void *sdp_data_value(sdp_data_t *data, uint32_t *len)
+ {
+ 	void *val = NULL;
+ 
+@@ -1435,6 +1436,8 @@ static void *sdp_data_value(sdp_data_t *data)
+ 	case SDP_URL_STR32:
+ 	case SDP_TEXT_STR32:
+ 		val = data->val.str;
++		if (len)
++			*len = data->unitSize - 1;
+ 		break;
+ 	case SDP_ALT8:
+ 	case SDP_ALT16:
+@@ -1457,7 +1460,7 @@ static sdp_data_t *sdp_copy_seq(sdp_data_t *data)
+ 		sdp_data_t *datatmp;
+ 		void *value;
+ 
+-		value = sdp_data_value(tmp);
++		value = sdp_data_value(tmp, NULL);
+ 		datatmp = sdp_data_alloc_with_length(tmp->dtd, value,
+ 					tmp->unitSize);
+ 
+@@ -1477,10 +1480,14 @@ static void sdp_copy_attrlist(void *value, void *udata)
+ 	sdp_data_t *data = value;
+ 	sdp_record_t *rec = udata;
+ 	void *val;
++	uint32_t len = 0;
+ 
+-	val = sdp_data_value(data);
++	val = sdp_data_value(data, &len);
+ 
+-	sdp_attr_add_new(rec, data->attrId, data->dtd, val);
++	if (!len)
++		sdp_attr_add_new(rec, data->attrId, data->dtd, val);
++	else
++		sdp_attr_add_new_with_length(rec, data->attrId, data->dtd, val, len);
+ }
+ 
+ sdp_record_t *sdp_copy_record(sdp_record_t *rec)
+@@ -2068,6 +2075,17 @@ int sdp_attr_add_new(sdp_record_t *rec, uint16_t attr, uint8_t dtd,
+ 	return -1;
+ }
+ 
++static int sdp_attr_add_new_with_length(sdp_record_t *rec, uint16_t attr, uint8_t dtd,
++							const void *value, uint32_t len)
++{
++	sdp_data_t *d = sdp_data_alloc_with_length(dtd, value, len);
++	if (d) {
++		sdp_attr_replace(rec, attr, d);
++		return 0;
++	}
++	return -1;
++}
++
+ /*
+  * Set the information attributes of the service
+  * pointed to by rec. The attributes are
