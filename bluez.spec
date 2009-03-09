@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -16,6 +16,8 @@ Patch2: bluez-try-utf8-harder.patch
 Patch3: bluez-sdp-xml-with-nulls-2.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1688/focus=1708
 Patch4: bluez-fix-sdp-copy-for-strings-with-nulls.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/1688/focus=1712
+Patch5: bluez-port-cups-to-bluez4.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -105,6 +107,7 @@ use in Bluetooth applications.
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .nulls-in-sdp-text
 %patch4 -p1 -b .more-nulls-in-sdp-text
+%patch5 -p1 -b .cups-bluez4
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -197,6 +200,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Mar 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-8
+- Port CUPS backend to BlueZ 4.x
+
 * Mon Mar 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-7
 - A (slightly) different fix for parsing to XML when it contains a NULL
 
