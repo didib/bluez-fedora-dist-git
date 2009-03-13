@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -18,6 +18,8 @@ Patch3: bluez-sdp-xml-with-nulls-2.patch
 Patch4: bluez-fix-sdp-copy-for-strings-with-nulls.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1688/focus=1712
 Patch5: bluez-port-cups-to-bluez4.patch
+# Adapted from http://cs.ozerki.net/zap/wacom-bt/
+Patch6: bluez-activate-wacom-mode2.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -108,6 +110,7 @@ use in Bluetooth applications.
 %patch3 -p1 -b .nulls-in-sdp-text
 %patch4 -p1 -b .more-nulls-in-sdp-text
 %patch5 -p1 -b .cups-bluez4
+%patch6 -p1 -b .wacom
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -200,6 +203,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Fri Mar 13 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-9
+- Switch Wacom Bluetooth tablet to mode 2
+
 * Mon Mar 09 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-8
 - Port CUPS backend to BlueZ 4.x
 
