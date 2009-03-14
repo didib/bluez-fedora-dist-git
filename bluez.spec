@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.32
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -203,6 +203,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Sat Mar 14 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-10
+- Fix a couple of warnings in the CUPS/BlueZ 4.x patch
+
 * Fri Mar 13 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-9
 - Switch Wacom Bluetooth tablet to mode 2
 

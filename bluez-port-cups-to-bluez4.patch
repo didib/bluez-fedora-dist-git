@@ -122,7 +122,7 @@ index d8b899e..002c96a 100644
  	const char *hcr_print = "00001126-0000-1000-8000-00805f9b34fb";
 -	char *xml, *id;
 +	const char *xml;
-+	char *id;
++	char *id = NULL;
  
  	/* Look for the service handle of the HCRP service */
 -	message = dbus_message_new_method_call("org.bluez", adapter,
@@ -152,7 +152,7 @@ index d8b899e..002c96a 100644
 -		dbus_message_iter_next(&iter_array);
 +	if (dbus_message_iter_get_arg_type (&reply_iter) != DBUS_TYPE_ARRAY) {
 +		dbus_message_unref(reply);
-+		return FALSE;
++		return NULL;
  	}
  
 -	dbus_message_unref(reply);
