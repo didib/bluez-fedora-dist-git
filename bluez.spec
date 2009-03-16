@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.32
+Version: 4.33
 Release: 10%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -12,14 +12,8 @@ Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/1688
-Patch3: bluez-sdp-xml-with-nulls-2.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/1688/focus=1708
-Patch4: bluez-fix-sdp-copy-for-strings-with-nulls.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/1688/focus=1712
-Patch5: bluez-port-cups-to-bluez4.patch
 # Adapted from http://cs.ozerki.net/zap/wacom-bt/
-Patch6: bluez-activate-wacom-mode2.patch
+Patch3: bluez-activate-wacom-mode2.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -107,10 +101,7 @@ use in Bluetooth applications.
 %setup -q
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
-%patch3 -p1 -b .nulls-in-sdp-text
-%patch4 -p1 -b .more-nulls-in-sdp-text
-%patch5 -p1 -b .cups-bluez4
-%patch6 -p1 -b .wacom
+%patch3 -p1 -b .wacom
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -203,6 +194,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Mon Mar 16 2009 - Bastien Nocera <bnocera@redhat.com> - 4.33-1
+- Update to 4.33
+
 * Sat Mar 14 2009 - Bastien Nocera <bnocera@redhat.com> - 4.32-10
 - Fix a couple of warnings in the CUPS/BlueZ 4.x patch
 
