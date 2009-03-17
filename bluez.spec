@@ -12,7 +12,7 @@ Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
-# Adapted from http://cs.ozerki.net/zap/wacom-bt/
+# http://thread.gmane.org/gmane.linux.bluez.kernel/1754
 Patch3: bluez-activate-wacom-mode2.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
