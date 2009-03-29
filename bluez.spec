@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.33
-Release: 11%{?dist}
+Version: 4.34
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -14,8 +14,6 @@ Patch1: bluez-utils-oui-usage.patch
 Patch2: bluez-try-utf8-harder.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1754
 Patch3: bluez-activate-wacom-mode2.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/1783/focus=1784
-Patch4: 0001-Fix-invalid-memory-access-when-dealing-with-URLs.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -104,7 +102,6 @@ use in Bluetooth applications.
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .wacom
-%patch4 -p1 -b .urls
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -197,7 +194,10 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
-* Tue Mar 24 2009 - Bastien Nocera <bnocera@redhat.com> - 4.34-11
+* Sun Mar 29 2009 - Bastien Nocera <bnocera@redhat.com> - 4.34-1
+- Update to 4.34
+
+* Tue Mar 24 2009 - Bastien Nocera <bnocera@redhat.com> - 4.33-11
 - Fix a possible crasher
 
 * Mon Mar 16 2009 - Bastien Nocera <bnocera@redhat.com> - 4.33-1
