@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.34
-Release: 3%{?dist}
+Version: 4.35
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -14,10 +14,6 @@ Patch1: bluez-utils-oui-usage.patch
 Patch2: bluez-try-utf8-harder.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1754
 Patch3: bluez-activate-wacom-mode2.patch
-# http://git.kernel.org/?p=bluetooth/bluez.git;a=commit;h=457056310229911e820357470ee8fb30c82516da
-Patch4: bluez-fix-audio-service-crasher.patch
-# http://git.kernel.org/?p=bluetooth/bluez.git;a=commit;h=1200c9362b09dcc0cd362c046b93c560a7a47256
-Patch5: bluez-fix-audio-service-disconnect.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -106,8 +102,6 @@ use in Bluetooth applications.
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .wacom
-%patch4 -p1 -b .audio-service-crasher
-%patch5 -p1 -b .audio-service-disconnect
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -200,6 +194,9 @@ fi
 %{_libdir}/alsa-lib/*.so
 
 %changelog
+* Sat Apr 11 2009 - Bastien Nocera <bnocera@redhat.com> - 4.35-1
+- Update to 4.35
+
 * Fri Apr 03 2009 - Bastien Nocera <bnocera@redhat.com> - 4.34-3
 - Avoid disconnecting audio devices straight after they're connected
 
