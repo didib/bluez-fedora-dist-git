@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.37
-Release: 2%{?dist}
+Version: 4.38
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -251,6 +251,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon May 04 2009 Bastien Nocera <bnocera@redhat.com> 4.38-1
+- Update to 4.38
+
 * Wed Apr 29 2009 Bastien Nocera <bnocera@redhat.com> 4.37-2
 - Split off dund, pand, hidd, and rfcomm helper into a compat package
   (#477890, #473892)
