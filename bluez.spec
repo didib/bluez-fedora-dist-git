@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.37
+Version: 4.38
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -14,6 +14,8 @@ Patch1: bluez-utils-oui-usage.patch
 Patch2: bluez-try-utf8-harder.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1754
 Patch3: bluez-activate-wacom-mode2.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=498756
+Patch4: bluez-socket-mobile-cf-connection-kit.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -102,6 +104,7 @@ use in Bluetooth applications.
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .wacom
+%patch4 -p1 -b .socket-mobile
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -195,6 +198,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Tue May 05 2009 Bastien Nocera <bnocera@redhat.com> 4.38-1
+- Add patch to activate the Socket Mobile CF kit (#498756)
+
 * Thu Apr 23 2009 - Bastien Nocera <bnocera@redhat.com> - 4.37-1
 - Update to 4.37
 
