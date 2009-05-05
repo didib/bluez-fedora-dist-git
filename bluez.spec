@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.38
-Release: 1%{?dist}
+Version: 4.37
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -198,7 +198,7 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
-* Tue May 05 2009 Bastien Nocera <bnocera@redhat.com> 4.38-1
+* Tue May 05 2009 Bastien Nocera <bnocera@redhat.com> 4.37-2
 - Add patch to activate the Socket Mobile CF kit (#498756)
 
 * Thu Apr 23 2009 - Bastien Nocera <bnocera@redhat.com> - 4.37-1
