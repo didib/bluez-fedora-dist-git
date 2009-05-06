@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.38
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -13,6 +13,7 @@ Source5: pand.init
 Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
+Source9: 97-bluetooth-ondemand.rules
 Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
@@ -36,6 +37,7 @@ Requires: initscripts, bluez-libs = %{version}
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
 Requires: dbus-bluez-pin-helper
+Requires: udev >= 130
 Requires(preun): /sbin/chkconfig, /sbin/service
 Requires(post): /sbin/chkconfig, /sbin/service
 
@@ -148,6 +150,7 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 fi
 
 install -D -m0644 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+install -D -m0644 %{SOURCE9} ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-ondemand.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
@@ -214,6 +217,7 @@ fi
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+%{_sysconfdir}/udev/rules.d/97-bluetooth-ondemand.rules
 %{_sysconfdir}/rc.d/init.d/bluetooth
 %{_localstatedir}/lib/bluetooth
 
@@ -254,6 +258,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Tue May 05 2009 Petr Lautrbach <plautrba@redhat.com> 4.38-3
+- Start/stop the bluetooth service via udev (#484345)
+
 * Tue May 05 2009 Bastien Nocera <bnocera@redhat.com> 4.38-2
 - Add patch to activate the Socket Mobile CF kit (#498756)
 

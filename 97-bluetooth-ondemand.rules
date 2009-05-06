@@ -1,0 +1,3 @@
+#bluetooth on demand rules
+SUBSYSTEM=="bluetooth", ACTION=="add", RUN+="/sbin/service bluetooth condstart"
+SUBSYSTEM=="bluetooth", ACTION=="remove", RUN+="/sbin/service bluetooth condstop"

@@ -16,8 +16,49 @@
 
 [ -e /etc/sysconfig/bluetooth ] && . /etc/sysconfig/bluetooth
 
+is_enabled_in_runlevel() 
+{
+	level=`runlevel | awk '{print $2;}'`
+
+	#check file in runlevel
+	[ -f /etc/rc$level.d/S??bluetooth ] 
+	return $?
+}
+
+has_bt_devices()
+{
+	#Look for Bluetooth adapters:
+	udevadm info --export-db | grep -q -e '/devices/.*/bluetooth/.*'
+
+	return $?
+}
+
+check_condstart()
+{
+	is_enabled_in_runlevel || return $?
+
+	/sbin/service bluetooth status && return 1
+
+	#Look for Bluetooth adapters:
+	has_bt_devices && return 0
+	return 1
+}
+
+condstart()
+{
+	if [ "$BLUETOOTH_ONDEMAND" = "true" ]; then
+		start
+		return $?
+	fi
+	return 1
+}
+
 start()
 {
+	if [ "$BLUETOOTH_ONDEMAND" = "true" ]; then
+		check_condstart || return 1
+	fi
+
 	echo -n $"Starting Bluetooth services:"
 	daemon /usr/sbin/bluetoothd
 	RETVAL=$?
@@ -40,27 +81,57 @@ stop()
 	return $RETVAL
 }
 
+check_condstop()
+{
+	is_enabled_in_runlevel || return $?
+
+	/sbin/service bluetooth status || return $?
+
+	#Look for Bluetooth adapters:
+	has_bt_devices && return 1
+	return 0
+}
+
+condstop()
+{
+	if [ "$BLUETOOTH_ONDEMAND" = "true" ]; then
+		check_condstop || return 1
+	else
+		return 2
+	fi
+
+	stop
+	return $?
+}
+
+
 case "$1" in
   start)
 	start
 	;;
+  condstart)
+	condstart
+	;;
   stop)
 	stop
 	;;
+  condstop)
+	condstop
+	;;
   force-reload|restart|reload)
-        stop
-        start
-        ;;
+	stop
+	start
+	;;
   try-restart|condrestart)
-        [ -e /var/lock/subsys/bluetooth ] && (stop; start)
-        ;;
+	[ -e /var/lock/subsys/bluetooth ] && (stop; start)
+	;;
   status)
-        status bluetoothd
+	status bluetoothd
 	RETVAL=$?
-        ;;
+	;;
   *)
-        echo $"Usage: $0 {start|stop|status|restart|reload|condrestart}"
-        exit 3
+	echo $"Usage: $0 {start|stop|status|restart|reload|condrestart|condstart|condstop}"
+	exit 3
 	;;
 esac
 
