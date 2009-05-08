@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.37
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -16,6 +16,11 @@ Patch2: bluez-try-utf8-harder.patch
 Patch3: bluez-activate-wacom-mode2.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
+
+# http://git.kernel.org/?p=bluetooth/bluez.git;a=commitdiff;h=a381d5342d27b99612fd31dc9cc80b01f412ad39
+Patch5: bluez-pass-removal-flag.patch
+# http://git.kernel.org/?p=bluetooth/bluez.git;a=commitdiff;h=8ca76f2e9cf85ff39adc8bfa68627b8c4d9512cc
+Patch6: bluez-no-unplug-on-disconnect.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -105,6 +110,8 @@ use in Bluetooth applications.
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
+%patch5 -p1 -b .removal
+%patch6 -p1 -b .unplug
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -198,6 +205,10 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Fri May 08 2009 Bastien Nocera <bnocera@redhat.com> 4.37-3
+- Hopefully fix HID device not reconnecting properly after
+  they've been disconnected (#485927)
+
 * Tue May 05 2009 Bastien Nocera <bnocera@redhat.com> 4.37-2
 - Add patch to activate the Socket Mobile CF kit (#498756)
 

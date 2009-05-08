@@ -1,0 +1,117 @@
+From: Luiz Augusto von Dentz <luiz.dentz@openbossa.org>
+Date: Mon, 27 Apr 2009 13:43:29 +0000 (-0300)
+Subject: Make disconnect watch callback to take removal flag.
+X-Git-Tag: 4.38~31
+X-Git-Url: http://git.kernel.org/?p=bluetooth%2Fbluez.git;a=commitdiff_plain;h=a381d5342d27b99612fd31dc9cc80b01f412ad39
+
+Make disconnect watch callback to take removal flag.
+
+This should make watches aware of a force disconnection for permanent device
+removal making possible to remove any persistent data associate with the
+device.
+---
+
+diff --git a/audio/headset.c b/audio/headset.c
+index 686d727..1966a25 100644
+--- a/audio/headset.c
++++ b/audio/headset.c
+@@ -2387,7 +2387,8 @@ static int headset_close_rfcomm(struct audio_device *dev)
+ 	return 0;
+ }
+ 
+-static void disconnect_cb(struct btd_device *btd_dev, void *user_data)
++static void disconnect_cb(struct btd_device *btd_dev, gboolean removal,
++				void *user_data)
+ {
+ 	struct audio_device *device = user_data;
+ 
+diff --git a/audio/sink.c b/audio/sink.c
+index 679e0ee..e8b96ab 100644
+--- a/audio/sink.c
++++ b/audio/sink.c
+@@ -167,7 +167,8 @@ static void pending_request_free(struct audio_device *dev,
+ 	g_free(pending);
+ }
+ 
+-static void disconnect_cb(struct btd_device *btd_dev, void *user_data)
++static void disconnect_cb(struct btd_device *btd_dev, gboolean removal,
++				void *user_data)
+ {
+ 	struct audio_device *device = user_data;
+ 	struct sink *sink = device->sink;
+diff --git a/input/device.c b/input/device.c
+index 69c1b16..9f13cd5 100644
+--- a/input/device.c
++++ b/input/device.c
+@@ -777,7 +777,8 @@ static int disconnect(struct input_device *idev, uint32_t flags)
+ 	return connection_disconnect(iconn, flags);
+ }
+ 
+-static void disconnect_cb(struct btd_device *device, void *user_data)
++static void disconnect_cb(struct btd_device *device, gboolean removal,
++				void *user_data)
+ {
+ 	struct input_device *idev = user_data;
+ 
+diff --git a/network/connection.c b/network/connection.c
+index 83377f6..a02e233 100644
+--- a/network/connection.c
++++ b/network/connection.c
+@@ -211,7 +211,8 @@ static void connection_destroy(DBusConnection *conn, void *user_data)
+ 		cancel_connection(nc, NULL);
+ }
+ 
+-static void disconnect_cb(struct btd_device *device, void *user_data)
++static void disconnect_cb(struct btd_device *device, gboolean removal,
++				void *user_data)
+ {
+ 	struct network_conn *nc = user_data;
+ 
+diff --git a/src/adapter.c b/src/adapter.c
+index 40c5ab0..8278b39 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -1603,10 +1603,11 @@ static DBusMessage *remove_device(DBusConnection *conn,
+ 				ERROR_INTERFACE ".DoesNotExist",
+ 				"Device creation in progress");
+ 
+-	if (device_is_connected(device)) {
+-		device_set_temporary(device, TRUE);
++	device_set_temporary(device, TRUE);
++
++	if (device_is_connected(device))
+ 		device_disconnect(device);
+-	} else
++	else
+ 		adapter_remove_device(conn, adapter, device);
+ 
+ 	return dbus_message_new_method_return(msg);
+diff --git a/src/device.c b/src/device.c
+index e969a6c..e999c95 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -543,7 +543,9 @@ void device_disconnect(struct btd_device *device)
+ 		l = l->next;
+ 
+ 		if (data->watch)
+-			data->watch(device, data->user_data);
++			/* temporary is set if device is going to be removed */
++			data->watch(device, device->temporary,
++					data->user_data);
+ 	}
+ 
+ 	g_slist_foreach(device->watches, (GFunc) g_free, NULL);
+diff --git a/src/device.h b/src/device.h
+index 2a56e66..de61e0c 100644
+--- a/src/device.h
++++ b/src/device.h
+@@ -83,7 +83,8 @@ void device_remove_connection(struct btd_device *device, DBusConnection *conn,
+ gboolean device_has_connection(struct btd_device *device, uint16_t handle);
+ void device_disconnect(struct btd_device *device);
+ 
+-typedef void (*disconnect_watch) (struct btd_device *device, void *user_data);
++typedef void (*disconnect_watch) (struct btd_device *device, gboolean removal,
++					void *user_data);
+ 
+ guint device_add_disconnect_watch(struct btd_device *device,
+ 				disconnect_watch watch, void *user_data,
