@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.38
-Release: 3%{?dist}
+Version: 4.39
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -258,6 +258,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Sat May 09 2009 Bastien Nocera <bnocera@redhat.com> 4.39-1
+- Update to 4.39
+
 * Tue May 05 2009 Petr Lautrbach <plautrba@redhat.com> 4.38-3
 - Start/stop the bluetooth service via udev (#484345)
 
