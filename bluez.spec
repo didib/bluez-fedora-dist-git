@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.39
+Version: 4.40
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -258,6 +258,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Tue May 19 2009 Bastien Nocera <bnocera@redhat.com> 4.40-1
+- Update to 4.40
+
 * Sat May 09 2009 Bastien Nocera <bnocera@redhat.com> 4.39-1
 - Update to 4.39
 
