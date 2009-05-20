@@ -149,7 +149,8 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
 fi
 
-install -D -m0644 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules
+install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0644 %{SOURCE9} ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-ondemand.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
