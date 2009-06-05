@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.40
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -22,6 +22,8 @@ Patch2: bluez-try-utf8-harder.patch
 Patch3: bluez-activate-wacom-mode2.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/2396
+Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -31,6 +33,11 @@ BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
 BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
+# For cable pairing
+BuildRequires: libgudev-devel, libusb1-devel
+
+# For rebuild
+BuildRequires: libtool autoconf automake
 
 Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
 Requires: initscripts, bluez-libs = %{version}
@@ -121,8 +128,10 @@ This includes hidd, dund and pand.
 %patch2 -p1 -b .non-utf8-name
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
+%patch5 -p1 -b .cable-pairing
 
 %build
+autoreconf
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
 make
 
@@ -259,6 +268,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Fri Jun 05 2009 Bastien Nocera <bnocera@redhat.com> 4.40-2
+- Add patch to allow Sixaxis pairing
+
 * Tue May 19 2009 Bastien Nocera <bnocera@redhat.com> 4.40-1
 - Update to 4.40
 
