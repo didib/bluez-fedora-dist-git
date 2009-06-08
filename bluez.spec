@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.40
-Release: 2%{?dist}
+Version: 4.41
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -268,6 +268,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Jun 08 2009 Bastien Nocera <bnocera@redhat.com> 4.41-1
+- Update to 4.41
+
 * Fri Jun 05 2009 Bastien Nocera <bnocera@redhat.com> 4.40-2
 - Add patch to allow Sixaxis pairing
 
