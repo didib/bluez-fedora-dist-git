@@ -131,6 +131,7 @@ This includes hidd, dund and pand.
 %patch5 -p1 -b .cable-pairing
 
 %build
+libtoolize -f -c
 autoreconf
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
 make
