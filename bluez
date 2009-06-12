@@ -1,0 +1,10 @@
+# Automatically start bluetoothd when an adapter is plugged in
+#
+
+start on fedora.bluetooth-adapter-available
+
+stop on runlevel [016]
+stop on fedora.bluetooth-adapter-not-available
+
+exec /usr/sbin/bluetoothd --nodaemon
+

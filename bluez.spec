@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.41
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -13,7 +13,8 @@ Source5: pand.init
 Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
-Source9: 97-bluetooth-ondemand.rules
+Source9: 96-bluez.rules
+
 Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
@@ -24,6 +25,8 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/2474
+Patch6: 0001-Add-udev-mode-to-bluetoothd.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -129,6 +132,7 @@ This includes hidd, dund and pand.
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
+%patch6 -p1 -b .udev
 
 %build
 libtoolize -f -c
@@ -161,8 +165,8 @@ fi
 
 rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-install -D -m0644 %{SOURCE9} ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-ondemand.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
+install -D -m0644 %{SOURCE9} ${RPM_BUILD_ROOT}/lib/udev/rules.d/96-bluez.rules
 
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
@@ -227,8 +231,8 @@ fi
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
+/lib/udev/rules.d/96-bluez.rules
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-%{_sysconfdir}/udev/rules.d/97-bluetooth-ondemand.rules
 %{_sysconfdir}/rc.d/init.d/bluetooth
 %{_localstatedir}/lib/bluetooth
 
@@ -269,6 +273,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Thu Jun 11 2009 Bastien Nocera <bnocera@redhat.com> 4.41-2
+- Switch to on-demand start/stop using udev
+
 * Mon Jun 08 2009 Bastien Nocera <bnocera@redhat.com> 4.41-1
 - Update to 4.41
 
