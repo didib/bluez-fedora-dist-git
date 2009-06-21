@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.41
+Version: 4.42
 Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -25,8 +25,8 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/2474
-Patch6: 0001-Add-udev-mode-to-bluetoothd.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/2579
+Patch6: 0001-Add-udev-rules-to-start-bluetooth-on-demand.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -273,6 +273,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Sun Jun 21 2009 Bastien Nocera <bnocera@redhat.com> 4.42-2
+- Update to 4.42
+
 * Thu Jun 11 2009 Bastien Nocera <bnocera@redhat.com> 4.41-2
 - Switch to on-demand start/stop using udev
 

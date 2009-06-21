@@ -1,0 +1,39 @@
+From 830639ae0f3421a9d7c7366854925e32001771b5 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Sun, 21 Jun 2009 14:37:32 +0100
+Subject: [PATCH] Add udev rules to start bluetooth on-demand
+
+Those rules call bluetoothd --udev when a new dongle is inserted.
+---
+ scripts/96-bluez.rules |    5 +++++
+ scripts/Makefile.am    |    2 ++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
+ create mode 100644 scripts/96-bluez.rules
+
+diff --git a/scripts/96-bluez.rules b/scripts/96-bluez.rules
+new file mode 100644
+index 0000000..f3034b5
+--- /dev/null
++++ b/scripts/96-bluez.rules
+@@ -0,0 +1,5 @@
++# Run helper every time a Bluetooth device appears
++# On remove actions, bluetoothd should go away by itself
++
++ACTION=="add", SUBSYSTEM=="bluetooth",		RUN+="/usr/sbin/bluetoothd --udev"
++
+diff --git a/scripts/Makefile.am b/scripts/Makefile.am
+index 494a9c2..d87295d 100644
+--- a/scripts/Makefile.am
++++ b/scripts/Makefile.am
+@@ -11,6 +11,8 @@ endif
+ if PCMCIARULES
+ rules_DATA += bluetooth-serial.rules
+ endif
++
++rules_DATA += 96-bluez.rules
+ endif
+ 
+ if PCMCIARULES
+-- 
+1.6.2.2
+
