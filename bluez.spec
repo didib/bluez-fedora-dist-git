@@ -13,7 +13,6 @@ Source5: pand.init
 Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
-Source9: 96-bluez.rules
 
 Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
