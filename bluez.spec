@@ -230,7 +230,7 @@ fi
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
-/lib/udev/rules.d/96-bluez.rules
+/lib/udev/rules.d/bluetooth.rules
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 %{_sysconfdir}/rc.d/init.d/bluetooth
 %{_localstatedir}/lib/bluetooth
