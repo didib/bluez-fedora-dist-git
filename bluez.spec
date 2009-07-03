@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.43
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -44,7 +44,7 @@ Requires: initscripts, bluez-libs = %{version}
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
 Requires: dbus-bluez-pin-helper
-Requires: udev >= 130
+Requires: udev >= 143-2
 Requires(preun): /sbin/chkconfig, /sbin/service
 Requires(post): /sbin/chkconfig, /sbin/service
 
@@ -269,6 +269,10 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Fri Jul 03 2009 Bastien Nocera <bnocera@redhat.com> 4.43-2
+- Up the required udev requires so bluetoothd gets started
+  on boot when an adapter is present
+
 * Fri Jul 03 2009 Bastien Nocera <bnocera@redhat.com> 4.43-1
 - Update to 4.43
 
