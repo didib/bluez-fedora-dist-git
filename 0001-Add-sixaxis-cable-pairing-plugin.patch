@@ -17,59 +17,6 @@ address, and added to the database of the current default adapter.
  4 files changed, 388 insertions(+), 1 deletions(-)
  create mode 100644 plugins/cable.c
 
-diff --git a/acinclude.m4 b/acinclude.m4
-index eb7cdeb..dac1120 100644
---- a/acinclude.m4
-+++ b/acinclude.m4
-@@ -159,6 +159,12 @@ AC_DEFUN([AC_PATH_USB], [
- 			[Define to 1 if you need the usb_interrupt_read() function.]))
- ])
- 
-+AC_DEFUN([AC_PATH_CABLE], [
-+	PKG_CHECK_MODULES(CABLE, gudev-1.0 libusb-1.0, cable_found=yes, cable_found=no)
-+	AC_SUBST(CABLE_CFLAGS)
-+	AC_SUBST(CABLE_LIBS)
-+])
-+
- AC_DEFUN([AC_PATH_NETLINK], [
- 	PKG_CHECK_MODULES(NETLINK, libnl-1, netlink_found=yes, netlink_found=no)
- 	AC_SUBST(NETLINK_CFLAGS)
-@@ -179,6 +185,7 @@ AC_DEFUN([AC_ARG_BLUEZ], [
- 	netlink_enable=no
- 	hal_enable=${hal_found}
- 	usb_enable=${usb_found}
-+	cable_enable=${cable_found}
- 	alsa_enable=${alsa_found}
- 	gstreamer_enable=${gstreamer_found}
- 	audio_enable=yes
-@@ -241,6 +248,10 @@ AC_DEFUN([AC_ARG_BLUEZ], [
- 		usb_enable=${enableval}
- 	])
- 
-+	AC_ARG_ENABLE(cable, AC_HELP_STRING([--enable-cable], [enable DeviceKit support]), [
-+		cable_enable=${enableval}
-+	])
-+
- 	AC_ARG_ENABLE(netlink, AC_HELP_STRING([--enable-netlink], [enable NETLINK support]), [
- 		netlink_enable=${enableval}
- 	])
-@@ -324,6 +335,10 @@ AC_DEFUN([AC_ARG_BLUEZ], [
- 		AC_DEFINE(HAVE_LIBUSB, 1, [Define to 1 if you have USB library.])
- 	fi
- 
-+	if (test "${cable_enable}" = "yes" && test "${cable_found}" = "yes"); then
-+		AC_DEFINE(HAVE_CABLE, 1, [Define to 1 if you have libcable.])
-+	fi
-+
- 	AC_SUBST([BLUEZ_CFLAGS], ['-I$(top_builddir)/include'])
- 	AC_SUBST([BLUEZ_LIBS], ['$(top_builddir)/lib/libbluetooth.la'])
- 
-@@ -357,4 +372,5 @@ AC_DEFUN([AC_ARG_BLUEZ], [
- 	AM_CONDITIONAL(CONFIGFILES, test "${configfiles_enable}" = "yes")
- 	AM_CONDITIONAL(INITSCRIPTS, test "${initscripts_enable}" = "yes")
- 	AM_CONDITIONAL(PCMCIARULES, test "${pcmciarules_enable}" = "yes")
-+	AM_CONDITIONAL(CABLE, test "${cable_enable}" = "yes" && test "${cable_found}" = "yes")
- ])
 diff --git a/configure.ac b/configure.ac
 index 1686d18..339d45c 100644
 --- a/configure.ac
@@ -502,3 +449,54 @@ index 0000000..9f24b55
 -- 
 1.6.0.6
 
+--- bluez-4.43.old/acinclude.m4	2009-07-02 23:43:14.000000000 +0100
++++ bluez-4.43/acinclude.m4	2009-07-03 12:18:46.000000000 +0100
+@@ -162,6 +162,12 @@ AC_DEFUN([AC_PATH_USB], [
+ 			[Define to 1 if you need the usb_interrupt_read() function.]))
+ ])
+ 
++AC_DEFUN([AC_PATH_CABLE], [
++	PKG_CHECK_MODULES(CABLE, gudev-1.0 libusb-1.0, cable_found=yes, cable_found=no)
++	AC_SUBST(CABLE_CFLAGS)
++	AC_SUBST(CABLE_LIBS)
++])
++
+ AC_DEFUN([AC_PATH_NETLINK], [
+ 	PKG_CHECK_MODULES(NETLINK, libnl-1, netlink_found=yes, netlink_found=no)
+ 	AC_SUBST(NETLINK_CFLAGS)
+@@ -182,6 +188,7 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 	netlink_enable=no
+ 	hal_enable=${hal_found}
+ 	usb_enable=${usb_found}
++	cable_enable=${cable_found}
+ 	alsa_enable=${alsa_found}
+ 	gstreamer_enable=${gstreamer_found}
+ 	audio_enable=yes
+@@ -244,6 +251,10 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 		usb_enable=${enableval}
+ 	])
+ 
++	AC_ARG_ENABLE(cable, AC_HELP_STRING([--enable-cable], [enable DeviceKit support]), [
++		cable_enable=${enableval}
++	])
++
+ 	AC_ARG_ENABLE(netlink, AC_HELP_STRING([--enable-netlink], [enable NETLINK support]), [
+ 		netlink_enable=${enableval}
+ 	])
+@@ -327,6 +338,10 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 		AC_DEFINE(HAVE_LIBUSB, 1, [Define to 1 if you have USB library.])
+ 	fi
+ 
++	if (test "${cable_enable}" = "yes" && test "${cable_found}" = "yes"); then
++		AC_DEFINE(HAVE_CABLE, 1, [Define to 1 if you have libcable.])
++	fi
++
+ 	AC_SUBST([BLUEZ_CFLAGS], ['-I$(top_builddir)/include'])
+ 	AC_SUBST([BLUEZ_LIBS], ['$(top_builddir)/lib/libbluetooth.la'])
+ 
+@@ -360,4 +375,5 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 	AM_CONDITIONAL(MANPAGES, test "${manpages_enable}" = "yes")
+ 	AM_CONDITIONAL(UDEVRULES, test "${udevrules_enable}" = "yes")
+ 	AM_CONDITIONAL(CONFIGFILES, test "${configfiles_enable}" = "yes")
++	AM_CONDITIONAL(CABLE, test "${cable_enable}" = "yes" && test "${cable_found}" = "yes")
+ ])

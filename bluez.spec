@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.42
-Release: 2%{?dist}
+Version: 4.43
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -24,8 +24,6 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/2579
-Patch6: 0001-Add-udev-rules-to-start-bluetooth-on-demand.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -131,7 +129,6 @@ This includes hidd, dund and pand.
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
-%patch6 -p1 -b .udev
 
 %build
 libtoolize -f -c
@@ -272,6 +269,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Fri Jul 03 2009 Bastien Nocera <bnocera@redhat.com> 4.43-1
+- Update to 4.43
+
 * Sun Jun 21 2009 Bastien Nocera <bnocera@redhat.com> 4.42-2
 - Update to 4.42
 
