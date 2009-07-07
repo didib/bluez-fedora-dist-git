@@ -162,7 +162,7 @@ fi
 rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
-install -D -m0644 scripts/bluetooth.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/bluetooth.rules
+install -D -m0644 scripts/97-bluetooth.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth.rules
 
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
@@ -227,7 +227,7 @@ fi
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
-/lib/udev/rules.d/bluetooth.rules
+/lib/udev/rules.d/97-bluetooth.rules
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 %{_sysconfdir}/rc.d/init.d/bluetooth
 %{_localstatedir}/lib/bluetooth
