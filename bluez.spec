@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.44
+Version: 4.45
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -35,6 +35,7 @@ BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 # For cable pairing
 BuildRequires: libgudev-devel, libusb1-devel
+BuildRequires: udev
 
 # For rebuild
 BuildRequires: libtool autoconf automake
@@ -269,6 +270,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Wed Jul 08 2009 Bastien Nocera <bnocera@redhat.com> 4.45-1
+- Update to 4.45
+
 * Tue Jul 07 2009 Bastien Nocera <bnocera@redhat.com> 4.44-1
 - Update to 4.44
 
