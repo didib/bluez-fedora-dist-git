@@ -108,7 +108,7 @@ index 0000000..fad8b47
 +	uint8_t  hard;
 +};
 +
-+static char *get_name(__u32 idx)
++static char *get_name(uint32_t idx)
 +{
 +	char *filename, *name, *pos;
 +
