@@ -22,7 +22,6 @@ start()
 	daemon /usr/sbin/bluetoothd
 	RETVAL=$?
 	[ $RETVAL = 0 ] && touch /var/lock/subsys/bluetoothd
-	[ "$HID2HCI_ENABLE" = "true" ] && hid2hci --tohci > /dev/null 2>&1 || :
 	touch /var/lock/subsys/bluetooth
 	echo ""
 	return $RETVAL
@@ -31,7 +30,6 @@ start()
 stop()
 {
 	echo -n "Stopping Bluetooth services:"
-	[ "$HID2HCI_UNDO" = "true" ] && hid2hci --tohid > /dev/null 2>&1 || :
 	killproc bluetoothd
 	RETVAL=$?
 	rm -f /var/lock/subsys/bluetooth

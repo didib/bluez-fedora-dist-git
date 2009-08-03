@@ -1,13 +1,12 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
-Source2: bluetooth.conf
-Source3: bluez-uinput.modules
+Source2: bluez-uinput.modules
 Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
@@ -124,7 +123,6 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
 	$RPM_BUILD_ROOT/%{_libdir}/gstreamer-0.10/*.la
 
 install -D -m0755 %SOURCE1 $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/bluetooth
-install -D -m0644 %SOURCE2 $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/bluetooth
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
 if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
@@ -132,12 +130,10 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
 fi
 
-rm -f $RPM_BUILD_ROOT/%{_sysconfdir}/udev/bluetooth-hid2hci.rules
-
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
-install -D -m0755 %{SOURCE3} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
+install -D -m0755 %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
 
@@ -169,13 +165,14 @@ fi
 %{_mandir}/man8/*
 %dir %{_sysconfdir}/bluetooth/
 %config(noreplace) %{_sysconfdir}/bluetooth/*
-%config(noreplace) %{_sysconfdir}/sysconfig/*
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+%{_sysconfdir}/udev/bluetooth-hid2hci.rules
 /etc/rc.d/init.d/*
 %{_localstatedir}/lib/bluetooth
+%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
 %files libs
 %defattr(-, root, root)
@@ -203,6 +200,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Mon Aug 03 2009 Bastien Nocera <bnocera@redhat.com> 4.42-2
+- Let udev rules handle hid2hci (#514698)
+
 * Wed Jun 24 2009 Bastien Nocera <bnocera@redhat.com> 4.42-1
 - Update to 4.42
 
