@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -132,6 +132,7 @@ fi
 
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
+mv ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/
 
 install -D -m0755 %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
@@ -169,7 +170,7 @@ fi
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-%{_sysconfdir}/udev/bluetooth-hid2hci.rules
+%{_sysconfdir}/udev/rules.d/bluetooth-hid2hci.rules
 /etc/rc.d/init.d/*
 %{_localstatedir}/lib/bluetooth
 %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
@@ -200,6 +201,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Mon Aug 03 2009 Bastien Nocera <bnocera@redhat.com> 4.42-3
+- Fix hid2hci rules location
+
 * Mon Aug 03 2009 Bastien Nocera <bnocera@redhat.com> 4.42-2
 - Let udev rules handle hid2hci (#514698)
 
