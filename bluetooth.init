@@ -4,8 +4,8 @@
 # description: Turn HID adapters into Bluetooth ones
 #
 ### BEGIN INIT INFO
-# Short-Description: Turn HID adapters into Bluetooth ones
-# Description: Turn HID adapters into Bluetooth ones
+# Short-Description: Trigger bluetoothd start-up
+# Description: Trigger bluetoothd start-up
 ### END INIT INFO
 
 # Source function library.
@@ -15,21 +15,18 @@
 
 start()
 {
-	echo -n $"Starting hid2hci:"
-	[ "$HID2HCI_ENABLE" = "true" ] && hid2hci --tohci > /dev/null 2>&1 || :
-	RETVAL=$?
-	touch /var/lock/subsys/bluetooth
+	echo -n $"Enabling Bluetooth devices:"
+	udevadm trigger --subsystem-match=bluetooth
 	echo ""
-	return $RETVAL
+	return 0
 }
 
 stop()
 {
+	# FIXME If somebody figures out how to disable the K* script
 	echo -n "Stopping Bluetooth services:"
-	[ "$HID2HCI_UNDO" = "true" ] && hid2hci --tohid > /dev/null 2>&1 || :
-	RETVAL=$?
 	echo ""
-	return $RETVAL
+	return 0
 }
 
 case "$1" in
@@ -39,11 +36,8 @@ case "$1" in
   stop)
 	stop
 	;;
-  status)
-	RETVAL=0
-	;;
   *)
-	echo $"Usage: $0 {start|stop|status}"
+	echo $"Usage: $0 {start|stop}"
 	exit 3
 	;;
 esac

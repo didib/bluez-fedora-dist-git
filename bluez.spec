@@ -1,12 +1,11 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.47
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
-Source2: bluetooth.conf
 Source3: dund.init
 Source4: dund.conf
 Source5: pand.init
@@ -134,7 +133,7 @@ This includes hidd, dund and pand.
 %build
 libtoolize -f -c
 autoreconf
-%configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
 make
 
 %install
@@ -223,7 +222,6 @@ fi
 %{_mandir}/man8/*
 %dir %{_sysconfdir}/bluetooth/
 %config(noreplace) %{_sysconfdir}/bluetooth/*
-%config(noreplace) %{_sysconfdir}/sysconfig/bluetooth
 %config(noreplace) %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
@@ -270,6 +268,11 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Wed Aug 05 2009 Bastien Nocera <bnocera@redhat.com> 4.47-2
+- Remove hid2hci calls, they're in udev now
+- Work-around udev bug, bluetoothd wasn't getting enabled
+  on coldplug
+
 * Sun Aug 02 2009 Bastien Nocera <bnocera@redhat.com> 4.47-1
 - Update to 4.47
 
