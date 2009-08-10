@@ -1,10 +1,10 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.47
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
-Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
+Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.bz2
 Source1: bluetooth.init
 Source3: dund.init
 Source4: dund.conf
@@ -268,6 +268,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Aug 10 2009 Ville Skyttä <ville.skytta@iki.fi> - 4.47-3
+- Use bzipped upstream tarball.
+
 * Wed Aug 05 2009 Bastien Nocera <bnocera@redhat.com> 4.47-2
 - Remove hid2hci calls, they're in udev now
 - Work-around udev bug, bluetoothd wasn't getting enabled
