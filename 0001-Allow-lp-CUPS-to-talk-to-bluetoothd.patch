@@ -1,0 +1,31 @@
+From b2d24735492e6a71f3441720940ac55c33fa0838 Mon Sep 17 00:00:00 2001
+From: Till Kamppeter <till.kamppeter@gmail.com>
+Date: Tue, 11 Aug 2009 14:04:05 +0100
+Subject: [PATCH 1/2] Allow lp (CUPS) to talk to bluetoothd
+
+CUPS runs its backend helpers as the "lp" user, so we should
+allow CUPS to talk to bluetoothd to enumerate printers.
+---
+ src/bluetooth.conf |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/src/bluetooth.conf b/src/bluetooth.conf
+index c047623..315009c 100644
+--- a/src/bluetooth.conf
++++ b/src/bluetooth.conf
+@@ -17,6 +17,12 @@
+     <allow send_destination="org.bluez"/>
+   </policy>
+ 
++  <!-- allow users of lp group (printing subsystem) to 
++       communicate with bluetoothd -->
++  <policy group="lp">
++    <allow send_destination="org.bluez"/>
++  </policy>
++
+   <policy context="default">
+     <deny send_destination="org.bluez"/>
+   </policy>
+-- 
+1.6.2.5
+

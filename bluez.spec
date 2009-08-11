@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.47
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.bz2
@@ -23,8 +23,12 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3108
 Patch6: 0001-Don-t-abort-cups-backend-on-property-change.patch
 Patch7: 0002-Actually-read-the-CreateDevice-reply.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3106/focus=3114
+Patch8: 0001-Allow-lp-CUPS-to-talk-to-bluetoothd.patch
+Patch9: 0002-Mark-Bluetooth-printers-as-being-local.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -133,6 +137,8 @@ This includes hidd, dund and pand.
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %build
 libtoolize -f -c
@@ -272,6 +278,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.47-5
+- More upstream CUPS fixes
+
 * Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.47-4
 - Fix cups discovery the first time we discover a device
 
