@@ -1,0 +1,27 @@
+From d96004d65132a7934308ded8010c5f819013157a Mon Sep 17 00:00:00 2001
+From: Till Kamppeter <till.kamppeter@gmail.com>
+Date: Tue, 11 Aug 2009 14:06:59 +0100
+Subject: [PATCH 2/2] Mark Bluetooth printers as being local
+
+For discovery purposes. Also add a better label for the printer,
+and append "(Bluetooth") to the "unique" name.
+---
+ cups/main.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/cups/main.c b/cups/main.c
+index ba9864f..bb15c9c 100644
+--- a/cups/main.c
++++ b/cups/main.c
+@@ -226,7 +226,7 @@ static void print_printer_details(const char *name, const char *bdaddr, const ch
+ 		 bdaddr[9], bdaddr[10],
+ 		 bdaddr[12], bdaddr[13],
+ 		 bdaddr[15], bdaddr[16]);
+-	printf("network %s \"Unknown\" \"%s (Bluetooth)\"", uri, escaped);
++	printf("direct %s \"%s\" \"%s (Bluetooth)\"", uri, escaped, escaped);
+ 	if (id != NULL)
+ 		printf(" \"%s\"\n", id);
+ 	else
+-- 
+1.6.2.5
+

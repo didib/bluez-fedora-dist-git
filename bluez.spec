@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -17,8 +17,12 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=507572
 Patch5: cups-less-errors.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3108
 Patch6: 0001-Don-t-abort-cups-backend-on-property-change.patch
 Patch7: 0002-Actually-read-the-CreateDevice-reply.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3106/focus=3114
+Patch8: 0001-Allow-lp-CUPS-to-talk-to-bluetoothd.patch
+Patch9: 0002-Mark-Bluetooth-printers-as-being-local.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -111,6 +115,8 @@ use in Bluetooth applications.
 %patch5 -p1 -b .cups-less-errors
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -205,6 +211,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.42-5
+- More upstream CUPS fixes
+
 * Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.42-4
 - Fix cups discovery the first time we discover a device
 
