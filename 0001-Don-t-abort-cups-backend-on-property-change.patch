@@ -1,0 +1,28 @@
+From 35ffd5a6dafd7e38c7d8c9502608314a44919302 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Tue, 11 Aug 2009 12:23:39 +0100
+Subject: [PATCH 1/2] Don't abort cups backend on property change
+
+Make sure the cups backend doesn't abort when trying to
+access a property that's not Discovering.
+---
+ cups/main.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/cups/main.c b/cups/main.c
+index 2fbfe7e..9c24734 100644
+--- a/cups/main.c
++++ b/cups/main.c
+@@ -506,6 +506,9 @@ static DBusHandlerResult filter_func(DBusConnection *connection, DBusMessage *me
+ 
+ 		dbus_message_iter_init(message, &iter);
+ 		dbus_message_iter_get_basic(&iter, &name);
++		if (name == NULL ||
++		    strcmp(name, "Discovering") != 0)
++		    	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+ 		dbus_message_iter_next(&iter);
+ 		dbus_message_iter_recurse(&iter, &value_iter);
+ 		dbus_message_iter_get_basic(&value_iter, &discovering);
+-- 
+1.6.2.5
+

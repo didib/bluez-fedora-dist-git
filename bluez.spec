@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -17,6 +17,8 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=507572
 Patch5: cups-less-errors.patch
+Patch6: 0001-Don-t-abort-cups-backend-on-property-change.patch
+Patch7: 0002-Actually-read-the-CreateDevice-reply.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -107,6 +109,8 @@ use in Bluetooth applications.
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cups-less-errors
+%patch6 -p1
+%patch7 -p1
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -201,6 +205,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.42-4
+- Fix cups discovery the first time we discover a device
+
 * Mon Aug 03 2009 Bastien Nocera <bnocera@redhat.com> 4.42-3
 - Fix hid2hci rules location
 

@@ -1,0 +1,30 @@
+From b29e1cb433454391da92720c3ff87373d9d60500 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Tue, 11 Aug 2009 12:24:58 +0100
+Subject: [PATCH 2/2] Actually read the CreateDevice reply
+
+Fixes aborts when the printer isn't a known device.
+---
+ cups/main.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cups/main.c b/cups/main.c
+index 9c24734..ba9864f 100644
+--- a/cups/main.c
++++ b/cups/main.c
+@@ -371,9 +371,9 @@ static void remote_device_found(const char *adapter, const char *bdaddr, const c
+ 
+ 		if (!reply)
+ 			return;
+-	} else {
+-		if (dbus_message_get_args(reply, NULL, DBUS_TYPE_OBJECT_PATH, &object_path, DBUS_TYPE_INVALID) == FALSE)
+-			return;
++	}
++	if (dbus_message_get_args(reply, NULL, DBUS_TYPE_OBJECT_PATH, &object_path, DBUS_TYPE_INVALID) == FALSE) {
++		return;
+ 	}
+ 
+ 	id = device_get_ieee1284_id(adapter, object_path);
+-- 
+1.6.2.5
+
