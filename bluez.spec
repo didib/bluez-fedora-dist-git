@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.47
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.bz2
@@ -39,7 +39,10 @@ BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
 BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 # For cable pairing
-BuildRequires: libgudev-devel, libusb1-devel
+BuildRequires: libgudev-devel 
+%ifnarch s390 s390x
+BuildRequires: libusb1-devel
+%endif
 BuildRequires: udev
 
 # For rebuild
@@ -278,6 +281,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Tue Aug 25 2009 Karsten Hopp <karsten@redhat.com> 4.47-6
+- don't buildrequire libusb1 on s390*
+
 * Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.47-5
 - More upstream CUPS fixes
 
