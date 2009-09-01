@@ -1,10 +1,10 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.47
-Release: 6%{?dist}
+Version: 4.50
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
-Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.bz2
+Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluetooth.init
 Source3: dund.init
 Source4: dund.conf
@@ -281,6 +281,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Tue Sep 01 2009 Bastien Nocera <bnocera@redhat.com> 4.50-1
+- Update to 4.50
+
 * Tue Aug 25 2009 Karsten Hopp <karsten@redhat.com> 4.47-6
 - don't buildrequire libusb1 on s390*
 
