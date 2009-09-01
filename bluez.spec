@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.50
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -23,12 +23,8 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/3108
-Patch6: 0001-Don-t-abort-cups-backend-on-property-change.patch
-Patch7: 0002-Actually-read-the-CreateDevice-reply.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/3106/focus=3114
-Patch8: 0001-Allow-lp-CUPS-to-talk-to-bluetoothd.patch
-Patch9: 0002-Mark-Bluetooth-printers-as-being-local.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3264/focus=3286
+Patch6: 0001-Make-discovery-mode-of-bluetooth-CUPS-backend-work-w.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -138,10 +134,7 @@ This includes hidd, dund and pand.
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
+%patch6 -p1 -b .newer-cups
 
 %build
 libtoolize -f -c
@@ -281,6 +274,11 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Tue Sep 01 2009 Bastien Nocera <bnocera@redhat.com> 4.50-2
+- Remove obsoleted patches
+- Add another CUPS backend patch
+- Update cable pairing patch for new build system
+
 * Tue Sep 01 2009 Bastien Nocera <bnocera@redhat.com> 4.50-1
 - Update to 4.50
 
