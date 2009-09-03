@@ -1,10 +1,10 @@
-Index: common/oui.c
+Index: src/oui.c
 ===================================================================
 RCS file: /cvsroot/bluez/utils/common/oui.c,v
 retrieving revision 1.2
 diff -u -p -r1.2 oui.c
---- common/oui.c	13 Jan 2007 17:48:12 -0000	1.2
-+++ common/oui.c	25 Jan 2008 12:16:58 -0000
+--- src/oui.c	13 Jan 2007 17:48:12 -0000	1.2
++++ src/oui.c	25 Jan 2008 12:16:58 -0000
 @@ -38,7 +38,7 @@
  
  /* http://standards.ieee.org/regauth/oui/oui.txt */

@@ -23,8 +23,6 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/3264/focus=3286
-Patch6: 0001-Make-discovery-mode-of-bluetooth-CUPS-backend-work-w.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -134,7 +132,6 @@ This includes hidd, dund and pand.
 %patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
-%patch6 -p1 -b .newer-cups
 
 %build
 libtoolize -f -c
