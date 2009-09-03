@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.50
-Release: 2%{?dist}
+Version: 4.51
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -274,6 +274,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Thu Sep 03 2009 Bastien Nocera <bnocera@redhat.com> 4.51-1
+- Update to 4.51
+
 * Tue Sep 01 2009 Bastien Nocera <bnocera@redhat.com> 4.50-2
 - Remove obsoleted patches
 - Add another CUPS backend patch
