@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.53
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -271,6 +271,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Wed Sep 16 2009 Bastien Nocera <bnocera@redhat.com> 4.53-2
+- Update cable plugin for gudev changes
+
 * Thu Sep 10 2009 Bastien Nocera <bnocera@redhat.com> 4.53-1
 - Update to 4.53
 
