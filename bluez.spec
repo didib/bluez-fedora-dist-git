@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -23,6 +23,8 @@ Patch7: 0002-Actually-read-the-CreateDevice-reply.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/3106/focus=3114
 Patch8: 0001-Allow-lp-CUPS-to-talk-to-bluetoothd.patch
 Patch9: 0002-Mark-Bluetooth-printers-as-being-local.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3430
+Patch10: bluez-correct-udev-dell-mouse-rules.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -117,6 +119,7 @@ use in Bluetooth applications.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 %configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
@@ -211,6 +214,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Wed Sep 16 2009 Bastien Nocera <bnocera@redhat.com> 4.42-6
+- Fix hid2hci rules (#517088)
+
 * Tue Aug 11 2009 Bastien Nocera <bnocera@redhat.com> 4.42-5
 - More upstream CUPS fixes
 
