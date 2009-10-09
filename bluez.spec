@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.55
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -34,7 +34,7 @@ BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
 # For cable pairing
-BuildRequires: libgudev-devel 
+BuildRequires: libudev-devel 
 %ifnarch s390 s390x
 BuildRequires: libusb1-devel
 %endif
@@ -272,6 +272,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Fri Oct 09 2009 Bastien Nocera <bnocera@redhat.com> 4.55-2
+- Update cable pairing plugin to use libudev
+
 * Mon Oct 05 2009 Bastien Nocera <bnocera@redhat.com> 4.55-1
 - Update to 4.55
 - Add libcap-ng support to drop capabilities (#517660)
