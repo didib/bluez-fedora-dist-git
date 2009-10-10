@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.55
-Release: 2%{?dist}
+Version: 4.56
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -272,6 +272,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Sat Oct 10 2009 Bastien Nocera <bnocera@redhat.com> 4.56-1
+- Update to 4.56
+
 * Fri Oct 09 2009 Bastien Nocera <bnocera@redhat.com> 4.55-2
 - Update cable pairing plugin to use libudev
 
