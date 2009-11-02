@@ -25,6 +25,7 @@ Patch8: 0001-Allow-lp-CUPS-to-talk-to-bluetoothd.patch
 Patch9: 0002-Mark-Bluetooth-printers-as-being-local.patch
 # Updated from udev-extras master
 Patch10: bluez-4.42-update-hid2hci-rules.patch
+Patch11: bluez-4.42-make-udev-helper-build.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -120,10 +121,16 @@ use in Bluetooth applications.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
-%configure --enable-cups --enable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
+%configure --enable-cups --disable-hid2hci --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
 make
+
+# Build by hand...
+pushd tools
+gcc -o hid2hci -DUTIL_PATH_SIZE=4096 `pkg-config --libs --cflags libudev libusb` hid2hci.c
+popd
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -145,7 +152,10 @@ fi
 
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
-mv ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/
+
+# Install hid2hci
+install -D -m0644 scripts/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/70-hid2hci.rules
+install -D -m0755 tools/hid2hci ${RPM_BUILD_ROOT}/lib/udev/hid2hci
 
 install -D -m0755 %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
@@ -183,7 +193,8 @@ fi
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-%{_sysconfdir}/udev/rules.d/bluetooth-hid2hci.rules
+/lib/udev/rules.d/*.rules
+/lib/udev/hid2hci
 /etc/rc.d/init.d/*
 %{_localstatedir}/lib/bluetooth
 %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules

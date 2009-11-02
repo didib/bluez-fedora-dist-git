@@ -1,0 +1,75 @@
+--- bluez-4.42/tools/hid2hci.c.old	2009-11-02 17:13:56.000000000 +0000
++++ bluez-4.42/tools/hid2hci.c	2009-11-02 17:24:39.000000000 +0000
+@@ -25,6 +25,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <stdint.h>
++#define _GNU_SOURCE 1
+ #include <string.h>
+ #include <getopt.h>
+ #include <sys/ioctl.h>
+@@ -32,7 +33,63 @@
+ #include <usb.h>
+ 
+ #include "libudev.h"
+-#include "libudev-private.h"
++
++/*
++ * Concatenates strings. In any case, terminates in _all_ cases with '\0'
++ * and moves the @dest pointer forward to the added '\0'. Returns the
++ * remaining size, and 0 if the string was truncated.
++ */
++size_t util_strpcpy(char **dest, size_t size, const char *src)
++{
++	size_t len;
++
++	len = strlen(src);
++	if (len >= size) {
++		if (size > 1)
++			*dest = mempcpy(*dest, src, size-1);
++		size = 0;
++		*dest[0] = '\0';
++	} else {
++		if (len > 0) {
++			*dest = mempcpy(*dest, src, len);
++			size -= len;
++		}
++		*dest[0] = '\0';
++	}
++	return size;
++}
++
++/* concatenates list of strings, moves dest forward */
++size_t util_strpcpyl(char **dest, size_t size, const char *src, ...)
++{
++	va_list va;
++
++	va_start(va, src);
++	do {
++		size = util_strpcpy(dest, size, src);
++		src = va_arg(va, char *);
++	} while (src != NULL);
++	va_end(va);
++
++	return size;
++}
++
++/* concatenates list of strings */
++size_t util_strscpyl(char *dest, size_t size, const char *src, ...)
++{
++	va_list va;
++	char *s;
++
++	va_start(va, src);
++	s = dest;
++	do {
++		size = util_strpcpy(&s, size, src);
++		src = va_arg(va, char *);
++	} while (src != NULL);
++	va_end(va);
++
++	return size;
++}
+ 
+ enum mode {
+ 	HCI = 0,
