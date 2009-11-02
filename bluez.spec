@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.57
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -225,7 +225,7 @@ fi
 %{_mandir}/man1/*
 %{_mandir}/man8/*
 %dir %{_sysconfdir}/bluetooth/
-%config(noreplace) %{_sysconfdir}/bluetooth/*
+%config(noreplace) %{_sysconfdir}/bluetooth/main.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
@@ -265,6 +265,7 @@ fi
 %{_bindir}/dund
 %{_bindir}/pand
 %{_bindir}/hidd
+%config(noreplace) %{_sysconfdir}/bluetooth/rfcomm.conf
 %{_sysconfdir}/rc.d/init.d/dund
 %{_sysconfdir}/rc.d/init.d/rfcomm
 %{_sysconfdir}/rc.d/init.d/pand
@@ -272,6 +273,10 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Nov 02 2009 Bastien Nocera <bnocera@redhat.com> 4.57-2
+- Move the rfcomm.conf to the compat package, otherwise
+  the comments at the top of it are confusing
+
 * Sat Oct 31 2009 Bastien Nocera <bnocera@redhat.com> 4.57-1
 - Update to 4.57
 
