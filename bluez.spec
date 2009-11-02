@@ -35,6 +35,7 @@ BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
 BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
+BuildRequires: libudev-devel
 
 Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
 Requires: initscripts, bluez-libs = %{version}
