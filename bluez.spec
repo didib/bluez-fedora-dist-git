@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 6%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -23,8 +23,8 @@ Patch7: 0002-Actually-read-the-CreateDevice-reply.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/3106/focus=3114
 Patch8: 0001-Allow-lp-CUPS-to-talk-to-bluetoothd.patch
 Patch9: 0002-Mark-Bluetooth-printers-as-being-local.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/3430
-Patch10: bluez-correct-udev-dell-mouse-rules.patch
+# Updated from udev-extras master
+Patch10: bluez-4.42-update-hid2hci-rules.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -214,6 +214,12 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Mon Nov 02 2009 Bastien Nocera <bnocera@redhat.com> 4.42-8
+- Update hid2hci code from udev master
+
+* Wed Sep 16 2009 Bastien Nocera <bnocera@redhat.com> 4.42-7
+- Backport code to re-enable Dell HID proxies (#513103)
+
 * Wed Sep 16 2009 Bastien Nocera <bnocera@redhat.com> 4.42-6
 - Fix hid2hci rules (#517088)
 
