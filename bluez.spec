@@ -130,7 +130,7 @@ make
 
 # Build by hand...
 pushd tools
-gcc -o hid2hci -DUTIL_PATH_SIZE=4096 `pkg-config --libs --cflags libudev libusb` hid2hci.c
+gcc -o hid2hci -DUTIL_PATH_SIZE=4096 -DLIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE=1 `pkg-config --libs --cflags libudev libusb` hid2hci.c
 popd
 
 %install
