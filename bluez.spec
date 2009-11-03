@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.42
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -226,6 +226,9 @@ fi
 %{_sysconfdir}/alsa/bluetooth.conf
 
 %changelog
+* Tue Nov 03 2009 Bastien Nocera <bnocera@redhat.com> 4.42-9
+- Update hid2hci udev rules for F11 udev
+
 * Mon Nov 02 2009 Bastien Nocera <bnocera@redhat.com> 4.42-8
 - Update hid2hci code from udev master
 
