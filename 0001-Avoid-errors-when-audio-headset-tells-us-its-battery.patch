@@ -1,0 +1,37 @@
+From 6e9f62f7251086f09d476d3fce9090e3d22acf63 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Fri, 6 Nov 2009 18:49:53 +0000
+Subject: [PATCH] Avoid errors when audio headset tells us its battery charge
+
+Like the Samsung WEP470 does.
+---
+ audio/headset.c |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/audio/headset.c b/audio/headset.c
+index cf1ae61..36a84c2 100644
+--- a/audio/headset.c
++++ b/audio/headset.c
+@@ -1132,6 +1132,11 @@ static int nr_and_ec(struct audio_device *device, const char *buf)
+ 	return 0;
+ }
+ 
++static int battery_event(struct audio_device *device, const char *buf)
++{
++	return 0;
++}
++
+ static struct event event_callbacks[] = {
+ 	{ "ATA", answer_call },
+ 	{ "ATD", dial_number },
+@@ -1152,6 +1157,7 @@ static struct event event_callbacks[] = {
+ 	{ "AT+CCWA", call_waiting_notify },
+ 	{ "AT+COPS", operator_selection },
+ 	{ "AT+NREC", nr_and_ec },
++	{ "AT+CBC", battery_event },
+ 	{ 0 }
+ };
+ 
+-- 
+1.6.5.2
+

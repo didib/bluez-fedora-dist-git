@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.57
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -23,6 +23,8 @@ Patch3: bluez-activate-wacom-mode2.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/3774
+Patch6: 0001-Avoid-errors-when-audio-headset-tells-us-its-battery.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -273,6 +275,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Fri Nov 06 2009 Bastien Nocera <bnocera@redhat.com> 4.57-3
+- Fix error when Samsung headset sends us its battery status
+
 * Mon Nov 02 2009 Bastien Nocera <bnocera@redhat.com> 4.57-2
 - Move the rfcomm.conf to the compat package, otherwise
    the comments at the top of it are confusing
