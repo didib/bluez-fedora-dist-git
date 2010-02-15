@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.58
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -275,6 +275,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Feb 15 2010 Bastien Nocera <bnocera@redhat.com> 4.58-2
+- Fix typo in init script (#558993)
+
 * Mon Nov 16 2009 Bastien Nocera <bnocera@redhat.com> 4.58-1
 - Update to 4.58
 
