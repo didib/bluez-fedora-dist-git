@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.60
-Release: 2%{?dist}
+Version: 4.61
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -17,8 +17,6 @@ Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/1754
-Patch3: bluez-activate-wacom-mode2.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -130,7 +128,6 @@ This includes hidd, dund and pand.
 %setup -q
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
-%patch3 -p1 -b .wacom
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 
@@ -273,6 +270,10 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Feb 15 2010 Bastien Nocera <bnocera@redhat.com> 4.61-1
+- Update to 4.61
+- Remove Wacom tablet enabler, now in the kernel
+
 * Mon Feb 15 2010 Bastien Nocera <bnocera@redhat.com> 4.60-2
 - Fix typo in init script (#558993)
 
