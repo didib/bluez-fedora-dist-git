@@ -1,7 +1,7 @@
-From 7194839445edb3fd112b2bc79878c303e3b7c9e2 Mon Sep 17 00:00:00 2001
+From 79c0b458e8dbb8784df4f7d2a3d7a4e154d58c65 Mon Sep 17 00:00:00 2001
 From: Bastien Nocera <hadess@hadess.net>
 Date: Tue, 1 Sep 2009 17:32:48 +0100
-Subject: [PATCH] Add sixaxis cable-pairing plugin
+Subject: [PATCH 1/2] Add sixaxis cable-pairing plugin
 
 Implement the old "sixpair" using libudev and libusb-1.0.
 
@@ -10,17 +10,17 @@ the device is selected, poked around to set the default Bluetooth
 address, and added to the database of the current default adapter.
 ---
  Makefile.am     |    9 +-
- acinclude.m4    |   16 +++
- configure.ac    |    1 +
- plugins/cable.c |  384 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 408 insertions(+), 2 deletions(-)
+ acinclude.m4    |   38 ++++++
+ configure.ac    |    3 +
+ plugins/cable.c |  385 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 433 insertions(+), 2 deletions(-)
  create mode 100644 plugins/cable.c
 
 diff --git a/Makefile.am b/Makefile.am
-index c8337d6..e5eccdf 100644
+index f8b1c11..a781a2c 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -162,6 +162,11 @@ builtin_modules += service
+@@ -167,6 +167,11 @@ builtin_modules += service
  builtin_sources += plugins/service.c
  endif
  
@@ -32,7 +32,7 @@ index c8337d6..e5eccdf 100644
  builtin_modules += hciops
  builtin_sources += plugins/hciops.c
  
-@@ -192,7 +197,7 @@ src_bluetoothd_SOURCES = $(gdbus_sources) $(builtin_sources) \
+@@ -197,7 +202,7 @@ src_bluetoothd_SOURCES = $(gdbus_sources) $(builtin_sources) \
  			src/dbus-common.c src/dbus-common.h \
  			src/dbus-hci.h src/dbus-hci.c
  src_bluetoothd_LDADD = lib/libbluetooth.la @GLIB_LIBS@ @DBUS_LIBS@ \
@@ -41,7 +41,7 @@ index c8337d6..e5eccdf 100644
  src_bluetoothd_LDFLAGS = -Wl,--export-dynamic \
  					-Wl,--version-script=src/bluetooth.ver
  src_bluetoothd_DEPENDENCIES = src/bluetooth.ver lib/libbluetooth.la
-@@ -305,7 +310,7 @@ EXTRA_DIST += doc/manager-api.txt \
+@@ -310,7 +315,7 @@ EXTRA_DIST += doc/manager-api.txt \
  
  AM_YFLAGS = -d
  
@@ -51,10 +51,10 @@ index c8337d6..e5eccdf 100644
  
  INCLUDES = -I$(builddir)/lib -I$(builddir)/src -I$(srcdir)/src \
 diff --git a/acinclude.m4 b/acinclude.m4
-index e7d1c32..10e5241 100644
+index 2e4444d..6af5a21 100644
 --- a/acinclude.m4
 +++ b/acinclude.m4
-@@ -142,6 +142,12 @@ AC_DEFUN([AC_PATH_USB], [
+@@ -146,6 +146,24 @@ AC_DEFUN([AC_PATH_USB], [
  			[Define to 1 if you need the usb_interrupt_read() function.]))
  ])
  
@@ -64,18 +64,35 @@ index e7d1c32..10e5241 100644
 +	AC_SUBST(CABLE_LIBS)
 +])
 +
- AC_DEFUN([AC_PATH_NETLINK], [
- 	PKG_CHECK_MODULES(NETLINK, libnl-1, netlink_found=yes, netlink_found=no)
- 	AC_SUBST(NETLINK_CFLAGS)
-@@ -170,6 +176,7 @@ AC_DEFUN([AC_ARG_BLUEZ], [
- 	netlink_enable=no
++AC_DEFUN([AC_PATH_NETLINK], [
++	PKG_CHECK_MODULES(NETLINK, libnl-1, netlink_found=yes, netlink_found=no)
++	AC_SUBST(NETLINK_CFLAGS)
++	AC_SUBST(NETLINK_LIBS)
++])
++
++AC_DEFUN([AC_PATH_CAPNG], [
++        PKG_CHECK_MODULES(CAPNG, libcap-ng, capng_found=yes, capng_found=no)
++        AC_SUBST(CAPNG_CFLAGS)
++        AC_SUBST(CAPNG_LIBS)
++])
++
+ AC_DEFUN([AC_PATH_SNDFILE], [
+ 	PKG_CHECK_MODULES(SNDFILE, sndfile, sndfile_found=yes, sndfile_found=no)
+ 	AC_SUBST(SNDFILE_CFLAGS)
+@@ -157,9 +175,12 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 	optimization_enable=yes
+ 	fortify_enable=yes
+ 	pie_enable=yes
++	capng_enable=${capng_found}
+ 	sndfile_enable=${sndfile_found}
++	netlink_enable=no
  	hal_enable=${hal_found}
  	usb_enable=${usb_found}
 +	cable_enable=${cable_found}
  	alsa_enable=${alsa_found}
  	gstreamer_enable=${gstreamer_found}
  	audio_enable=yes
-@@ -239,6 +246,10 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+@@ -231,6 +252,14 @@ AC_DEFUN([AC_ARG_BLUEZ], [
  		usb_enable=${enableval}
  	])
  
@@ -83,44 +100,55 @@ index e7d1c32..10e5241 100644
 +		cable_enable=${enableval}
 +	])
 +
- 	AC_ARG_ENABLE(netlink, AC_HELP_STRING([--enable-netlink], [enable NETLINK support]), [
- 		netlink_enable=${enableval}
++	AC_ARG_ENABLE(netlink, AC_HELP_STRING([--enable-netlink], [enable NETLINK support]), [
++		netlink_enable=${enableval}
++	])
++
+ 	AC_ARG_ENABLE(tracer, AC_HELP_STRING([--enable-tracer], [install Tracing daemon]), [
+ 		tracer_enable=${enableval}
  	])
-@@ -326,6 +337,10 @@ AC_DEFUN([AC_ARG_BLUEZ], [
- 		AC_DEFINE(HAVE_CAPNG, 1, [Define to 1 if you have capabilities library.])
+@@ -314,6 +343,14 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 		AC_DEFINE(HAVE_LIBUSB, 1, [Define to 1 if you have USB library.])
  	fi
  
++	if (test "${capng_enable}" = "yes" && test "${capng_found}" = "yes"); then
++		AC_DEFINE(HAVE_CAPNG, 1, [Define to 1 if you have capabilities library.])
++	fi
++
 +	if (test "${cable_enable}" = "yes" && test "${cable_found}" = "yes"); then
 +		AC_DEFINE(HAVE_CABLE, 1, [Define to 1 if you have libcable.])
 +	fi
 +
  	AM_CONDITIONAL(SNDFILE, test "${sndfile_enable}" = "yes" && test "${sndfile_found}" = "yes")
- 	AM_CONDITIONAL(NETLINK, test "${netlink_enable}" = "yes" && test "${netlink_found}" = "yes")
  	AM_CONDITIONAL(USB, test "${usb_enable}" = "yes" && test "${usb_found}" = "yes")
-@@ -350,4 +365,5 @@ AC_DEFUN([AC_ARG_BLUEZ], [
+ 	AM_CONDITIONAL(SBC, test "${alsa_enable}" = "yes" || test "${gstreamer_enable}" = "yes")
+@@ -339,4 +376,5 @@ AC_DEFUN([AC_ARG_BLUEZ], [
  	AM_CONDITIONAL(DFUTOOL, test "${dfutool_enable}" = "yes" && test "${usb_found}" = "yes")
  	AM_CONDITIONAL(UDEVRULES, test "${udevrules_enable}" = "yes")
  	AM_CONDITIONAL(CONFIGFILES, test "${configfiles_enable}" = "yes")
 +	AM_CONDITIONAL(CABLE, test "${cable_enable}" = "yes" && test "${cable_found}" = "yes")
  ])
 diff --git a/configure.ac b/configure.ac
-index b93cca0..5df134f 100644
+index bbe29ea..87f146c 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -40,6 +40,7 @@ AC_PATH_GLIB
+@@ -40,7 +40,10 @@ AC_PATH_GLIB
  AC_PATH_ALSA
  AC_PATH_GSTREAMER
  AC_PATH_USB
 +AC_PATH_CABLE
- AC_PATH_NETLINK
++AC_PATH_NETLINK
  AC_PATH_SNDFILE
- AC_PATH_CAPNG
++AC_PATH_CAPNG
+ 
+ AC_ARG_BLUEZ
+ 
 diff --git a/plugins/cable.c b/plugins/cable.c
 new file mode 100644
-index 0000000..0b7cc7a
+index 0000000..3159ba4
 --- /dev/null
 +++ b/plugins/cable.c
-@@ -0,0 +1,384 @@
+@@ -0,0 +1,385 @@
 +/*
 + *
 + *  BlueZ - Bluetooth protocol stack for Linux
@@ -283,6 +311,7 @@ index 0000000..0b7cc7a
 +	struct btd_device *device;
 +	bdaddr_t dst;
 +
++	device_bdaddr = NULL;
 +	conn = dbus_bus_get(DBUS_BUS_SYSTEM, NULL);
 +	if (conn == NULL) {
 +		debug("Failed to get on the bus");
@@ -506,5 +535,5 @@ index 0000000..0b7cc7a
 +BLUETOOTH_PLUGIN_DEFINE(cable, VERSION,
 +			BLUETOOTH_PLUGIN_PRIORITY_DEFAULT, cable_init, cable_exit)
 -- 
-1.6.4.4
+1.6.6
 
