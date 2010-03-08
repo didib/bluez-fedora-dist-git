@@ -17,8 +17,6 @@ Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=564799
-Patch3: 0001-Fix-DSO-linking.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -130,7 +128,6 @@ This includes hidd, dund and pand.
 %setup -q
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
-%patch3 -p1 -b .linking
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 
