@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.63
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -17,6 +17,8 @@ Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
+# http://git.kernel.org/?p=bluetooth/bluez.git;a=commitdiff;h=78c8da05216642cd7f668c19a03ce15cd021686c
+Patch3: bluez-pairing-security.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -270,6 +272,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Apr 12 2010 Bastien Nocera <bnocera@redhat.com> 4.63-2
+- Fix pairing and using mice, due to recent BtIO changes
+
 * Fri Mar 26 2010 Bastien Nocera <bnocera@redhat.com> 4.63-1
 - Update to 4.63
 
