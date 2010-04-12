@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.63
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -130,6 +130,7 @@ This includes hidd, dund and pand.
 %setup -q
 %patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
+%patch3 -p1 -b .security
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 
@@ -272,6 +273,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
 
 %changelog
+* Mon Apr 12 2010 Bastien Nocera <bnocera@redhat.com> 4.63-3
+- And actually apply the aforementioned patch
+
 * Mon Apr 12 2010 Bastien Nocera <bnocera@redhat.com> 4.63-2
 - Fix pairing and using mice, due to recent BtIO changes
 
