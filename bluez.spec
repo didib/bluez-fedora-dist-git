@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.66
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -219,7 +219,11 @@ fi
 %{_bindir}/rfcomm
 %{_bindir}/sdptool
 %{_sbindir}/*
-%{_mandir}/man1/*
+%{_mandir}/man1/ciptool.1.gz
+%{_mandir}/man1/dfutool.1.gz
+%{_mandir}/man1/hcitool.1.gz
+%{_mandir}/man1/rfcomm.1.gz
+%{_mandir}/man1/sdptool.1.gz
 %{_mandir}/man8/*
 %dir %{_sysconfdir}/bluetooth/
 %config(noreplace) %{_sysconfdir}/bluetooth/main.conf
@@ -268,8 +272,15 @@ fi
 %{_sysconfdir}/rc.d/init.d/pand
 %config(noreplace) %{_sysconfdir}/sysconfig/dund
 %config(noreplace) %{_sysconfdir}/sysconfig/pand
+%{_mandir}/man1/dund.1.gz
+%{_mandir}/man1/hidd.1.gz
+%{_mandir}/man1/pand.1.gz
 
 %changelog
+* Mon Jun 21 2010 Bastien Nocera <bnocera@redhat.com> 4.66-2
+- Move hidd, pand and dund man pages to the -compat
+  sub-package (#593578)
+
 * Mon Jun 14 2010 Bastien Nocera <bnocera@redhat.com> 4.66-1
 - Update to 4.66
 
