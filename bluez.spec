@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.66
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -45,7 +45,9 @@ Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
 Requires: initscripts, bluez-libs = %{version}
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
+%ifnarch s390 s390x
 Requires: dbus-bluez-pin-helper
+%endif
 Requires: udev >= 143-2
 Requires(preun): /sbin/chkconfig, /sbin/service
 Requires(post): /sbin/chkconfig, /sbin/service
@@ -277,6 +279,10 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Sun Jul 11 2010 Dan Horák <dan[at]danny.cz> 4.66-3
+- don't require the pin helper on s390(x) now, we can disable the whole
+  bluetooth stack in the future
+
 * Mon Jun 21 2010 Bastien Nocera <bnocera@redhat.com> 4.66-2
 - Move hidd, pand and dund man pages to the -compat
   sub-package (#593578)
