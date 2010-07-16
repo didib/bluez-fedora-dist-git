@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.66
-Release: 3%{?dist}
+Version: 4.69
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -279,6 +279,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Fri Jul 16 2010 Bastien Nocera <bnocera@redhat.com> 4.69-1
+- Update to 4.69
+
 * Sun Jul 11 2010 Dan Horák <dan[at]danny.cz> 4.66-3
 - don't require the pin helper on s390(x) now, we can disable the whole
   bluetooth stack in the future
