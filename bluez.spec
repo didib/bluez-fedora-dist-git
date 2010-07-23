@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.69
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -104,6 +104,7 @@ Requires: bluez-libs = %{version}
 Summary: Compatibility utilities for Bluetooth devices
 Group: System Environment/Daemons
 Requires: bluez-libs = %{version}
+Requires: bluez = %{version}
 
 %description cups
 This package contains the CUPS backend 
@@ -279,6 +280,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Fri Jul 23 2010 Bastien Nocera <bnocera@redhat.com> 4.69-2
+- Don't allow installing bluez-compat on its own
+
 * Fri Jul 16 2010 Bastien Nocera <bnocera@redhat.com> 4.69-1
 - Update to 4.69
 
