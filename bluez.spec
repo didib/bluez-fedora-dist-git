@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.69
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -45,9 +45,10 @@ Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
 Requires: initscripts, bluez-libs = %{version}
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
-%ifnarch s390 s390x
-Requires: dbus-bluez-pin-helper
-%endif
+# comment out for bootstrapping
+#ifnarch s390 s390x
+#Requires: dbus-bluez-pin-helper
+#endif
 Requires: udev >= 143-2
 Requires(preun): /sbin/chkconfig, /sbin/service
 Requires(post): /sbin/chkconfig, /sbin/service
@@ -280,6 +281,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Sat Jul 31 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> 4.69-3
+- Comment out Requires: dbus-bluez-pin-helper for bootstrapping. Otherwise
+  it drags in the old blueman, built against python-2.6
 * Fri Jul 23 2010 Bastien Nocera <bnocera@redhat.com> 4.69-2
 - Don't allow installing bluez-compat on its own
 
