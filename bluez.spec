@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.69
-Release: 4%{?dist}
+Version: 4.70
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -280,6 +280,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Thu Aug 26 2010 Bastien Nocera <bnocera@redhat.com> 4.70-1
+- Update to 4.70
+
 * Sat Jul 31 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> 4.69-4
 - Re-add Requires: dbus-bluez-pin-helper, since blueman is now in
 
