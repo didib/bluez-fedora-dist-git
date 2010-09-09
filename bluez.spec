@@ -260,7 +260,7 @@ fi
 %files alsa
 %defattr(-, root, root)
 %{_libdir}/alsa-lib/*.so
-%{_sysconfdir}/alsa/bluetooth.conf
+%{_datadir}/alsa/bluetooth.conf
 
 %files compat
 %defattr(-, root, root)
