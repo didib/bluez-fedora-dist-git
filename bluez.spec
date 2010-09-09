@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.70
+Version: 4.71
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -13,7 +13,6 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
@@ -32,7 +31,7 @@ BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
 # For cable pairing
-BuildRequires: libudev-devel 
+BuildRequires: libudev-devel
 %ifnarch s390 s390x
 BuildRequires: libusb1-devel
 %endif
@@ -129,7 +128,6 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
-%patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
@@ -137,12 +135,12 @@ This includes hidd, dund and pand.
 %build
 libtoolize -f -c
 autoreconf
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-configfiles
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-configfiles --with-ouifile=/usr/share/hwdata/oui.txt
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT 
+make install DESTDIR=$RPM_BUILD_ROOT
 /sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
 # Remove autocrap and libtool droppings
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
@@ -150,7 +148,7 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
 	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
 	$RPM_BUILD_ROOT/%{_libdir}/gstreamer-0.10/*.la
 
-for a in bluetooth dund pand rfcomm ; do 
+for a in bluetooth dund pand rfcomm ; do
 	install -D -m0755 $RPM_SOURCE_DIR/$a.init $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/$a
 	if [ -e $RPM_SOURCE_DIR/$a.conf ] ; then
 		install -D -m0644 $RPM_SOURCE_DIR/$a.conf $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/$a
@@ -280,6 +278,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Thu Sep 09 2010 Bastien Nocera <bnocera@redhat.com> 4.71-1
+- Update to 4.71
+
 * Thu Aug 26 2010 Bastien Nocera <bnocera@redhat.com> 4.70-1
 - Update to 4.70
 
