@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.69
-Release: 4%{?dist}
+Version: 4.71
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -13,7 +13,6 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-Patch1: bluez-utils-oui-usage.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
@@ -129,7 +128,6 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
-%patch1 -p0 -b .oui
 %patch2 -p1 -b .non-utf8-name
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
@@ -137,7 +135,7 @@ This includes hidd, dund and pand.
 %build
 libtoolize -f -c
 autoreconf
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --with-ouifile=/usr/share/hwdata/oui.txt
 make
 
 %install
@@ -280,6 +278,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Fri Sep 10 2010 Bastien Nocera <bnocera@redhat.com> 4.71-1
+- Update to 4.71
+
 * Sat Jul 31 2010 Orcan Ogetbil <oget[dot]fedora[at]gmail[dot]com> 4.69-4
 - Re-add Requires: dbus-bluez-pin-helper, since blueman is now in
 
