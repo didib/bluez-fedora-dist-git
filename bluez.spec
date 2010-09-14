@@ -1,11 +1,10 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.71
-Release: 1%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
-Source1: bluetooth.init
 Source3: dund.init
 Source4: dund.conf
 Source5: pand.init
@@ -20,6 +19,7 @@ Patch2: bluez-try-utf8-harder.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
+Patch6: 0001-systemd-install-systemd-unit-files.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
@@ -106,7 +106,7 @@ Requires: bluez-libs = %{version}
 Requires: bluez = %{version}
 
 %description cups
-This package contains the CUPS backend 
+This package contains the CUPS backend
 
 %description gstreamer
 This package contains gstreamer plugins for the Bluetooth SBC audio format
@@ -131,11 +131,12 @@ This includes hidd, dund and pand.
 %patch2 -p1 -b .non-utf8-name
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
+%patch6 -p1 -b .systemd
 
 %build
 libtoolize -f -c
 autoreconf
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-configfiles --with-ouifile=/usr/share/hwdata/oui.txt
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system
 make
 
 %install
@@ -148,7 +149,7 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
 	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
 	$RPM_BUILD_ROOT/%{_libdir}/gstreamer-0.10/*.la
 
-for a in bluetooth dund pand rfcomm ; do
+for a in dund pand rfcomm ; do
 	install -D -m0755 $RPM_SOURCE_DIR/$a.init $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/$a
 	if [ -e $RPM_SOURCE_DIR/$a.conf ] ; then
 		install -D -m0644 $RPM_SOURCE_DIR/$a.conf $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/$a
@@ -164,7 +165,6 @@ fi
 rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/*.rules
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
-install -D -m0644 scripts/97-bluetooth.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth.rules
 
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
@@ -176,18 +176,27 @@ rm -rf $RPM_BUILD_ROOT
 %post libs -p /sbin/ldconfig
 
 %post
-/sbin/chkconfig --add bluetooth
-if [ "$1" -ge "1" ]; then
-	/sbin/service bluetooth condrestart >/dev/null 2>&1 || :
+if [ $1 -eq 1 ]; then
+        /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 fi
-exit 0
 
 %postun libs -p /sbin/ldconfig
 
 %preun
-if [ "$1" = "0" ]; then
-	/sbin/service bluetooth stop >/dev/null 2>&1 || :
-	/sbin/chkconfig --del bluetooth
+if [ $1 -eq 0 ]; then
+        /bin/systemctl disable bluetooth.service >/dev/null 2>&1 || :
+        /bin/systemctl stop bluetooth.service >/dev/null 2>&1 || :
+fi
+
+%postun
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+        /bin/systemctl try-restart bluetooth.service >/dev/null 2>&1 || :
+fi
+
+%triggerun -- bluez < 4.71-2
+if /sbin/chkconfig bluetooth ; then
+        /bin/systemctl enable bluetooth.service >/dev/null 2>&1 || :
 fi
 
 %post compat
@@ -232,10 +241,10 @@ fi
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
-/lib/udev/rules.d/97-bluetooth.rules
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-%{_sysconfdir}/rc.d/init.d/bluetooth
 %{_localstatedir}/lib/bluetooth
+/lib/systemd/system/bluetooth.service
+%{_datadir}/dbus-1/system-services/org.bluez.service
 
 %files libs
 %defattr(-, root, root)
@@ -278,6 +287,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Tue Sep 14 2010 Bastien Nocera <bnocera@redhat.com> 4.71-3
+- systemd hookup and cleanups from Lennart
+
 * Thu Sep 09 2010 Bastien Nocera <bnocera@redhat.com> 4.71-1
 - Update to 4.71
 
