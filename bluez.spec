@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.71
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -13,6 +13,9 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=634205
+# http://thread.gmane.org/gmane.linux.bluez.kernel/7853
+Patch1: 0001-Also-run-bluetoothd-on-udev-change-events.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
@@ -129,6 +132,7 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
+%patch1 -p1 -b .udev
 %patch2 -p1 -b .non-utf8-name
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
@@ -295,6 +299,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Wed Sep 22 2010 Bastien Nocera <bnocera@redhat.com> 4.71-5
+- Fix bluetoothd not starting on cold boot (#634205)
+
 * Thu Sep 16 2010 Bill Nottingham <notting@redhat.com> 4.71-4
 - re-add sysv script
 

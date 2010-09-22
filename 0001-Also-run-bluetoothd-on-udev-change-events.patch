@@ -1,0 +1,24 @@
+From 156877874776d3caec3641f09a34a42e4102ef71 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Wed, 22 Sep 2010 12:35:54 +0100
+Subject: [PATCH] Also run bluetoothd on udev change events
+
+Fixes bluetoothd not starting on cold boot with newer versions
+of udev. See:
+https://bugzilla.redhat.com/show_bug.cgi?id=634205
+---
+ scripts/bluetooth.rules.in |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/scripts/bluetooth.rules.in b/scripts/bluetooth.rules.in
+index 6809e9d..64df69d 100644
+--- a/scripts/bluetooth.rules.in
++++ b/scripts/bluetooth.rules.in
+@@ -1,3 +1,4 @@
+ # Run helper every time a Bluetooth device appears
+ # On remove actions, bluetoothd should go away by itself
+ ACTION=="add", SUBSYSTEM=="bluetooth", RUN+="@prefix@/sbin/bluetoothd --udev"
++ACTION=="change", SUBSYSTEM=="bluetooth", RUN+="@prefix@/sbin/bluetoothd --udev"
+-- 
+1.7.2.3
+
