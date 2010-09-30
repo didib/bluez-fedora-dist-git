@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.71
-Release: 5%{?dist}
+Release: 5%{?dist}.1
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -299,6 +299,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Wed Sep 29 2010 jkeating - 4.71-5.1
+- Rebuilt for gcc bug 634757
+
 * Wed Sep 22 2010 Bastien Nocera <bnocera@redhat.com> 4.71-5
 - Fix bluetoothd not starting on cold boot (#634205)
 
