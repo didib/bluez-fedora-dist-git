@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.72
-Release: 2%{?dist}
+Version: 4.73
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -287,6 +287,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Mon Oct 04 2010 Bastien Nocera <bnocera@redhat.com> 4.73-1
+- Update to 4.73
+
 * Wed Sep 29 2010 jkeating - 4.72-2
 - Rebuilt for gcc bug 634757
 
