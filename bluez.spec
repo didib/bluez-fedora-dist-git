@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.71
-Release: 5%{?dist}.1
+Version: 4.77
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -13,12 +13,11 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=634205
-# http://thread.gmane.org/gmane.linux.bluez.kernel/7853
-Patch1: 0001-Also-run-bluetoothd-on-udev-change-events.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/8645
+Patch3: 0002-build-Fix-parallel-build.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -132,8 +131,8 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
-%patch1 -p1 -b .udev
 %patch2 -p1 -b .non-utf8-name
+%patch3 -p1 -b .parallel
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
@@ -299,6 +298,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Wed Oct 27 2010 Bastien Nocera <bnocera@redhat.com> 4.77-1
+- Update to 4.77
+
 * Wed Sep 29 2010 jkeating - 4.71-5.1
 - Rebuilt for gcc bug 634757
 
