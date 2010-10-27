@@ -12,6 +12,8 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
+# http://thread.gmane.org/gmane.linux.bluez.kernel/8645
+Patch1: 0002-build-Fix-parallel-build.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
@@ -19,6 +21,7 @@ Patch2: bluez-try-utf8-harder.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
+# http://thread.gmane.org/gmane.linux.bluez.kernel/8645
 Patch6: 0001-systemd-install-systemd-unit-files.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
