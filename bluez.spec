@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.77
+Version: 4.78
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -12,8 +12,6 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-# http://thread.gmane.org/gmane.linux.bluez.kernel/8645
-Patch1: 0002-build-Fix-parallel-build.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
 Patch2: bluez-try-utf8-harder.patch
@@ -290,6 +288,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Sat Nov 06 2010 Bastien Nocera <bnocera@redhat.com> 4.78-1
+- Update to 4.78
+
 * Wed Oct 27 2010 Bastien Nocera <bnocera@redhat.com> 4.77-1
 - Update to 4.77
 
