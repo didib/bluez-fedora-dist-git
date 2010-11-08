@@ -14,7 +14,7 @@ Source8: bluez-uinput.modules
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
-Patch2: bluez-try-utf8-harder.patch
+Patch2: 0001-Handle-ISO8859-1-device-names.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
