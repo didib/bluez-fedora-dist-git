@@ -1,7 +1,7 @@
-From b3483ab0b821d29bbeb6aa5630b36bc126a89441 Mon Sep 17 00:00:00 2001
+From d3cf8827053a239009d35995c0e06744d2bd331a Mon Sep 17 00:00:00 2001
 From: Lennart Poettering <lennart@poettering.net>
 Date: Wed, 21 Jul 2010 19:20:44 +0200
-Subject: [PATCH 3/3] systemd: install systemd unit files
+Subject: [PATCH] systemd: install systemd unit files
 
 This also enables bus activation for bluetoothd, but only if systemd is
 running. Only if that's the case we can make sure in a race-free fashion
@@ -18,10 +18,10 @@ that bluetoothd is not started twice at the same time.
  create mode 100644 scripts/org.bluez.service
 
 diff --git a/Makefile.am b/Makefile.am
-index e855713..1edd6a2 100644
+index 6044082..3ed5bcc 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -344,7 +344,8 @@ endif
+@@ -346,7 +346,8 @@ endif
  CLEANFILES += $(rules_DATA)
  
  EXTRA_DIST += scripts/bluetooth.rules \
@@ -31,7 +31,7 @@ index e855713..1edd6a2 100644
  
  if PCMCIA
  udevdir = $(libexecdir)/udev
-@@ -352,6 +353,20 @@ udevdir = $(libexecdir)/udev
+@@ -354,6 +355,20 @@ udevdir = $(libexecdir)/udev
  dist_udev_SCRIPTS = scripts/bluetooth_serial
  endif
  
@@ -52,7 +52,7 @@ index e855713..1edd6a2 100644
  EXTRA_DIST += doc/manager-api.txt \
  		doc/adapter-api.txt doc/device-api.txt \
  		doc/service-api.txt doc/agent-api.txt doc/attribute-api.txt \
-@@ -376,9 +391,9 @@ pkgconfigdir = $(libdir)/pkgconfig
+@@ -378,9 +393,9 @@ pkgconfigdir = $(libdir)/pkgconfig
  
  pkgconfig_DATA = bluez.pc
  
@@ -65,7 +65,7 @@ index e855713..1edd6a2 100644
  MAINTAINERCLEANFILES = Makefile.in \
  	aclocal.m4 configure config.h.in config.sub config.guess \
 diff --git a/configure.ac b/configure.ac
-index d375ac9..6619a42 100644
+index 3348ee8..5244f73 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -56,5 +56,14 @@ if (test "${enable_capng}" = "yes"); then
@@ -120,5 +120,5 @@ index 0000000..2a3b057
 +User=root
 +SystemdService=bluetooth.service
 -- 
-1.7.3.1
+1.7.3.2
 
