@@ -1,7 +1,7 @@
-From d3cf8827053a239009d35995c0e06744d2bd331a Mon Sep 17 00:00:00 2001
+From d205c2e05061a3f3502cccd0b157348cdc6e1071 Mon Sep 17 00:00:00 2001
 From: Lennart Poettering <lennart@poettering.net>
 Date: Wed, 21 Jul 2010 19:20:44 +0200
-Subject: [PATCH] systemd: install systemd unit files
+Subject: [PATCH 2/3] systemd: install systemd unit files
 
 This also enables bus activation for bluetoothd, but only if systemd is
 running. Only if that's the case we can make sure in a race-free fashion
@@ -65,7 +65,7 @@ index 6044082..3ed5bcc 100644
  MAINTAINERCLEANFILES = Makefile.in \
  	aclocal.m4 configure config.h.in config.sub config.guess \
 diff --git a/configure.ac b/configure.ac
-index 3348ee8..5244f73 100644
+index b4c2482..a807830 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -56,5 +56,14 @@ if (test "${enable_capng}" = "yes"); then
