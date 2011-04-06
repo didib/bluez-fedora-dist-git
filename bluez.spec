@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.90
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -185,7 +185,7 @@ fi
 
 %preun
 if [ $1 -eq 0 ]; then
-        /bin/systemctl disable bluetooth.service >/dev/null 2>&1 || :
+        /bin/systemctl --no-reload disable bluetooth.service >/dev/null 2>&1 || :
         /bin/systemctl stop bluetooth.service >/dev/null 2>&1 || :
 fi
 
@@ -196,8 +196,16 @@ if [ $1 -ge 1 ] ; then
 fi
 
 %triggerun -- bluez < 4.71-2
-if /sbin/chkconfig bluetooth ; then
+if /sbin/chkconfig --level 3 bluetooth ; then
         /bin/systemctl enable bluetooth.service >/dev/null 2>&1 || :
+fi
+
+%triggerun -- bluez < 4.87-3
+if /bin/systemctl is-enabled bluetooth.service >/dev/null 2>&1 ; then
+        # Starting with bluez 4.87-3 the D-Bus symlink is required to
+        # make bus activation work. Let's add it in, in case bluez was
+        # enabled already.
+        ln -s /lib/systemd/system/bluetooth.service /etc/systemd/system/dbus-org.bluez.service >/dev/null 2>&1 || :
 fi
 
 %post compat
@@ -288,6 +296,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Thu Apr  7 2011 Lennart Poettering <lpoetter@redhat.com> - 4.90-2
+- Update systemd patch to make it possible to disable bluez
+
 * Thu Mar 17 2011 Bastien Nocera <bnocera@redhat.com> 4.90-1
 - Update to 4.90
 
