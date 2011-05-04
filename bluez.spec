@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.87
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -10,7 +10,6 @@ Source4: dund.conf
 Source5: pand.init
 Source6: pand.conf
 Source7: rfcomm.init
-Source8: bluez-uinput.modules
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=450081
 # http://thread.gmane.org/gmane.linux.bluez.kernel/1687
@@ -167,8 +166,6 @@ rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/lib/udev/r
 install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
-install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
-
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
 
 %clean
@@ -246,7 +243,6 @@ fi
 %{_mandir}/man8/*
 %dir %{_sysconfdir}/bluetooth/
 %config(noreplace) %{_sysconfdir}/bluetooth/main.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
@@ -296,6 +292,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Wed May 04 2011 Bastien Nocera <bnocera@redhat.com> 4.87-4
+- Remove unneeded autoloading of uinput module (#692526)
+
 * Thu Apr  7 2011 Lennart Poettering <lpoetter@redhat.com> - 4.87-3
 - Update systemd patch to make it possible to disable bluez
 
