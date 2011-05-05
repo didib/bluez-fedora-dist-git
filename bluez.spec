@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.87
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -192,7 +192,7 @@ if [ $1 -ge 1 ] ; then
         /bin/systemctl try-restart bluetooth.service >/dev/null 2>&1 || :
 fi
 
-%triggerun -- bluez < 4.71-2
+%triggerun -- bluez < 4.78
 if /sbin/chkconfig --level 3 bluetooth ; then
         /bin/systemctl enable bluetooth.service >/dev/null 2>&1 || :
 fi
@@ -292,6 +292,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Thu May 05 2011 Bill Nottingham <notting@redhat.com> 4.87-5
+- fix versioning of systemd-related triggers
+
 * Wed May 04 2011 Bastien Nocera <bnocera@redhat.com> 4.87-4
 - Remove unneeded autoloading of uinput module (#692526)
 
