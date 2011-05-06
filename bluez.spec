@@ -195,7 +195,7 @@ if [ $1 -ge 1 ] ; then
         /bin/systemctl try-restart bluetooth.service >/dev/null 2>&1 || :
 fi
 
-%triggerun -- bluez < 4.71-2
+%triggerun -- bluez < 4.78
 if /sbin/chkconfig --level 3 bluetooth ; then
         /bin/systemctl enable bluetooth.service >/dev/null 2>&1 || :
 fi
