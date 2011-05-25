@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.90
-Release: 2%{?dist}
+Version: 4.93
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -12,9 +12,6 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-# https://bugzilla.redhat.com/show_bug.cgi?id=450081
-# http://thread.gmane.org/gmane.linux.bluez.kernel/1687
-Patch2: 0001-Handle-ISO8859-1-device-names.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -129,7 +126,6 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
-%patch2 -p1 -b .non-utf8-name
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
@@ -296,6 +292,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Wed May 25 2011 Bastien Nocera <bnocera@redhat.com> 4.93-1
+- Update to 4.93
+
 * Thu Apr  7 2011 Lennart Poettering <lpoetter@redhat.com> - 4.90-2
 - Update systemd patch to make it possible to disable bluez
 
