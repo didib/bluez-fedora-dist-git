@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.93
+Version: 4.94
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -12,6 +12,8 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
+# http://thread.gmane.org/gmane.linux.bluez.kernel/13255
+Patch1: 0001-adaptername-Move-adapter-naming-into-a-plugin.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -126,6 +128,7 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
+%patch1 -p1 -b .adaptername
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
@@ -292,6 +295,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Wed Jun 01 2011 Bastien Nocera <bnocera@redhat.com> 4.94-1
+- Update to 4.94
+
 * Wed May 25 2011 Bastien Nocera <bnocera@redhat.com> 4.93-1
 - Update to 4.93
 
