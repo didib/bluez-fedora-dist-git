@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.87
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -175,7 +175,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 if [ $1 -eq 1 ]; then
-        /bin/systemctl daemon-reload >/dev/null 2>&1 || :
+	/bin/systemctl enable bluetooth.service >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
@@ -292,6 +292,10 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Mon Jun 20 2011 Lennart Poettering <lpoetter@redhat.com> - 4.87-6
+- Enable bluetoothd by default
+- Follow-up on https://bugzilla.redhat.com/show_bug.cgi?id=694519 also fixing upgrades
+
 * Thu May 05 2011 Bill Nottingham <notting@redhat.com> 4.87-5
 - fix versioning of systemd-related triggers
 
