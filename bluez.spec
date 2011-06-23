@@ -236,7 +236,7 @@ fi
 %{_bindir}/l2ping
 %{_bindir}/rfcomm
 %{_bindir}/sdptool
-%{_bindir}/gattool
+%{_bindir}/gatttool
 %{_sbindir}/*
 %{_mandir}/man1/ciptool.1.gz
 %{_mandir}/man1/dfutool.1.gz
