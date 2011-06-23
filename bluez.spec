@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.94
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -13,7 +13,7 @@ Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
 # http://thread.gmane.org/gmane.linux.bluez.kernel/13255
-Patch1: 0001-adaptername-Move-adapter-naming-into-a-plugin.patch
+Patch1: pretty-hostname-support.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -236,6 +236,7 @@ fi
 %{_bindir}/l2ping
 %{_bindir}/rfcomm
 %{_bindir}/sdptool
+%{_bindir}/gattool
 %{_sbindir}/*
 %{_mandir}/man1/ciptool.1.gz
 %{_mandir}/man1/dfutool.1.gz
@@ -295,6 +296,10 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Thu Jun 23 2011 Bastien Nocera <bnocera@redhat.com> 4.94-3
+- Update patches to apply correctly
+- First compilable version with hostnamed support
+
 * Mon Jun 20 2011 Lennart Poettering <lpoetter@redhat.com> - 4.94-2
 - Enable bluetoothd by default
 - Follow-up on https://bugzilla.redhat.com/show_bug.cgi?id=694519 also fixing upgrades
