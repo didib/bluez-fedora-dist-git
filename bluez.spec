@@ -30,6 +30,7 @@ BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
 BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
+BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: libudev-devel
 %ifnarch s390 s390x
