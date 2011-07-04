@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.94
-Release: 4%{?dist}
+Version: 4.95
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -12,8 +12,6 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-# http://thread.gmane.org/gmane.linux.bluez.kernel/13255
-Patch1: pretty-hostname-support.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -129,7 +127,6 @@ This includes hidd, dund and pand.
 %prep
 
 %setup -q
-%patch1 -p1 -b .adaptername
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
@@ -287,6 +284,9 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Tue Jul 05 2011 Bastien Nocera <bnocera@redhat.com> 4.95-1
+- Update to 4.95
+
 * Tue Jun 28 2011 Lennart Poettering <lpoetter@redhat.com> - 4.94-4
 - Enable bluetoothd on all upgrades from 4.87-6 and older, in order to fix up broken F15 installations
 
