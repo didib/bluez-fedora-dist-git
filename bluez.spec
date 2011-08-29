@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.96
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -72,7 +72,7 @@ Group: System Environment/Libraries
 %package libs-devel
 Summary: Development libraries for Bluetooth applications
 Group: Development/Libraries
-Requires: bluez-libs = %{version}
+Requires: bluez-libs = %{version}-%{release}
 Requires: pkgconfig
 Obsoletes: bluez-sdp-devel < 4.0
 
@@ -134,7 +134,7 @@ This includes hidd, dund and pand.
 %build
 libtoolize -f -c
 autoreconf
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system
 make
 
 %install
@@ -161,7 +161,8 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 fi
 
 rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/*.rules
-install -D -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+install -D -p -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+install -D -p -m0644 scripts/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-hid2hci.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
@@ -238,7 +239,9 @@ fi
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
+/lib/udev/hid2hci
 %{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
+%{_sysconfdir}/udev/rules.d/97-bluetooth-hid2hci.rules
 %{_localstatedir}/lib/bluetooth
 /lib/systemd/system/bluetooth.service
 %{_datadir}/dbus-1/system-services/org.bluez.service
@@ -284,6 +287,12 @@ fi
 %{_mandir}/man1/pand.1.gz
 
 %changelog
+* Mon Aug 29 2011 Hans de Goede <bnocera@redhat.com> 4.96-2
+- hid2hci was recently removed from udev and added to bluez in 4.93,
+  udev in Fedora-16 no longer has hid2hci -> enable it in our bluez builds.
+  This fixes bluetooth not working on machines where the bluetooth hci
+  initially shows up as a hid device, such as with many Dell laptops.
+
 * Mon Aug 01 2011 Bastien Nocera <bnocera@redhat.com> 4.96-1
 - Update to 4.96
 
