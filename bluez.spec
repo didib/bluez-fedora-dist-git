@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.96
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -19,7 +19,6 @@ Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/8645
 Patch6: 0001-systemd-install-systemd-unit-files.patch
 
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 URL: http://www.bluez.org/
 
 BuildRequires: flex
@@ -81,7 +80,7 @@ Summary: CUPS printer backend for Bluetooth printers
 Group: System Environment/Daemons
 Obsoletes: bluez-utils-cups < 4.5-2
 Provides: bluez-utils-cups = %{version}-%{release}
-Requires: bluez-libs = %{version}
+Requires: bluez-libs = %{version}-%{release}
 Requires: cups
 
 %package gstreamer
@@ -89,20 +88,26 @@ Summary: GStreamer support for SBC audio format
 Group: System Environment/Daemons
 Obsoletes: bluez-utils-gstreamer < 4.5-2
 Provides: bluez-utils-gstreamer = %{version}-%{release}
-Requires: bluez-libs = %{version}
+Requires: bluez-libs = %{version}-%{release}
 
 %package alsa
 Summary: ALSA support for Bluetooth audio devices
 Obsoletes: bluez-utils-alsa < 4.5-2
 Provides: bluez-utils-alsa = %{version}-%{release}
 Group: System Environment/Daemons
-Requires: bluez-libs = %{version}
+Requires: bluez-libs = %{version}-%{release}
 
 %package compat
 Summary: Compatibility utilities for Bluetooth devices
 Group: System Environment/Daemons
-Requires: bluez-libs = %{version}
-Requires: bluez = %{version}
+Requires: bluez-libs = %{version}-%{release}
+Requires: bluez = %{version}-%{release}
+
+%package hid2hci
+Summary: Put HID proxying bluetooth HCI's into HCI mode
+Group: System Environment/Daemons
+Requires: bluez-libs = %{version}-%{release}
+Requires: bluez = %{version}-%{release}
 
 %description cups
 This package contains the CUPS backend
@@ -124,6 +129,25 @@ use in Bluetooth applications.
 This package contains compatibility utilities for Bluetooth devices.
 This includes hidd, dund and pand.
 
+%description hid2hci
+Most allinone PC's and bluetooth keyboard / mouse sets which include a
+bluetooth dongle, ship with a so called HID proxying bluetooth HCI.
+The HID proxying makes the keyboard / mouse show up as regular USB HID
+devices (after connecting using the connect button on the device + keyboard),
+which makes them work without requiring any manual configuration.
+
+The bluez-hid2hci package contains the hid2hci utility and udev rules to
+automatically switch supported Bluetooth devices into regular HCI mode.
+
+Install this package if you want to use the bluetooth function of the HCI
+with other bluetooth devices like for example a mobile phone.
+
+Note that after installing this package you will first need to pair your
+bluetooth keyboard and mouse with the bluetooth adapter before you can use
+them again. Since you cannot use your bluetooth keyboard and mouse until
+they are paired, this will require the use of a regular (wired) USB keyboard
+and mouse.
+
 %prep
 
 %setup -q
@@ -138,7 +162,6 @@ autoreconf
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 /sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
 # Remove autocrap and libtool droppings
@@ -161,16 +184,13 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 fi
 
 rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/*.rules
-install -D -p -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-install -D -p -m0644 scripts/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/rules.d/97-bluetooth-hid2hci.rules
+install -D -p -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth-serial.rules
+install -D -p -m0644 scripts/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
 
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post libs -p /sbin/ldconfig
 
@@ -217,8 +237,11 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del rfcomm
 fi
 
+%post hid2hci
+/sbin/udevadm trigger --subsystem-match=usb
+
 %files
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_bindir}/ciptool
 %{_bindir}/dfutool
 %{_bindir}/hcitool
@@ -233,46 +256,45 @@ fi
 %{_mandir}/man1/rfcomm.1.gz
 %{_mandir}/man1/sdptool.1.gz
 %{_mandir}/man8/*
+%exclude %{_mandir}/man8/hid2hci.8*
 %dir %{_sysconfdir}/bluetooth/
 %config(noreplace) %{_sysconfdir}/bluetooth/main.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
-/lib/udev/hid2hci
-%{_sysconfdir}/udev/rules.d/97-bluetooth-serial.rules
-%{_sysconfdir}/udev/rules.d/97-bluetooth-hid2hci.rules
+/lib/udev/rules.d/97-bluetooth-serial.rules
 %{_localstatedir}/lib/bluetooth
 /lib/systemd/system/bluetooth.service
 %{_datadir}/dbus-1/system-services/org.bluez.service
 
 %files libs
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_libdir}/libbluetooth.so.*
 %doc AUTHORS COPYING INSTALL ChangeLog README
 
 %files libs-devel
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_libdir}/libbluetooth.so
 %dir %{_includedir}/bluetooth
 %{_includedir}/bluetooth/*
 %{_libdir}/pkgconfig/bluez.pc
 
 %files cups
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 /usr/lib/cups/backend/bluetooth
 
 %files gstreamer
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_libdir}/gstreamer-*/*.so
 
 %files alsa
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_libdir}/alsa-lib/*.so
 %{_datadir}/alsa/bluetooth.conf
 
 %files compat
-%defattr(-, root, root)
+%defattr(-,root,root,-)
 %{_bindir}/dund
 %{_bindir}/pand
 %{_bindir}/hidd
@@ -286,8 +308,20 @@ fi
 %{_mandir}/man1/hidd.1.gz
 %{_mandir}/man1/pand.1.gz
 
+%files hid2hci
+%defattr(-,root,root,-)
+/lib/udev/rules.d/97-bluetooth-hid2hci.rules
+/lib/udev/hid2hci
+%{_mandir}/man8/hid2hci.8*
+
 %changelog
-* Mon Aug 29 2011 Hans de Goede <bnocera@redhat.com> 4.96-2
+* Mon Sep  5 2011 Hans de Goede <hdegoede@redhat.com> 4.96-3
+- Put hid2hci into its own (optional) subpackage, so that people who
+  just want to use their HID proxying HCI with the keyboard and mouse
+  it came with, will have things working out of the box.
+- Put udev rules in /lib/udev, where package installed udev rules belong
+
+* Mon Aug 29 2011 Hans de Goede <hdegoede@redhat.com> 4.96-2
 - hid2hci was recently removed from udev and added to bluez in 4.93,
   udev in Fedora-16 no longer has hid2hci -> enable it in our bluez builds.
   This fixes bluetooth not working on machines where the bluetooth hci
