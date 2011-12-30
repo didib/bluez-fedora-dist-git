@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.96
-Release: 3%{?dist}
+Version: 4.97
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -315,6 +315,9 @@ fi
 %{_mandir}/man8/hid2hci.8*
 
 %changelog
+* Fri Dec 30 2011 Bastien Nocera <bnocera@redhat.com> 4.97-1
+- Update to 4.97
+
 * Mon Sep  5 2011 Hans de Goede <hdegoede@redhat.com> 4.96-3
 - Put hid2hci into its own (optional) subpackage, so that people who
   just want to use their HID proxying HCI with the keyboard and mouse
