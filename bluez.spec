@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.97
-Release: 2%{?dist}
+Version: 4.98
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
@@ -315,6 +315,9 @@ fi
 %{_mandir}/man8/hid2hci.8*
 
 %changelog
+* Fri Jan 13 2012 Bastien Nocera <bnocera@redhat.com> 4.98-1
+- Update to 4.98
+
 * Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.97-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
