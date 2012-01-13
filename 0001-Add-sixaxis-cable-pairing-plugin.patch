@@ -189,7 +189,7 @@ index 0000000..e8cff76
 +
 +	device = adapter_find_device(adapter, address);
 +	if (device == NULL) {
-+		device = device_create(conn, adapter, address, DEVICE_TYPE_UNKNOWN);
++		device = device_create(conn, adapter, address, ADDR_TYPE_BREDR);
 +		if (device != NULL)
 +			adapter_create_device_for_device(conn, adapter, device);
 +	}
