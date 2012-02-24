@@ -1,9 +1,11 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.98
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
+URL: http://www.bluez.org/
+
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source3: dund.init
 Source4: dund.conf
@@ -19,7 +21,7 @@ Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/8645
 Patch6: 0001-systemd-install-systemd-unit-files.patch
 
-URL: http://www.bluez.org/
+Patch7: sbc_mmx.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -38,8 +40,8 @@ BuildRequires: udev
 # For rebuild
 BuildRequires: libtool autoconf automake
 
-Obsoletes: bluez-pan < 4.0, bluez-sdp < 4.0
-Requires: initscripts, bluez-libs = %{version}
+Requires: bluez-libs = %{version}-%{release}
+Requires: initscripts
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
 %ifnarch s390 s390x
@@ -48,9 +50,6 @@ Requires: dbus-bluez-pin-helper
 Requires: udev >= 143-2
 Requires(preun): /sbin/chkconfig, /sbin/service
 Requires(post): /sbin/chkconfig, /sbin/service
-
-Obsoletes: bluez-utils < 4.5-2
-Provides: bluez-utils = %{version}-%{release}
 
 %description
 Utilities for use in Bluetooth applications:
@@ -73,27 +72,20 @@ Summary: Development libraries for Bluetooth applications
 Group: Development/Libraries
 Requires: bluez-libs = %{version}-%{release}
 Requires: pkgconfig
-Obsoletes: bluez-sdp-devel < 4.0
 
 %package cups
 Summary: CUPS printer backend for Bluetooth printers
 Group: System Environment/Daemons
-Obsoletes: bluez-utils-cups < 4.5-2
-Provides: bluez-utils-cups = %{version}-%{release}
 Requires: bluez-libs = %{version}-%{release}
 Requires: cups
 
 %package gstreamer
 Summary: GStreamer support for SBC audio format
 Group: System Environment/Daemons
-Obsoletes: bluez-utils-gstreamer < 4.5-2
-Provides: bluez-utils-gstreamer = %{version}-%{release}
 Requires: bluez-libs = %{version}-%{release}
 
 %package alsa
 Summary: ALSA support for Bluetooth audio devices
-Obsoletes: bluez-utils-alsa < 4.5-2
-Provides: bluez-utils-alsa = %{version}-%{release}
 Group: System Environment/Daemons
 Requires: bluez-libs = %{version}-%{release}
 
@@ -154,6 +146,7 @@ and mouse.
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
+%patch7 -p1 -b .mmx
 
 %build
 libtoolize -f -c
@@ -315,6 +308,10 @@ fi
 %{_mandir}/man8/hid2hci.8*
 
 %changelog
+* Fri Feb 24 2012 Peter Robinson <pbrobinson@fedoraproject.org> 4.98-2
+- Add mmx patch to fix build of sbc component
+- clean up spec, drop ancient obsoletes
+
 * Fri Jan 13 2012 Bastien Nocera <bnocera@redhat.com> 4.98-1
 - Update to 4.98
 
