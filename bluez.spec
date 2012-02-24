@@ -257,9 +257,11 @@ fi
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 /lib/udev/rules.d/97-bluetooth-serial.rules
+/usr/lib/udev/rules.d/97-bluetooth.rules
 %{_localstatedir}/lib/bluetooth
-/lib/systemd/system/bluetooth.service
 %{_datadir}/dbus-1/system-services/org.bluez.service
+/lib/systemd/system/bluetooth.service
+%exclude /usr/lib/systemd/system/bluetooth.service
 
 %files libs
 %defattr(-,root,root,-)
@@ -303,9 +305,10 @@ fi
 
 %files hid2hci
 %defattr(-,root,root,-)
-/lib/udev/rules.d/97-bluetooth-hid2hci.rules
-/lib/udev/hid2hci
+/usr/lib/udev/hid2hci
 %{_mandir}/man8/hid2hci.8*
+/lib/udev/rules.d/97-bluetooth-hid2hci.rules
+%exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
 * Fri Feb 24 2012 Peter Robinson <pbrobinson@fedoraproject.org> 4.98-2
