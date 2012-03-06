@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.98
-Release: 3%{?dist}
+Version: 4.99
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -314,6 +314,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Tue Mar 06 2012 Bastien Nocera <bnocera@redhat.com> 4.99-1
+- Update to 4.99
+
 * Tue Feb 28 2012 Petr Pisar <ppisar@redhat.com> - 4.98-3
 - Make headers compilable with g++ 4.7 (bug #791292)
 
