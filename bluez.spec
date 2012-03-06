@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.98
-Release: 3%{?dist}
+Version: 4.99
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -22,8 +22,6 @@ Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 Patch6: 0001-systemd-install-systemd-unit-files.patch
 
 Patch7: sbc_mmx.patch
-# Bug #791292
-Patch8: cplusplus_void_cast.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -149,7 +147,6 @@ and mouse.
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
 %patch7 -p1 -b .mmx
-%patch8 -p1 -b .cplusplus
 
 %build
 libtoolize -f -c
@@ -314,6 +311,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Tue Mar 06 2012 Bastien Nocera <bnocera@redhat.com> 4.99-1
+- Update to 4.99
+
 * Tue Feb 28 2012 Petr Pisar <ppisar@redhat.com> - 4.98-3
 - Make headers compilable with g++ 4.7 (bug #791292)
 
