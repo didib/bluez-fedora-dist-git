@@ -22,8 +22,6 @@ Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 Patch6: 0001-systemd-install-systemd-unit-files.patch
 
 Patch7: sbc_mmx.patch
-# Bug #791292
-Patch8: cplusplus_void_cast.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -149,7 +147,6 @@ and mouse.
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
 %patch7 -p1 -b .mmx
-%patch8 -p1 -b .cplusplus
 
 %build
 libtoolize -f -c
