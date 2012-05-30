@@ -21,8 +21,6 @@ Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/8645
 Patch6: 0001-systemd-install-systemd-unit-files.patch
 
-Patch7: sbc_mmx.patch
-
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
@@ -33,7 +31,7 @@ BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: libudev-devel
 %ifnarch s390 s390x
-BuildRequires: libusb1-devel
+BuildRequires: libusbx-devel
 %endif
 BuildRequires: udev
 
@@ -146,13 +144,12 @@ and mouse.
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
-%patch7 -p1 -b .mmx
 
 %build
 libtoolize -f -c
 autoreconf
 %configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system
-make
+make V=1
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
