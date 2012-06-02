@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.99
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -20,6 +20,7 @@ Patch4: bluez-socket-mobile-cf-connection-kit.patch
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/8645
 Patch6: 0001-systemd-install-systemd-unit-files.patch
+Patch7: bluez-udev-deprecated.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -144,6 +145,7 @@ and mouse.
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1 -b .systemd
+%patch7 -p1 -b .udev
 
 %build
 libtoolize -f -c
@@ -181,6 +183,8 @@ install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_
 install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
+
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
 %post libs -p /sbin/ldconfig
 
@@ -308,6 +312,10 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Fri Jun  1 2012 Peter Robinson <pbrobinson@fedoraproject.org> - 4.99-2
+- Add patch for udev change to fix FTBFS on rawhide
+- Drop sbc patch as fixed in gcc 4.7 final
+
 * Tue Mar 06 2012 Bastien Nocera <bnocera@redhat.com> 4.99-1
 - Update to 4.99
 
