@@ -39,7 +39,7 @@ index 53fcbe9..9cbafbc 100644
  			src/oob.h src/oob.c src/eir.h src/eir.c
  src_bluetoothd_LDADD = lib/libbluetooth-private.la @GLIB_LIBS@ @DBUS_LIBS@ \
 -								-ldl -lrt
-+								-@CABLE_LIBS@ ldl -lrt
++								@CABLE_LIBS@ ldl -lrt
  src_bluetoothd_LDFLAGS = $(AM_LDFLAGS) -Wl,--export-dynamic \
  				-Wl,--version-script=$(srcdir)/src/bluetooth.ver
  
