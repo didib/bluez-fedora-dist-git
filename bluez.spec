@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.99
-Release: 2%{?dist}
+Version: 4.100
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -312,6 +312,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Thu Jun 14 2012 Bastien Nocera <bnocera@redhat.com> 4.100-1
+- Update to 4.100
+
 * Fri Jun  1 2012 Peter Robinson <pbrobinson@fedoraproject.org> - 4.99-2
 - Add patch for udev change to fix FTBFS on rawhide
 - Drop sbc patch as fixed in gcc 4.7 final
