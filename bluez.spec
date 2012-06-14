@@ -18,9 +18,6 @@ Source8: bluez-uinput.modules
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
-# http://thread.gmane.org/gmane.linux.bluez.kernel/8645
-Patch6: 0001-systemd-install-systemd-unit-files.patch
-Patch7: bluez-udev-deprecated.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -144,8 +141,6 @@ and mouse.
 %setup -q
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
-%patch6 -p1 -b .systemd
-%patch7 -p1 -b .udev
 
 %build
 libtoolize -f -c
