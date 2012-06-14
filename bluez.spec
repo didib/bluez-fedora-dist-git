@@ -16,6 +16,8 @@ Source8: bluez-uinput.modules
 
 # File missing from the tarball
 Patch1: 0001-Add-missing-org.bluez.service-file.patch
+# Typo
+Patch2: 0001-Fix-ALSA-plugin-having-full-soname.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -142,6 +144,7 @@ and mouse.
 
 %setup -q
 %patch1 -p1 -b .missing-file
+%patch2 -p1 -b .typo
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 
@@ -256,11 +259,9 @@ fi
 %{_libdir}/bluetooth/
 /lib/udev/bluetooth_serial
 /lib/udev/rules.d/97-bluetooth-serial.rules
-/usr/lib/udev/rules.d/97-bluetooth.rules
 %{_localstatedir}/lib/bluetooth
 %{_datadir}/dbus-1/system-services/org.bluez.service
-/lib/systemd/system/bluetooth.service
-%exclude /usr/lib/systemd/system/bluetooth.service
+/usr/lib/systemd/system/bluetooth.service
 
 %files libs
 %defattr(-,root,root,-)
