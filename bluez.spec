@@ -14,6 +14,8 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
+# File missing from the tarball
+Patch1: 0001-Add-missing-org.bluez.service-file.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -139,6 +141,7 @@ and mouse.
 %prep
 
 %setup -q
+%patch1 -p1 -b .missing-file
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 
