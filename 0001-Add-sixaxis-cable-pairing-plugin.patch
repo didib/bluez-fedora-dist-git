@@ -1,4 +1,4 @@
-From 78030d9dae0ab1e06b408c6f8e12df4a1dddbca8 Mon Sep 17 00:00:00 2001
+From 64f9449656dbbb718d53a54ed8e7904e289280ec Mon Sep 17 00:00:00 2001
 From: Bastien Nocera <hadess@hadess.net>
 Date: Fri, 30 Dec 2011 12:34:29 +0100
 Subject: [PATCH] Add sixaxis cable-pairing plugin
@@ -19,7 +19,7 @@ address, and added to the database of the current default adapter.
  create mode 100644 plugins/cable.c
 
 diff --git a/Makefile.am b/Makefile.am
-index 53fcbe9..9cbafbc 100644
+index 53fcbe9..f831a72 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -238,6 +238,11 @@ builtin_sources += thermometer/main.c \
@@ -39,7 +39,7 @@ index 53fcbe9..9cbafbc 100644
  			src/oob.h src/oob.c src/eir.h src/eir.c
  src_bluetoothd_LDADD = lib/libbluetooth-private.la @GLIB_LIBS@ @DBUS_LIBS@ \
 -								-ldl -lrt
-+								@CABLE_LIBS@ ldl -lrt
++								@CABLE_LIBS@ -ldl -lrt
  src_bluetoothd_LDFLAGS = $(AM_LDFLAGS) -Wl,--export-dynamic \
  				-Wl,--version-script=$(srcdir)/src/bluetooth.ver
  
@@ -119,7 +119,7 @@ index 48b181e..45a4b15 100644
  AC_PATH_CHECK
 diff --git a/plugins/cable.c b/plugins/cable.c
 new file mode 100644
-index 0000000..b974b4c
+index 0000000..fe758db
 --- /dev/null
 +++ b/plugins/cable.c
 @@ -0,0 +1,382 @@
@@ -189,7 +189,7 @@ index 0000000..b974b4c
 +
 +	device = adapter_find_device(adapter, address);
 +	if (device == NULL) {
-+		device = device_create(conn, adapter, address, ADDR_TYPE_BREDR);
++		device = device_create(conn, adapter, address, BDADDR_BREDR);
 +		if (device != NULL)
 +			adapter_create_device_for_device(conn, adapter, device);
 +	}
