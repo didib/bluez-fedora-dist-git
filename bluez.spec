@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.100
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -22,6 +22,10 @@ Patch2: 0001-Fix-ALSA-plugin-having-full-soname.patch
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
+# PS3 BD Remote patches
+Patch6: 0001-input-Add-helper-function-to-request-disconnect.patch
+Patch7: 0002-fakehid-Disconnect-from-PS3-remote-after-10-mins.patch
+Patch8: 0003-fakehid-Use-the-same-constant-as-declared.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -147,6 +151,9 @@ and mouse.
 %patch2 -p1 -b .typo
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
 
 %build
 libtoolize -f -c
@@ -311,6 +318,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Sun Jun 17 2012 Bastien Nocera <bnocera@redhat.com> 4.100-2
+- Add PS3 BD Remote patches (power saving)
+
 * Thu Jun 14 2012 Bastien Nocera <bnocera@redhat.com> 4.100-1
 - Update to 4.100
 
