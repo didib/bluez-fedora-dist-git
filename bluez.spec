@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.100
-Release: 2%{?dist}
+Version: 4.101
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -14,10 +14,6 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
-# File missing from the tarball
-Patch1: 0001-Add-missing-org.bluez.service-file.patch
-# Typo
-Patch2: 0001-Fix-ALSA-plugin-having-full-soname.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -147,8 +143,6 @@ and mouse.
 %prep
 
 %setup -q
-%patch1 -p1 -b .missing-file
-%patch2 -p1 -b .typo
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1
