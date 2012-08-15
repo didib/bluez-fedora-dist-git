@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -152,7 +152,7 @@ and mouse.
 %build
 libtoolize -f -c
 autoreconf
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
 make V=1
 
 %install
@@ -312,6 +312,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Wed Aug 15 2012 Bastien Nocera <bnocera@redhat.com> 4.101-3
+- Enable pairing Wiimote support (#847481)
+
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.101-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
