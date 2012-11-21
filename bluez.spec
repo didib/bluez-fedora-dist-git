@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -323,11 +323,13 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Wed Nov 21 2012 Bastien Nocera <bnocera@redhat.com> 4.101-5
+- Fix hid2hci not working with recent kernels (#877998)
+
 * Wed Nov 21 2012 Bastien Nocera <bnocera@redhat.com> 4.101-4
 - Clean up requires and build requires
 - Use CUPS macro (#772236)
 - Enable audio socket so a2dp works in PulseAudio again (#874015)
-- Fix hid2hci not working with recent kernels (#877998)
 
 * Wed Aug 15 2012 Bastien Nocera <bnocera@redhat.com> 4.101-3
 - Enable pairing Wiimote support (#847481)
