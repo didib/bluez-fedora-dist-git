@@ -16,6 +16,8 @@ Source8: bluez-uinput.modules
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=874015#c0
 Patch0: bluez-4.101-allow-a2dp-with-pulseaudio.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=877998
+Patch1: 0001-hid2hci-change-subsystem-in-udev-rule-from-usb-to-us.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -148,6 +150,7 @@ and mouse.
 
 %setup -q
 %patch0 -p1
+%patch1 -p1
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1
@@ -324,6 +327,7 @@ fi
 - Clean up requires and build requires
 - Use CUPS macro (#772236)
 - Enable audio socket so a2dp works in PulseAudio again (#874015)
+- Fix hid2hci not working with recent kernels (#877998)
 
 * Wed Aug 15 2012 Bastien Nocera <bnocera@redhat.com> 4.101-3
 - Enable pairing Wiimote support (#847481)
