@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -31,25 +31,23 @@ BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
 BuildRequires: readline-devel
 # For cable pairing
-BuildRequires: libudev-devel
+BuildRequires: systemd-devel
 %ifnarch s390 s390x
 BuildRequires: libusbx-devel
 %endif
-BuildRequires: udev
 
 # For rebuild
 BuildRequires: libtool autoconf automake
 
 Requires: bluez-libs = %{version}-%{release}
-Requires: initscripts
+Requires: systemd
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
 %ifnarch s390 s390x
 Requires: dbus-bluez-pin-helper
 %endif
-Requires: udev >= 143-2
-Requires(preun): /sbin/chkconfig, /sbin/service
-Requires(post): /sbin/chkconfig, /sbin/service
+Requires(preun): /bin/systemctl
+Requires(post): /bin/systemctl
 
 %description
 Utilities for use in Bluetooth applications:
@@ -94,6 +92,8 @@ Summary: Compatibility utilities for Bluetooth devices
 Group: System Environment/Daemons
 Requires: bluez-libs = %{version}-%{release}
 Requires: bluez = %{version}-%{release}
+Requires(preun): /sbin/chkconfig, /sbin/service
+Requires(post): /sbin/chkconfig, /sbin/service
 
 %package hid2hci
 Summary: Put HID proxying bluetooth HCI's into HCI mode
@@ -312,6 +312,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Wed Nov 21 2012 Bastien Nocera <bnocera@redhat.com> 4.101-4
+- Clean up requires and build requires
+
 * Wed Aug 15 2012 Bastien Nocera <bnocera@redhat.com> 4.101-3
 - Enable pairing Wiimote support (#847481)
 
