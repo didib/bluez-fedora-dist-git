@@ -32,6 +32,8 @@ BuildRequires: libcap-ng-devel
 BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: systemd-devel
+# For cups
+BuildRequires: cups-devel
 %ifnarch s390 s390x
 BuildRequires: libusbx-devel
 %endif
@@ -173,7 +175,7 @@ done
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
 if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
-	install -D -m0755 ${RPM_BUILD_ROOT}/usr/lib64/cups/backend/bluetooth ${RPM_BUILD_ROOT}/usr/lib/cups/backend/bluetooth
+	install -D -m0755 ${RPM_BUILD_ROOT}/usr/lib64/cups/backend/bluetooth ${RPM_BUILD_ROOT}%_cups_serverbin/backend/bluetooth
 	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
 fi
 
@@ -278,7 +280,7 @@ fi
 
 %files cups
 %defattr(-,root,root,-)
-/usr/lib/cups/backend/bluetooth
+%_cups_serverbin/backend/bluetooth
 
 %files gstreamer
 %defattr(-,root,root,-)
@@ -314,6 +316,7 @@ fi
 %changelog
 * Wed Nov 21 2012 Bastien Nocera <bnocera@redhat.com> 4.101-4
 - Clean up requires and build requires
+- Use CUPS macro (#772236)
 
 * Wed Aug 15 2012 Bastien Nocera <bnocera@redhat.com> 4.101-3
 - Enable pairing Wiimote support (#847481)
