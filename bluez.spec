@@ -14,6 +14,8 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=874015#c0
+Patch0: bluez-4.101-allow-a2dp-with-pulseaudio.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
 Patch4: bluez-socket-mobile-cf-connection-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
@@ -145,6 +147,7 @@ and mouse.
 %prep
 
 %setup -q
+%patch0 -p1
 %patch4 -p1 -b .socket-mobile
 %patch5 -p1 -b .cable-pairing
 %patch6 -p1
@@ -189,6 +192,8 @@ install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bl
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
+
+install -D -p -m0644 audio/audio.conf ${RPM_BUILD_ROOT}/etc/bluetooth/
 
 %post libs -p /sbin/ldconfig
 
@@ -257,6 +262,7 @@ fi
 %exclude %{_mandir}/man8/hid2hci.8*
 %dir %{_sysconfdir}/bluetooth/
 %config(noreplace) %{_sysconfdir}/bluetooth/main.conf
+%config(noreplace) %{_sysconfdir}/bluetooth/audio.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
@@ -317,6 +323,7 @@ fi
 * Wed Nov 21 2012 Bastien Nocera <bnocera@redhat.com> 4.101-4
 - Clean up requires and build requires
 - Use CUPS macro (#772236)
+- Enable audio socket so a2dp works in PulseAudio again (#874015)
 
 * Wed Aug 15 2012 Bastien Nocera <bnocera@redhat.com> 4.101-3
 - Enable pairing Wiimote support (#847481)

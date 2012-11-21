@@ -1,0 +1,15 @@
+diff --git a/audio/audio.conf b/audio/audio.conf
+index fd6092a..9a80e63 100644
+--- a/audio/audio.conf
++++ b/audio/audio.conf
+@@ -4,6 +4,10 @@
+ # particular interface
+ [General]
+ 
++# Allow PulseAudio to connect by default
++# https://bugzilla.redhat.com/show_bug.cgi?id=874015#c0
++Enable=Socket
++
+ # Switch to master role for incoming connections (defaults to true)
+ #Master=true
+ 
