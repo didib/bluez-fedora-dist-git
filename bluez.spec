@@ -1,12 +1,13 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
 
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
+Source1: bluez.gitignore
 Source3: dund.init
 Source4: dund.conf
 Source5: pand.init
@@ -15,17 +16,26 @@ Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=874015#c0
-Patch0: bluez-4.101-allow-a2dp-with-pulseaudio.patch
+Patch0: 0001-Allow-PulseAudio-to-connect-by-default.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=877998
 Patch1: 0001-hid2hci-change-subsystem-in-udev-rule-from-usb-to-us.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
-Patch4: bluez-socket-mobile-cf-connection-kit.patch
+Patch4: 0001-Activate-the-Socket-Mobile-CF-kit.patch
 # http://thread.gmane.org/gmane.linux.bluez.kernel/2396
 Patch5: 0001-Add-sixaxis-cable-pairing-plugin.patch
 # PS3 BD Remote patches
 Patch6: 0001-input-Add-helper-function-to-request-disconnect.patch
 Patch7: 0002-fakehid-Disconnect-from-PS3-remote-after-10-mins.patch
 Patch8: 0003-fakehid-Use-the-same-constant-as-declared.patch
+# Upstream patches
+Patch9: 0001-audio-Permit-concurrent-use-of-AG-and-HF-roles.patch
+Patch10: 0001-Fix-GDBus-flags-after-conversion-to-macros.patch
+Patch11: 0001-input-Fix-not-adding-watches-when-io-channel-is-conn.patch
+Patch12: 0001-network-fix-network-Connect-method-parameters.patch
+Patch13: 0001-network-NULL-dereference-fix.patch
+# Ubuntu patches
+Patch14: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
+Patch15: 0001-Enable-the-Gateway-and-Source-audio-profiles-by-defa.patch
 
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
@@ -149,13 +159,16 @@ and mouse.
 %prep
 
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch4 -p1 -b .socket-mobile
-%patch5 -p1 -b .cable-pairing
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
+git init
+if [ -z "$GIT_COMMITTER_NAME" ]; then
+    git config user.email "bluez-owner@fedoraproject.org"
+    git config user.name "Fedora Bluez maintainers"
+fi
+cp %{SOURCE1} .gitignore
+git add .
+git commit -a -q -m "%{version} baseline."
+
+git am -p1 %{patches} < /dev/null
 
 %build
 libtoolize -f -c
@@ -323,6 +336,10 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Thu Jan 10 2013 Bastien Nocera <bnocera@redhat.com> 4.101-6
+- Use git to manage distro patches
+- Add numerous upstream and downstream patches (#892929)
+
 * Wed Nov 21 2012 Bastien Nocera <bnocera@redhat.com> 4.101-5
 - Fix hid2hci not working with recent kernels (#877998)
 
