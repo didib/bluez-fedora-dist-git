@@ -37,6 +37,7 @@ Patch13: 0001-network-NULL-dereference-fix.patch
 Patch14: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 Patch15: 0001-Enable-the-Gateway-and-Source-audio-profiles-by-defa.patch
 
+BuildRequires: git
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
