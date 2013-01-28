@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -173,7 +173,7 @@ git am -p1 %{patches} < /dev/null
 
 %build
 libtoolize -f -c
-autoreconf
+autoreconf -vif
 %configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
 make V=1
 
@@ -337,6 +337,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Mon Jan 28 2013 Peter Robinson <pbrobinson@fedoraproject.org> 4.101-6
+- Add -vif to autoreconf to fix build issues
+
 * Thu Jan 10 2013 Bastien Nocera <bnocera@redhat.com> 4.101-5
 - Use git to manage distro patches
 - Add numerous upstream and downstream patches (#892929)
