@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -15,6 +15,8 @@ Source6: pand.conf
 Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=964031
+Patch0: 0001-Allow-PulseAudio-to-connect-by-default.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=877998
 Patch1: 0001-hid2hci-change-subsystem-in-udev-rule-from-usb-to-us.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=498756
@@ -335,6 +337,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Wed Jun 26 2013 Bastien Nocera <bnocera@redhat.com> 4.101-8
+- Another pass at fixing A2DP support (#964031)
+
 * Tue Jun 25 2013 Bastien Nocera <bnocera@redhat.com> 4.101-7
 - Remove socket interface enablement for A2DP (#964031)
 
