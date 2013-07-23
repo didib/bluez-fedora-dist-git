@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 9%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -41,7 +41,7 @@ BuildRequires: git
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
-BuildRequires: gstreamer1-plugins-base-devel, gstreamer1-devel
+BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
 BuildRequires: readline-devel
@@ -337,9 +337,6 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
-* Tue Jul 23 2013 Bastien Nocera <bnocera@redhat.com> 4.101-9
-- Remove unused GStreamer BRs
-
 * Wed Jun 26 2013 Bastien Nocera <bnocera@redhat.com> 4.101-8
 - Another pass at fixing A2DP support (#964031)
 
