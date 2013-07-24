@@ -1,7 +1,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 4.101
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -337,6 +337,9 @@ fi
 %exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
 
 %changelog
+* Wed Jul 24 2013 Bastien Nocera <bnocera@redhat.com> 4.101-10
+- Correct Sixaxis name in preferences
+
 * Tue Jul 23 2013 Bastien Nocera <bnocera@redhat.com> 4.101-9
 - Fix trust setting in Sixaxis devices
 
