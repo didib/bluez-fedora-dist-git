@@ -8,11 +8,6 @@ URL: http://www.bluez.org/
 
 Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
 Source1: bluez.gitignore
-Source3: dund.init
-Source4: dund.conf
-Source5: pand.init
-Source6: pand.conf
-Source7: rfcomm.init
 Source8: bluez-uinput.modules
 
 # Ubuntu patches
@@ -46,6 +41,9 @@ Requires: dbus-bluez-pin-helper
 %endif
 Requires(preun): /bin/systemctl
 Requires(post): /bin/systemctl
+
+# Dropped in Fedora 20:
+Obsoletes: bluez-compat < 5.0
 
 %description
 Utilities for use in Bluetooth applications:
@@ -85,14 +83,6 @@ Summary: ALSA support for Bluetooth audio devices
 Group: System Environment/Daemons
 Requires: bluez-libs = %{version}-%{release}
 
-%package compat
-Summary: Compatibility utilities for Bluetooth devices
-Group: System Environment/Daemons
-Requires: bluez-libs = %{version}-%{release}
-Requires: bluez = %{version}-%{release}
-Requires(preun): /sbin/chkconfig, /sbin/service
-Requires(post): /sbin/chkconfig, /sbin/service
-
 %package hid2hci
 Summary: Put HID proxying bluetooth HCI's into HCI mode
 Group: System Environment/Daemons
@@ -114,10 +104,6 @@ Libraries for use in Bluetooth applications.
 %description libs-devel
 bluez-libs-devel contains development libraries and headers for
 use in Bluetooth applications.
-
-%description compat
-This package contains compatibility utilities for Bluetooth devices.
-This includes hidd, dund and pand.
 
 %description hid2hci
 Most allinone PC's and bluetooth keyboard / mouse sets which include a
@@ -155,7 +141,7 @@ git am -p1 %{patches} < /dev/null
 %build
 libtoolize -f -c
 autoreconf -vif
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hidd --enable-pand --enable-dund --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
 make V=1
 
 %install
@@ -167,18 +153,13 @@ rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
 	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
 	$RPM_BUILD_ROOT/%{_libdir}/gstreamer-0.10/*.la
 
-for a in dund pand rfcomm ; do
-	install -D -m0755 $RPM_SOURCE_DIR/$a.init $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/$a
-	if [ -e $RPM_SOURCE_DIR/$a.conf ] ; then
-		install -D -m0644 $RPM_SOURCE_DIR/$a.conf $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/$a
-	fi
-done
-
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
 if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 	install -D -m0755 ${RPM_BUILD_ROOT}/usr/lib64/cups/backend/bluetooth ${RPM_BUILD_ROOT}%_cups_serverbin/backend/bluetooth
 	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
 fi
+
+rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/rfcomm.conf
 
 rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/*.rules
 install -D -p -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth-serial.rules
@@ -216,27 +197,6 @@ fi
 
 %triggerun -- bluez < 4.94-4
 /bin/systemctl --no-reload enable bluetooth.service >/dev/null 2>&1 || :
-
-%post compat
-/sbin/chkconfig --add dund
-/sbin/chkconfig --add pand
-/sbin/chkconfig --add rfcomm
-if [ "$1" -ge "1" ]; then
-	/sbin/service dund condrestart >/dev/null 2>&1 || :
-	/sbin/service pand condrestart >/dev/null 2>&1 || :
-	/sbin/service rfcomm condrestart >/dev/null 2>&1 || :
-fi
-exit 0
-
-%preun compat
-if [ "$1" = "0" ]; then
-	/sbin/service dund stop >/dev/null 2>&1 || :
-	/sbin/service pand stop >/dev/null 2>&1 || :
-	/sbin/service rfcomm stop >/dev/null 2>&1 || :
-	/sbin/chkconfig --del dund
-	/sbin/chkconfig --del pand
-	/sbin/chkconfig --del rfcomm
-fi
 
 %post hid2hci
 /sbin/udevadm trigger --subsystem-match=usb
@@ -294,21 +254,6 @@ fi
 %defattr(-,root,root,-)
 %{_libdir}/alsa-lib/*.so
 %{_datadir}/alsa/bluetooth.conf
-
-%files compat
-%defattr(-,root,root,-)
-%{_bindir}/dund
-%{_bindir}/pand
-%{_bindir}/hidd
-%config(noreplace) %{_sysconfdir}/bluetooth/rfcomm.conf
-%{_sysconfdir}/rc.d/init.d/dund
-%{_sysconfdir}/rc.d/init.d/rfcomm
-%{_sysconfdir}/rc.d/init.d/pand
-%config(noreplace) %{_sysconfdir}/sysconfig/dund
-%config(noreplace) %{_sysconfdir}/sysconfig/pand
-%{_mandir}/man1/dund.1.gz
-%{_mandir}/man1/hidd.1.gz
-%{_mandir}/man1/pand.1.gz
 
 %files hid2hci
 %defattr(-,root,root,-)
