@@ -17,7 +17,6 @@ BuildRequires: git
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
-BuildRequires: gstreamer-plugins-base-devel, gstreamer-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
 BuildRequires: readline-devel
@@ -44,6 +43,7 @@ Requires(post): /bin/systemctl
 
 # Dropped in Fedora 20:
 Obsoletes: bluez-compat < 5.0
+Obsoletes: bluez-gstreamer < 5.0
 
 %description
 Utilities for use in Bluetooth applications:
@@ -73,11 +73,6 @@ Group: System Environment/Daemons
 Requires: bluez-libs = %{version}-%{release}
 Requires: cups
 
-%package gstreamer
-Summary: GStreamer support for SBC audio format
-Group: System Environment/Daemons
-Requires: bluez-libs = %{version}-%{release}
-
 %package alsa
 Summary: ALSA support for Bluetooth audio devices
 Group: System Environment/Daemons
@@ -91,9 +86,6 @@ Requires: bluez = %{version}-%{release}
 
 %description cups
 This package contains the CUPS backend
-
-%description gstreamer
-This package contains gstreamer plugins for the Bluetooth SBC audio format
 
 %description alsa
 This package contains ALSA support for Bluetooth audio devices
@@ -141,7 +133,7 @@ git am -p1 %{patches} < /dev/null
 %build
 libtoolize -f -c
 autoreconf -vif
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-gstreamer --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
+%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
 make V=1
 
 %install
@@ -151,7 +143,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
 	$RPM_BUILD_ROOT/%{_libdir}/alsa-lib/*.la		\
 	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
-	$RPM_BUILD_ROOT/%{_libdir}/gstreamer-0.10/*.la
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
 if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
@@ -245,10 +236,6 @@ fi
 %files cups
 %defattr(-,root,root,-)
 %_cups_serverbin/backend/bluetooth
-
-%files gstreamer
-%defattr(-,root,root,-)
-%{_libdir}/gstreamer-*/*.so
 
 %files alsa
 %defattr(-,root,root,-)
