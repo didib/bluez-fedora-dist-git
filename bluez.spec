@@ -1,24 +1,25 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 4.101
-Release: 10%{?dist}
+Version: 5.5
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
 
-Source: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.gz
+Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
-Source8: bluez-uinput.modules
 
-# Ubuntu patches
-Patch14: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
+## https://bugzilla.redhat.com/show_bug.cgi?id=874015#c0
+Patch1: playstation-peripheral-pugin-v5.x.patch
+## Ubuntu patches
+Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 
 BuildRequires: git
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
 BuildRequires: libusb-devel, glib2-devel
-BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
+BuildRequires: libical-devel
 BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: systemd-devel
@@ -35,9 +36,6 @@ Requires: bluez-libs = %{version}-%{release}
 Requires: systemd
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
-%ifnarch s390 s390x
-Requires: dbus-bluez-pin-helper
-%endif
 Requires(preun): /bin/systemctl
 Requires(post): /bin/systemctl
 
@@ -53,6 +51,14 @@ Utilities for use in Bluetooth applications:
 	- hciconfig
 	- bluetoothd
 	- l2ping
+	- rfcomm
+	- sdptool
+	- bccmd
+	- bluetoothctl
+	- btmon
+	- hcidump
+	- l2test
+	- rctest
 	- start scripts (Red Hat)
 	- pcmcia configuration files
 
@@ -125,16 +131,17 @@ git am -p1 %{patches} < /dev/null
 
 %build
 libtoolize -f -c
-autoreconf -vif
-%configure --enable-cups --enable-dfutool --enable-tools --enable-bccmd --enable-hid2hci --with-ouifile=/usr/share/hwdata/oui.txt --with-systemdsystemunitdir=/lib/systemd/system --enable-wiimote
+autoreconf -f -i
+%configure --enable-cups --enable-tools --enable-library \
+	--with-systemdsystemunitdir=/lib/systemd/system \
+	--with-systemduserunitdir=/lib/systemd/user
 make V=1
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
 /sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
 # Remove autocrap and libtool droppings
-rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
-	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
+rm $RPM_BUILD_ROOT/%{_libdir}/*.la
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
 if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
@@ -142,20 +149,15 @@ if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
 	rm -rf ${RPM_BUILD_ROOT}%{_libdir}/cups
 fi
 
-rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/rfcomm.conf
-
-rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/*.rules
-install -D -p -m0644 scripts/bluetooth-serial.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth-serial.rules
-install -D -p -m0644 scripts/bluetooth-hid2hci.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-bluetooth-hid2hci.rules
-install -D -m0755 scripts/bluetooth_serial ${RPM_BUILD_ROOT}/lib/udev/bluetooth_serial
-
-install -D -m0755 %{SOURCE8} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
+rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/usr/lib/udev/rules.d/*.rules
+install -D -p -m0644 tools/hid2hci.rules ${RPM_BUILD_ROOT}/lib/udev/rules.d/97-hid2hci.rules
 
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
-install -D -p -m0644 audio/audio.conf ${RPM_BUILD_ROOT}/etc/bluetooth/
+install -d -m0755 ${RPM_BUILD_ROOT}/etc/bluetooth/
+install -D -p -m0644 profiles/audio/audio.conf ${RPM_BUILD_ROOT}/etc/bluetooth/
 
 %post libs -p /sbin/ldconfig
 
@@ -187,31 +189,41 @@ fi
 %files
 %defattr(-,root,root,-)
 %{_bindir}/ciptool
-%{_bindir}/dfutool
 %{_bindir}/hcitool
 %{_bindir}/l2ping
 %{_bindir}/rfcomm
 %{_bindir}/sdptool
-%{_bindir}/gatttool
-%{_sbindir}/*
+%{_bindir}/bccmd
+%{_bindir}/bluetoothctl
+%{_bindir}/btmon
+%{_bindir}/hciattach
+%{_bindir}/hciconfig
+%{_bindir}/hcidump
+%{_bindir}/l2test
+%{_bindir}/rctest
 %{_mandir}/man1/ciptool.1.gz
-%{_mandir}/man1/dfutool.1.gz
 %{_mandir}/man1/hcitool.1.gz
 %{_mandir}/man1/rfcomm.1.gz
 %{_mandir}/man1/sdptool.1.gz
+%{_mandir}/man1/bccmd.1.*
+%{_mandir}/man1/hciattach.1.*
+%{_mandir}/man1/hciconfig.1.*
+%{_mandir}/man1/hcidump.1.*
+%{_mandir}/man1/l2ping.1.*
+%{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/*
-%exclude %{_mandir}/man8/hid2hci.8*
 %dir %{_sysconfdir}/bluetooth/
-%config(noreplace) %{_sysconfdir}/bluetooth/main.conf
 %config(noreplace) %{_sysconfdir}/bluetooth/audio.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/modules/bluez-uinput.modules
+%{_libexecdir}/bluetooth/bluetoothd
+%{_libexecdir}/bluetooth/obexd
+%exclude %{_mandir}/man1/hid2hci.1*
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
-/lib/udev/bluetooth_serial
-/lib/udev/rules.d/97-bluetooth-serial.rules
 %{_localstatedir}/lib/bluetooth
 %{_datadir}/dbus-1/system-services/org.bluez.service
-/usr/lib/systemd/system/bluetooth.service
+%{_datadir}/dbus-1/services/org.bluez.obex.service
+/lib/systemd/system/bluetooth.service
+/lib/systemd/user/obex.service
 
 %files libs
 %defattr(-,root,root,-)
@@ -232,11 +244,14 @@ fi
 %files hid2hci
 %defattr(-,root,root,-)
 /usr/lib/udev/hid2hci
-%{_mandir}/man8/hid2hci.8*
-/lib/udev/rules.d/97-bluetooth-hid2hci.rules
-%exclude /usr/lib/udev/rules.d/97-bluetooth-hid2hci.rules
+%{_mandir}/man1/hid2hci.1*
+/lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.5-1
+- Update to 5.5, based on earlier work from
+  https://bugzilla.redhat.com/show_bug.cgi?id=974145
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.101-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
