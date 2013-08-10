@@ -1,3 +1,5 @@
+%global _hardened_build 1
+
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.8
@@ -245,6 +247,7 @@ fi
 %changelog
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-1
 - Update to 5.8
+- Hardened build
 
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.5-1
 - Update to 5.5, based on earlier work from
