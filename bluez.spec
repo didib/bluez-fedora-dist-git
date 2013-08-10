@@ -19,9 +19,10 @@ Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 BuildRequires: git
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
-BuildRequires: libusb-devel, glib2-devel
+BuildRequires: glib2-devel
 BuildRequires: libcap-ng-devel
 BuildRequires: libical-devel
+BuildRequires: libusb-devel
 BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: systemd-devel
@@ -34,7 +35,7 @@ BuildRequires: libusbx-devel
 # For rebuild
 BuildRequires: libtool autoconf automake
 
-Requires: bluez-libs = %{version}-%{release}
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
 
@@ -74,20 +75,19 @@ Group: System Environment/Libraries
 %package libs-devel
 Summary: Development libraries for Bluetooth applications
 Group: Development/Libraries
-Requires: bluez-libs = %{version}-%{release}
-Requires: pkgconfig
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
 %package cups
 Summary: CUPS printer backend for Bluetooth printers
 Group: System Environment/Daemons
-Requires: bluez-libs = %{version}-%{release}
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
 Requires: cups
 
 %package hid2hci
 Summary: Put HID proxying bluetooth HCI's into HCI mode
 Group: System Environment/Daemons
-Requires: bluez-libs = %{version}-%{release}
-Requires: bluez = %{version}-%{release}
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
+Requires: bluez%{?_isa} = %{version}-%{release}
 
 %description cups
 This package contains the CUPS backend
@@ -119,7 +119,6 @@ they are paired, this will require the use of a regular (wired) USB keyboard
 and mouse.
 
 %prep
-
 %setup -q
 git init
 if [ -z "$GIT_COMMITTER_NAME" ]; then
@@ -138,11 +137,11 @@ autoreconf -f -i
 %configure --enable-cups --enable-tools --enable-library \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
-make V=1
+make %{?_smp_mflags} V=1
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
-/sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
+
 # Remove autocrap and libtool droppings
 rm $RPM_BUILD_ROOT/%{_libdir}/*.la
 
@@ -176,7 +175,6 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /sbin/udevadm trigger --subsystem-match=usb
 
 %files
-%defattr(-,root,root,-)
 %{_bindir}/ciptool
 %{_bindir}/hcitool
 %{_bindir}/l2ping
@@ -213,23 +211,19 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %files libs
-%defattr(-,root,root,-)
 %{_libdir}/libbluetooth.so.*
 %doc AUTHORS COPYING INSTALL ChangeLog README
 
 %files libs-devel
-%defattr(-,root,root,-)
 %{_libdir}/libbluetooth.so
 %dir %{_includedir}/bluetooth
 %{_includedir}/bluetooth/*
 %{_libdir}/pkgconfig/bluez.pc
 
 %files cups
-%defattr(-,root,root,-)
 %_cups_serverbin/backend/bluetooth
 
 %files hid2hci
-%defattr(-,root,root,-)
 /usr/lib/udev/hid2hci
 %{_mandir}/man1/hid2hci.1*
 /lib/udev/rules.d/97-hid2hci.rules
