@@ -1,6 +1,6 @@
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.5
+Version: 5.8
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -156,9 +156,6 @@ install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
-install -d -m0755 ${RPM_BUILD_ROOT}/etc/bluetooth/
-install -D -p -m0644 profiles/audio/audio.conf ${RPM_BUILD_ROOT}/etc/bluetooth/
-
 %post libs -p /sbin/ldconfig
 
 %post
@@ -212,8 +209,6 @@ fi
 %{_mandir}/man1/l2ping.1.*
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/*
-%dir %{_sysconfdir}/bluetooth/
-%config(noreplace) %{_sysconfdir}/bluetooth/audio.conf
 %{_libexecdir}/bluetooth/bluetoothd
 %{_libexecdir}/bluetooth/obexd
 %exclude %{_mandir}/man1/hid2hci.1*
@@ -248,6 +243,9 @@ fi
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-1
+- Update to 5.8
+
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.5-1
 - Update to 5.5, based on earlier work from
   https://bugzilla.redhat.com/show_bug.cgi?id=974145
