@@ -35,11 +35,12 @@ BuildRequires: libusbx-devel
 BuildRequires: libtool autoconf automake
 
 Requires: bluez-libs = %{version}-%{release}
-Requires: systemd
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
-Requires(preun): /bin/systemctl
-Requires(post): /bin/systemctl
+
+Requires(post): systemd
+Requires(preun): systemd
+Requires(postun): systemd
 
 # Dropped in Fedora 20:
 Obsoletes: bluez-alsa < 5.0
@@ -135,8 +136,8 @@ git am -p1 %{patches} < /dev/null
 libtoolize -f -c
 autoreconf -f -i
 %configure --enable-cups --enable-tools --enable-library \
-	--with-systemdsystemunitdir=/lib/systemd/system \
-	--with-systemduserunitdir=/lib/systemd/user
+           --with-systemdsystemunitdir=%{_unitdir} \
+           --with-systemduserunitdir=%{_userunitdir}
 make V=1
 
 %install
@@ -160,27 +161,16 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
 %post libs -p /sbin/ldconfig
 
-%post
-if [ $1 -eq 1 ]; then
-	/bin/systemctl enable bluetooth.service >/dev/null 2>&1 || :
-fi
-
 %postun libs -p /sbin/ldconfig
 
+%post
+%systemd_post bluetooth.service
+
 %preun
-if [ $1 -eq 0 ]; then
-        /bin/systemctl --no-reload disable bluetooth.service >/dev/null 2>&1 || :
-        /bin/systemctl stop bluetooth.service >/dev/null 2>&1 || :
-fi
+%systemd_preun bluetooth.service
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-        /bin/systemctl try-restart bluetooth.service >/dev/null 2>&1 || :
-fi
-
-%triggerun -- bluez < 4.94-4
-/bin/systemctl --no-reload enable bluetooth.service >/dev/null 2>&1 || :
+%systemd_postun_with_restart bluetooth.service
 
 %post hid2hci
 /sbin/udevadm trigger --subsystem-match=usb
@@ -219,8 +209,8 @@ fi
 %{_localstatedir}/lib/bluetooth
 %{_datadir}/dbus-1/system-services/org.bluez.service
 %{_datadir}/dbus-1/services/org.bluez.obex.service
-/lib/systemd/system/bluetooth.service
-/lib/systemd/user/obex.service
+%{_unitdir}/bluetooth.service
+%{_userunitdir}/obex.service
 
 %files libs
 %defattr(-,root,root,-)
@@ -248,6 +238,7 @@ fi
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-1
 - Update to 5.8
 - Hardened build
+- Use systemd rpm macros
 
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.5-1
 - Update to 5.5, based on earlier work from
