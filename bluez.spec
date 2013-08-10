@@ -16,7 +16,7 @@ Patch14: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 BuildRequires: git
 BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
-BuildRequires: libusb-devel, glib2-devel, alsa-lib-devel
+BuildRequires: libusb-devel, glib2-devel
 BuildRequires: libsndfile-devel
 BuildRequires: libcap-ng-devel
 BuildRequires: readline-devel
@@ -42,6 +42,7 @@ Requires(preun): /bin/systemctl
 Requires(post): /bin/systemctl
 
 # Dropped in Fedora 20:
+Obsoletes: bluez-alsa < 5.0
 Obsoletes: bluez-compat < 5.0
 Obsoletes: bluez-gstreamer < 5.0
 
@@ -73,11 +74,6 @@ Group: System Environment/Daemons
 Requires: bluez-libs = %{version}-%{release}
 Requires: cups
 
-%package alsa
-Summary: ALSA support for Bluetooth audio devices
-Group: System Environment/Daemons
-Requires: bluez-libs = %{version}-%{release}
-
 %package hid2hci
 Summary: Put HID proxying bluetooth HCI's into HCI mode
 Group: System Environment/Daemons
@@ -86,9 +82,6 @@ Requires: bluez = %{version}-%{release}
 
 %description cups
 This package contains the CUPS backend
-
-%description alsa
-This package contains ALSA support for Bluetooth audio devices
 
 %description libs
 Libraries for use in Bluetooth applications.
@@ -141,7 +134,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 /sbin/ldconfig -n $RPM_BUILD_ROOT/%{_libdir}
 # Remove autocrap and libtool droppings
 rm -f $RPM_BUILD_ROOT/%{_libdir}/*.la				\
-	$RPM_BUILD_ROOT/%{_libdir}/alsa-lib/*.la		\
 	$RPM_BUILD_ROOT/%{_libdir}/bluetooth/plugins/*.la	\
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
@@ -236,11 +228,6 @@ fi
 %files cups
 %defattr(-,root,root,-)
 %_cups_serverbin/backend/bluetooth
-
-%files alsa
-%defattr(-,root,root,-)
-%{_libdir}/alsa-lib/*.so
-%{_datadir}/alsa/bluetooth.conf
 
 %files hid2hci
 %defattr(-,root,root,-)
