@@ -141,7 +141,7 @@ make %{?_smp_mflags} V=1
 make install DESTDIR=$RPM_BUILD_ROOT
 
 # Remove autocrap and libtool droppings
-rm $RPM_BUILD_ROOT/%{_libdir}/*.la
+find $RPM_BUILD_ROOT -name '*.la' -delete
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
 if test -d ${RPM_BUILD_ROOT}/usr/lib64/cups ; then
@@ -230,6 +230,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %changelog
 * Fri Aug 16 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-2
 - Don't pull in -libs for the other subpackages
+- Remove a stray .la file
 
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-1
 - Update to 5.8
