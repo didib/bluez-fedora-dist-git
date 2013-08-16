@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -35,7 +35,6 @@ BuildRequires: libusbx-devel
 # For rebuild
 BuildRequires: libtool autoconf automake
 
-Requires: bluez-libs%{?_isa} = %{version}-%{release}
 Requires: dbus >= 0.60
 Requires: hwdata >= 0.215
 
@@ -80,13 +79,12 @@ Requires: bluez-libs%{?_isa} = %{version}-%{release}
 %package cups
 Summary: CUPS printer backend for Bluetooth printers
 Group: System Environment/Daemons
-Requires: bluez-libs%{?_isa} = %{version}-%{release}
+Requires: bluez%{?_isa} = %{version}-%{release}
 Requires: cups
 
 %package hid2hci
 Summary: Put HID proxying bluetooth HCI's into HCI mode
 Group: System Environment/Daemons
-Requires: bluez-libs%{?_isa} = %{version}-%{release}
 Requires: bluez%{?_isa} = %{version}-%{release}
 
 %description cups
@@ -175,6 +173,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /sbin/udevadm trigger --subsystem-match=usb
 
 %files
+%doc AUTHORS COPYING ChangeLog README
 %{_bindir}/ciptool
 %{_bindir}/hcitool
 %{_bindir}/l2ping
@@ -211,8 +210,8 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %files libs
+%doc COPYING
 %{_libdir}/libbluetooth.so.*
-%doc AUTHORS COPYING INSTALL ChangeLog README
 
 %files libs-devel
 %{_libdir}/libbluetooth.so
@@ -229,6 +228,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Fri Aug 16 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-2
+- Don't pull in -libs for the other subpackages
+
 * Sat Aug 10 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-1
 - Update to 5.8
 - Hardened build
