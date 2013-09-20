@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.9
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -44,6 +44,10 @@ Requires(postun): systemd
 Obsoletes: bluez-alsa < 5.0
 Obsoletes: bluez-compat < 5.0
 Obsoletes: bluez-gstreamer < 5.0
+
+# Other bluetooth-releated packages that haven't gotten ported to BlueZ 5
+Obsoletes: blueman < 1.23-9
+Obsoletes: obex-data-server < 1:0.4.6-8
 
 %description
 Utilities for use in Bluetooth applications:
@@ -226,6 +230,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Fri Sep 20 2013 Kalev Lember <kalevlember@gmail.com> 5.9-3
+- Obsolete blueman and obex-data-server
+
 * Fri Sep 20 2013 Bastien Nocera <bnocera@redhat.com> 5.9-2
 - Fix problem unsetting discoverable
 
