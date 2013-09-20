@@ -2,8 +2,8 @@
 
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.8
-Release: 2%{?dist}
+Version: 5.9
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -22,15 +22,11 @@ BuildRequires: dbus-devel >= 0.90
 BuildRequires: glib2-devel
 BuildRequires: libcap-ng-devel
 BuildRequires: libical-devel
-BuildRequires: libusb-devel
 BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: systemd-devel
 # For cups
 BuildRequires: cups-devel
-%ifnarch s390 s390x
-BuildRequires: libusbx-devel
-%endif
 
 # For rebuild
 BuildRequires: libtool autoconf automake
