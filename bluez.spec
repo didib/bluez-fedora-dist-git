@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -15,6 +15,8 @@ Source1: bluez.gitignore
 Patch1: playstation-peripheral-pugin-v5.x.patch
 ## Ubuntu patches
 Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
+# https://git.kernel.org/cgit/bluetooth/bluez.git/commit/?id=12494337e4ce67ce927bd2d8c86e9c176ec3e36f
+Patch3: 0001-core-Fix-passing-timeout-when-disabling-discoverable.patch
 
 BuildRequires: git
 BuildRequires: flex
@@ -224,6 +226,12 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Fri Sep 20 2013 Bastien Nocera <bnocera@redhat.com> 5.9-2
+- Fix problem unsetting discoverable
+
+* Fri Sep 20 2013 Bastien Nocera <bnocera@redhat.com> 5.9-1
+- Update to 5.9
+
 * Fri Aug 16 2013 Kalev Lember <kalevlember@gmail.com> - 5.8-2
 - Don't pull in -libs for the other subpackages
 - Remove a stray .la file
