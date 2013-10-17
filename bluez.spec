@@ -2,8 +2,8 @@
 
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.9
-Release: 4%{?dist}
+Version: 5.10
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -15,8 +15,6 @@ Source1: bluez.gitignore
 Patch1: playstation-peripheral-pugin-v5.x.patch
 ## Ubuntu patches
 Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
-# https://git.kernel.org/cgit/bluetooth/bluez.git/commit/?id=12494337e4ce67ce927bd2d8c86e9c176ec3e36f
-Patch3: 0001-core-Fix-passing-timeout-when-disabling-discoverable.patch
 
 BuildRequires: git
 BuildRequires: flex
@@ -231,6 +229,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Thu Oct 17 2013 Bastien Nocera <bnocera@redhat.com> 5.10-1
+- Update to 5.10
+
 * Fri Sep 20 2013 Kalev Lember <kalevlember@gmail.com> 5.9-4
 - Obsolete blueman-nautilus as well
 
