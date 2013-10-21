@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -15,6 +15,8 @@ Source1: bluez.gitignore
 Patch1: playstation-peripheral-pugin-v5.x.patch
 ## Ubuntu patches
 Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
+# Non-upstream
+Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 
 BuildRequires: git
 BuildRequires: flex
@@ -229,6 +231,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Mon Oct 21 2013 Bastien Nocera <bnocera@redhat.com> 5.10-2
+- Add non-upstreamable patch to make bluetooth-sendto work again
+
 * Thu Oct 17 2013 Bastien Nocera <bnocera@redhat.com> 5.10-1
 - Update to 5.10
 
