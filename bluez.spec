@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -19,10 +19,8 @@ Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 
 BuildRequires: git
-BuildRequires: flex
 BuildRequires: dbus-devel >= 0.90
 BuildRequires: glib2-devel
-BuildRequires: libcap-ng-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
 # For cable pairing
@@ -34,7 +32,6 @@ BuildRequires: cups-devel
 BuildRequires: libtool autoconf automake
 
 Requires: dbus >= 0.60
-Requires: hwdata >= 0.215
 
 Requires(post): systemd
 Requires(preun): systemd
@@ -231,6 +228,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Mon Oct 21 2013 Bastien Nocera <bnocera@redhat.com> 5.10-3
+- Remove a few obsolete BRs and deps, thanks to Marcel Holtmann
+
 * Mon Oct 21 2013 Bastien Nocera <bnocera@redhat.com> 5.10-2
 - Add non-upstreamable patch to make bluetooth-sendto work again
 
