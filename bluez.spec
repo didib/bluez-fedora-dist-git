@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -17,6 +17,8 @@ Patch1: playstation-peripheral-pugin-v5.x.patch
 Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 # Non-upstream
 Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
+# Upstream patch
+Patch4: 0001-obex-Use-user-s-cache-dir-as-a-default-root.patch
 
 BuildRequires: git
 BuildRequires: flex
@@ -231,6 +233,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Tue Nov 12 2013 Bastien Nocera <bnocera@redhat.com> 5.10-3
+- Default to the XDG cache dir for receiving files
+
 * Mon Oct 21 2013 Bastien Nocera <bnocera@redhat.com> 5.10-2
 - Add non-upstreamable patch to make bluetooth-sendto work again
 

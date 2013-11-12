@@ -1,0 +1,53 @@
+From 841896ae172c08c1652af88d0994f0349912ed14 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Sun, 10 Nov 2013 15:24:20 +0100
+Subject: [PATCH] obex: Use user's cache dir as a default root
+
+It's per-user, so we won't try to overwrite somebody else's
+files in /tmp when that happens. It's also (unless we have a
+particularly bizarre setup) on the same partition as the destination
+folder which means we can atomically move the file to the destination
+with a unique filename.
+---
+ obexd/src/main.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/obexd/src/main.c b/obexd/src/main.c
+index 61a06b2..80645f8 100644
+--- a/obexd/src/main.c
++++ b/obexd/src/main.c
+@@ -50,8 +50,6 @@
+ #include "obexd.h"
+ #include "server.h"
+ 
+-#define DEFAULT_ROOT_PATH "/tmp"
+-
+ #define DEFAULT_CAP_FILE CONFIGDIR "/capability.xml"
+ 
+ static GMainLoop *main_loop = NULL;
+@@ -167,7 +165,7 @@ static GOptionEntry options[] = {
+ 				"Specify root folder location. Both absolute "
+ 				"and relative can be used, but relative paths "
+ 				"are assumed to be relative to user $HOME "
+-				"folder", "PATH" },
++				"folder. Default $XDG_CACHE_HOME", "PATH" },
+ 	{ "root-setup", 'S', 0, G_OPTION_ARG_STRING, &option_root_setup,
+ 				"Root folder setup script", "SCRIPT" },
+ 	{ "symlinks", 'l', 0, G_OPTION_ARG_NONE, &option_symlinks,
+@@ -285,8 +283,11 @@ int main(int argc, char *argv[])
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+-	if (option_root == NULL)
+-		option_root = g_strdup(DEFAULT_ROOT_PATH);
++	if (option_root == NULL) {
++		option_root = g_build_filename(g_get_user_cache_dir(), "obexd",
++									NULL);
++		g_mkdir_with_parents(option_root, 0700);
++	}
+ 
+ 	if (option_root[0] != '/') {
+ 		char *old_root = option_root, *home = getenv("HOME");
+-- 
+1.8.4.2
+
