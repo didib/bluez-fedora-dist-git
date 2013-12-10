@@ -1,7 +1,7 @@
-From e7e82c7619b56fc1153481417c0a83b25d46030d Mon Sep 17 00:00:00 2001
+From 1da26fd3ce47728f423e290e3928257ead9baf76 Mon Sep 17 00:00:00 2001
 From: Bastien Nocera <hadess@hadess.net>
 Date: Sat, 7 Dec 2013 15:51:47 +0100
-Subject: [PATCH 3/5] input: Fix crash when SDP record isn't available
+Subject: [PATCH] input: Fix crash when SDP record isn't available
 
 On startup, if the SDP cache has been removed but the pairing
 information is still present, we'd crash trying to access inside a
@@ -11,7 +11,7 @@ NULL record struct.
  1 file changed, 3 insertions(+)
 
 diff --git a/profiles/input/device.c b/profiles/input/device.c
-index 521aca8..62f6dbb 100644
+index 6523161..8a28b0d 100644
 --- a/profiles/input/device.c
 +++ b/profiles/input/device.c
 @@ -811,6 +811,9 @@ static struct input_device *input_device_new(struct btd_service *service)
@@ -22,7 +22,7 @@ index 521aca8..62f6dbb 100644
 +		return NULL;
 +
  	idev = g_new0(struct input_device, 1);
- 	bacpy(&idev->src, btd_adapter_get_address(adapter));
+ 	bacpy(&idev->src, adapter_get_address(adapter));
  	bacpy(&idev->dst, device_get_address(device));
 -- 
 1.8.4.2
