@@ -1,0 +1,56 @@
+From 28419bdc2fd093bcbc68b629b9c7b8c295260c57 Mon Sep 17 00:00:00 2001
+From: Szymon Janc <szymon.janc@gmail.com>
+Date: Mon, 9 Dec 2013 20:20:55 +0100
+Subject: [PATCH 5/5] core: Fix crash due to agent callback freeing the agent
+
+Similar fix was provided for simple_agent_reply in a2f5d438 but missed
+pincode_reply case.
+
+Fix following:
+
+src/agent.c:agent_disconnect() Agent :1.48 disconnected
+src/agent.c:set_default_agent() Default agent cleared
+src/agent.c:agent_destroy() agent :1.48
+src/agent.c:agent_unref() 0x4701c68: ref=1
+Agent /org/bluez/agent replied with an error:
+    org.freedesktop.DBus.Error.NoReply, Message did not receive a reply
+    (timeout by message bus)
+src/adapter.c:btd_adapter_pincode_reply() hci0 addr 6C:0E:0D:DB:D1:16
+    pinlen 0
+src/agent.c:agent_unref() 0x4701c68: ref=0
+src/adapter.c:btd_adapter_pincode_reply() hci0 addr 6C:0E:0D:DB:D1:16
+    pinlen 0
+src/agent.c:agent_unref() 0x4701c68: ref=-1
+src/adapter.c:btd_adapter_pincode_reply() hci0 addr 6C:0E:0D:DB:D1:16
+    pinlen 0
+src/agent.c:agent_unref() 0x4701c68: ref=-2
+...
+---
+ src/agent.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/agent.c b/src/agent.c
+index b292881..2ec3183 100644
+--- a/src/agent.c
++++ b/src/agent.c
+@@ -428,6 +428,9 @@ static void pincode_reply(DBusPendingCall *call, void *user_data)
+ 	 * is only called after a reply has been received */
+ 	message = dbus_pending_call_steal_reply(call);
+ 
++	/* Protect from the callback freeing the agent */
++	agent_ref(agent);
++
+ 	dbus_error_init(&err);
+ 	if (dbus_set_error_from_message(&err, message)) {
+ 		error("Agent %s replied with an error: %s, %s",
+@@ -467,6 +470,7 @@ done:
+ 	dbus_pending_call_cancel(req->call);
+ 	agent->request = NULL;
+ 	agent_request_free(req, TRUE);
++	agent_unref(agent);
+ }
+ 
+ static int pincode_request_new(struct agent_request *req, const char *device_path,
+-- 
+1.8.4.2
+
