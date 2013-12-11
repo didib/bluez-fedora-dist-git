@@ -2,8 +2,8 @@
 
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.11
-Release: 2%{?dist}
+Version: 5.12
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -11,17 +11,13 @@ URL: http://www.bluez.org/
 Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
 
-## https://bugzilla.redhat.com/show_bug.cgi?id=874015#c0
-Patch1: playstation-peripheral-pugin-v5.x.patch
 ## Ubuntu patches
 Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 # Non-upstream
 Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch5: 0002-autopair-Don-t-handle-the-iCade.patch
-Patch6: 0003-input-Fix-crash-when-SDP-record-isn-t-available.patch
 Patch7: 0004-agent-Assert-possible-infinite-loop.patch
-Patch8: 0005-core-Fix-crash-due-to-agent-callback-freeing-the-age.patch
 
 BuildRequires: git
 BuildRequires: flex
@@ -236,6 +232,10 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Wed Dec 11 2013 Bastien Nocera <bnocera@redhat.com> 5.12-1
+- Update to 5.12
+- Sixaxis PS3 joypad support is now upstream
+
 * Tue Dec 10 2013 Bastien Nocera <bnocera@redhat.com> 5.11-2
 - Add crasher fixes (rhbz #1027365)
 
