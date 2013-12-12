@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.12
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -18,6 +18,7 @@ Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch5: 0002-autopair-Don-t-handle-the-iCade.patch
 Patch7: 0004-agent-Assert-possible-infinite-loop.patch
+Patch8: 0001-sixaxis-Fix-device-detection.patch
 
 BuildRequires: git
 BuildRequires: flex
@@ -232,6 +233,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Thu Dec 12 2013 Bastien Nocera <bnocera@redhat.com> 5.12-2
+- This update fixes Sixaxis PS3 joypad detection
+
 * Wed Dec 11 2013 Bastien Nocera <bnocera@redhat.com> 5.12-1
 - Update to 5.12
 - Sixaxis PS3 joypad support is now upstream
