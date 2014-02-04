@@ -183,6 +183,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_bindir}/sdptool
 %{_bindir}/bccmd
 %{_bindir}/bluetoothctl
+%{_bindir}/bluemoon
 %{_bindir}/btmon
 %{_bindir}/hciattach
 %{_bindir}/hciconfig
