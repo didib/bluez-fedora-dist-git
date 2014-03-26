@@ -2,7 +2,7 @@
 
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.16
+Version: 5.17
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -234,6 +234,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Wed Mar 26 2014 Bastien Nocera <bnocera@redhat.com> 5.17-1
+- Update to 5.17
+
 * Thu Mar 13 2014 Bastien Nocera <bnocera@redhat.com> 5.16-1
 - Update to 5.16
 
