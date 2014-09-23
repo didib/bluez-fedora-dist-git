@@ -189,6 +189,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_bindir}/hciconfig
 %{_bindir}/hcidump
 %{_bindir}/l2test
+%{_bindir}/mpris-proxy
 %{_bindir}/rctest
 %{_mandir}/man1/ciptool.1.gz
 %{_mandir}/man1/hcitool.1.gz
