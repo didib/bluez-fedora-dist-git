@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.23
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -63,6 +63,7 @@ Utilities for use in Bluetooth applications:
 	- hcidump
 	- l2test
 	- rctest
+	- gatttool
 	- start scripts (Red Hat)
 	- pcmcia configuration files
 
@@ -142,6 +143,11 @@ make %{?_smp_mflags} V=1
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
 
+# "make install" fails to install gatttool, necessary for Bluetooth Low Energy
+# Red Hat Bugzilla bug #1141909
+# Debian bug #720486
+install -m0755 attrib/gatttool $RPM_BUILD_ROOT%{_bindir}
+
 # Remove autocrap and libtool droppings
 find $RPM_BUILD_ROOT -name '*.la' -delete
 
@@ -190,6 +196,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_bindir}/hcidump
 %{_bindir}/l2test
 %{_bindir}/mpris-proxy
+%{_bindir}/gatttool
 %{_bindir}/rctest
 %{_mandir}/man1/ciptool.1.gz
 %{_mandir}/man1/hcitool.1.gz
@@ -232,6 +239,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Thu Oct 30 2014 Eric Smith <brouhaha@fedorapeople.org> 5.23-2
+- Install gatttool and mpris-proxy
+
 * Tue Sep 23 2014 Bastien Nocera <bnocera@redhat.com> 5.23-1
 - Update to 5.23
 
