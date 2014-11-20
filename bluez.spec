@@ -2,8 +2,8 @@
 
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.23
-Release: 2%{?dist}
+Version: 5.25
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -239,6 +239,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Thu Nov 20 2014 Bastien Nocera <bnocera@redhat.com> 5.25-1
+- Update to 5.25
+
 * Thu Oct 30 2014 Eric Smith <brouhaha@fedorapeople.org> 5.23-2
 - Install gatttool and mpris-proxy
 
