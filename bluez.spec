@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.29
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -18,6 +18,7 @@ Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch5: 0002-autopair-Don-t-handle-the-iCade.patch
 Patch7: 0004-agent-Assert-possible-infinite-loop.patch
+Patch8: 0001-fix-invalid-conversion.patch
 
 BuildRequires: git
 BuildRequires: dbus-devel >= 0.90
@@ -240,6 +241,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Sun Mar 29 2015 David Tardon <dtardon@redhat.com> - 5.29-2
+- fix header file
+
 * Wed Mar 25 2015 Don Zickus <dzickus@redhat.com> 5.29-1
 - Update to 5.29
 
