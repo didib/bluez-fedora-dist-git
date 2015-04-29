@@ -2,8 +2,8 @@
 
 Summary: Bluetooth utilities
 Name: bluez
-Version: 5.29
-Release: 2%{?dist}
+Version: 5.30
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -12,16 +12,15 @@ Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
 
 ## Ubuntu patches
-Patch2: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
+Patch1: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 # Non-upstream
-Patch3: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
-Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
-Patch5: 0002-autopair-Don-t-handle-the-iCade.patch
-Patch7: 0004-agent-Assert-possible-infinite-loop.patch
-Patch8: 0001-fix-invalid-conversion.patch
+Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
+Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
+Patch4: 0002-autopair-Don-t-handle-the-iCade.patch
+Patch5: 0004-agent-Assert-possible-infinite-loop.patch
 
 BuildRequires: git
-BuildRequires: dbus-devel >= 0.90
+BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
@@ -30,10 +29,7 @@ BuildRequires: systemd-devel
 # For cups
 BuildRequires: cups-devel
 
-# For rebuild
-BuildRequires: libtool autoconf automake
-
-Requires: dbus >= 0.60
+Requires: dbus >= 1.6
 
 Requires(post): systemd
 Requires(preun): systemd
@@ -133,8 +129,6 @@ git commit -a -q -m "%{version} baseline."
 git am -p1 %{patches} < /dev/null
 
 %build
-libtoolize -f -c
-autoreconf -f -i
 %configure --enable-cups --enable-tools --enable-library \
            --enable-sixaxis \
            --with-systemdsystemunitdir=%{_unitdir} \
@@ -182,7 +176,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /sbin/udevadm trigger --subsystem-match=usb
 
 %files
-%doc AUTHORS COPYING ChangeLog README
+%{!?_licensedir:%global license %%doc}
+%license COPYING
+%doc AUTHORS ChangeLog
 %{_bindir}/ciptool
 %{_bindir}/hcitool
 %{_bindir}/l2ping
@@ -223,7 +219,8 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %files libs
-%doc COPYING
+%{!?_licensedir:%global license %%doc}
+%license COPYING
 %{_libdir}/libbluetooth.so.*
 
 %files libs-devel
@@ -241,6 +238,10 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Wed Apr 29 2015 Peter Robinson <pbrobinson@fedoraproject.org>
+- Update to 5.30
+- Use %%license
+
 * Sun Mar 29 2015 David Tardon <dtardon@redhat.com> - 5.29-2
 - fix header file
 
