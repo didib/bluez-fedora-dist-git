@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.30
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -18,6 +18,8 @@ Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch4: 0002-autopair-Don-t-handle-the-iCade.patch
 Patch5: 0004-agent-Assert-possible-infinite-loop.patch
+# Upstream
+Patch6: 0001-profiles-network-Fix-not-being-able-to-initiate-conn.patch
 
 BuildRequires: git
 BuildRequires: dbus-devel >= 1.6
@@ -238,7 +240,10 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
-* Wed Apr 29 2015 Peter Robinson <pbrobinson@fedoraproject.org>
+* Thu Jun 11 2015 Lubomir Rintel <lkundrak@v3.sk> - 5.30-2
+- Fix NAP connections (rh #1230461)
+
+* Wed Apr 29 2015 Peter Robinson <pbrobinson@fedoraproject.org> - 5.30-1
 - Update to 5.30
 - Use %%license
 
