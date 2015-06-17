@@ -3,7 +3,7 @@
 Summary: Bluetooth utilities
 Name: bluez
 Version: 5.30
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -240,6 +240,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 5.30-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Thu Jun 11 2015 Lubomir Rintel <lkundrak@v3.sk> - 5.30-2
 - Fix NAP connections (rh #1230461)
 
