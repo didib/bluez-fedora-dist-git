@@ -1,8 +1,8 @@
 %global _hardened_build 1
 
+Name:    bluez
 Summary: Bluetooth utilities
-Name: bluez
-Version: 5.32
+Version: 5.33
 Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
@@ -239,6 +239,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Fri Jul 31 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.33-1
+- Update to 5.33
+
 * Wed Jul  8 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.32-1
 - Update to 5.32
 
