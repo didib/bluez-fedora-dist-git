@@ -3,7 +3,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.35
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -86,6 +86,12 @@ Summary: Put HID proxying bluetooth HCI's into HCI mode
 Group: System Environment/Daemons
 Requires: bluez%{?_isa} = %{version}-%{release}
 
+%package obexd
+Summary: Object Exchange daemon for sharing content
+Group: System Environment/Daemons
+Requires: bluez%{?_isa} = %{version}-%{release}
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
+
 %description cups
 This package contains the CUPS backend
 
@@ -114,6 +120,9 @@ bluetooth keyboard and mouse with the bluetooth adapter before you can use
 them again. Since you cannot use your bluetooth keyboard and mouse until
 they are paired, this will require the use of a regular (wired) USB keyboard
 and mouse.
+
+%description obexd
+Object Exchange daemon for sharing files, contacts etc over bluetooth
 
 %prep
 %setup -q
@@ -209,15 +218,12 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/*
 %{_libexecdir}/bluetooth/bluetoothd
-%{_libexecdir}/bluetooth/obexd
 %exclude %{_mandir}/man1/hid2hci.1*
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_libdir}/bluetooth/
 %{_localstatedir}/lib/bluetooth
 %{_datadir}/dbus-1/system-services/org.bluez.service
-%{_datadir}/dbus-1/services/org.bluez.obex.service
 %{_unitdir}/bluetooth.service
-%{_userunitdir}/obex.service
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -238,7 +244,15 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_mandir}/man1/hid2hci.1*
 /lib/udev/rules.d/97-hid2hci.rules
 
+%files obexd
+%{_libexecdir}/bluetooth/obexd
+%{_datadir}/dbus-1/services/org.bluez.obex.service
+%{_userunitdir}/obex.service
+
 %changelog
+* Fri Oct 30 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.35-2
+- Split obexd out into a sub package
+
 * Mon Oct  5 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.35-1
 - Update to 5.35
 
