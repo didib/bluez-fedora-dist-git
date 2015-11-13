@@ -2,8 +2,8 @@
 
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.35
-Release: 2%{?dist}
+Version: 5.36
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -34,16 +34,6 @@ Requires: dbus >= 1.6
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
-
-# Dropped in Fedora 20:
-Obsoletes: bluez-alsa < 5.0
-Obsoletes: bluez-compat < 5.0
-Obsoletes: bluez-gstreamer < 5.0
-
-# Other bluetooth-releated packages that haven't gotten ported to BlueZ 5
-Obsoletes: blueman < 1.23-9
-Obsoletes: blueman-nautilus < 1.23-9
-Obsoletes: obex-data-server < 1:0.4.6-8
 
 %description
 Utilities for use in Bluetooth applications:
@@ -250,6 +240,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Fri Nov 13 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.36-1
+- Update to 5.36
+
 * Fri Oct 30 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.35-2
 - Split obexd out into a sub package
 
