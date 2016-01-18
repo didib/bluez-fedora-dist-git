@@ -3,7 +3,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.37
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -240,6 +240,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon Jan 18 2016 David Tardon <dtardon@redhat.com> - 5.37-2
+- rebuild for libical 2.0.0
+
 * Tue Dec 29 2015 Peter Robinson <pbrobinson@fedoraproject.org> 5.37-1
 - Update to 5.37
 
