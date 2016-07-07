@@ -3,7 +3,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.40
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -18,6 +18,8 @@ Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch4: 0002-autopair-Don-t-handle-the-iCade.patch
 Patch5: 0004-agent-Assert-possible-infinite-loop.patch
+Patch6: 0001-obexd-Allow-CreateFolder-to-create-a-directory.patch
+Patch7: 0002-obexd-Return-dummy_data-instead-of-int-in-phonebook-.patch
 
 BuildRequires: git
 BuildRequires: dbus-devel >= 1.6
@@ -159,6 +161,10 @@ install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
+#copy bluetooth config file and setup auto enable
+install -D -p -m0644 src/main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/main.conf
+sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/main.conf
+
 %post libs -p /sbin/ldconfig
 
 %postun libs -p /sbin/ldconfig
@@ -214,6 +220,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_localstatedir}/lib/bluetooth
 %{_datadir}/dbus-1/system-services/org.bluez.service
 %{_unitdir}/bluetooth.service
+%config %{_sysconfdir}/bluetooth/main.conf
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -240,6 +247,11 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Jul 7 2016 Don Zickus <dzickus@redhat.com> 5.40-2
+- obexd fixes to prevent crashes
+- add /etc/bluetooth/main.conf config file
+- set 'AutoEnable=true' in /etc/bluetooth/main.conf file
+
 * Tue May 31 2016 Peter Robinson <pbrobinson@fedoraproject.org> 5.40-1
 - Update to 5.40 bugfix relesae
 
