@@ -1,0 +1,79 @@
+From 6c75f43e50d754b4605498a8a68d2be4bc19ee37 Mon Sep 17 00:00:00 2001
+From: Marek Kasik <mkasik@redhat.com>
+Date: Thu, 30 Jun 2016 17:01:28 -0400
+Subject: [PATCH 2/2] obexd: Return dummy_data instead of int in
+ phonebook-dummy
+
+There are two functions in phonebook-dummy that were returning
+'int's instead of 'struct dummy_data'
+
+phonebook_create_cache
+phonebook_get_entry
+
+As a result, when an obex-client sends the GetSize command, the obexd
+on the server segfaults.
+
+Fix this by storing the id and returning the dummy_data struct.
+
+The GetSize test now passes correctly.
+---
+ obexd/plugins/phonebook-dummy.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/obexd/plugins/phonebook-dummy.c b/obexd/plugins/phonebook-dummy.c
+index eeb078f..29ae889 100644
+--- a/obexd/plugins/phonebook-dummy.c
++++ b/obexd/plugins/phonebook-dummy.c
+@@ -520,7 +520,6 @@ void *phonebook_get_entry(const char *folder, const char *id,
+ 	struct dummy_data *dummy;
+ 	char *filename;
+ 	int fd;
+-	guint ret;
+ 
+ 	filename = g_build_filename(root_folder, folder, id, NULL);
+ 
+@@ -538,13 +537,13 @@ void *phonebook_get_entry(const char *folder, const char *id,
+ 	dummy->apparams = params;
+ 	dummy->fd = fd;
+ 
+-	ret = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, read_entry, dummy,
++	dummy->id = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, read_entry, dummy,
+ 								dummy_free);
+ 
+ 	if (err)
+ 		*err = 0;
+ 
+-	return GINT_TO_POINTER(ret);
++	return dummy;
+ }
+ 
+ void *phonebook_create_cache(const char *name, phonebook_entry_cb entry_cb,
+@@ -553,7 +552,7 @@ void *phonebook_create_cache(const char *name, phonebook_entry_cb entry_cb,
+ 	struct cache_query *query;
+ 	char *foldername;
+ 	DIR *dp;
+-	guint ret;
++	struct dummy_data *dummy;
+ 
+ 	foldername = g_build_filename(root_folder, name, NULL);
+ 	dp = opendir(foldername);
+@@ -572,11 +571,13 @@ void *phonebook_create_cache(const char *name, phonebook_entry_cb entry_cb,
+ 	query->user_data = user_data;
+ 	query->dp = dp;
+ 
+-	ret = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, create_cache, query,
+-								query_free);
++	dummy = g_new0(struct dummy_data, 1);
++
++	dummy->id = g_idle_add_full(G_PRIORITY_DEFAULT_IDLE, create_cache,
++							query, query_free);
+ 
+ 	if (err)
+ 		*err = 0;
+ 
+-	return GINT_TO_POINTER(ret);
++	return dummy;
+ }
+-- 
+1.8.3.1
+
