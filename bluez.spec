@@ -2,8 +2,8 @@
 
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.40
-Release: 2%{?dist}
+Version: 5.41
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -18,8 +18,6 @@ Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch4: 0002-autopair-Don-t-handle-the-iCade.patch
 Patch5: 0004-agent-Assert-possible-infinite-loop.patch
-Patch6: 0001-obexd-Allow-CreateFolder-to-create-a-directory.patch
-Patch7: 0002-obexd-Return-dummy_data-instead-of-int-in-phonebook-.patch
 
 BuildRequires: git
 BuildRequires: dbus-devel >= 1.6
@@ -246,6 +244,9 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 /lib/udev/rules.d/97-hid2hci.rules
 
 %changelog
+* Mon Aug 1 2016 Don Zickus <dzickus@redhat.com> 5.41-1
+- Update to 5.41
+
 * Thu Jul 7 2016 Don Zickus <dzickus@redhat.com> 5.40-2
 - obexd fixes to prevent crashes
 - add /etc/bluetooth/main.conf config file
