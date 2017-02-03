@@ -3,7 +3,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.43
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/System
 URL: http://www.bluez.org/
@@ -18,6 +18,7 @@ Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch4: 0002-autopair-Don-t-handle-the-iCade.patch
 Patch5: 0004-agent-Assert-possible-infinite-loop.patch
+Patch6: 0001-core-gatt-Don-t-register-attribute-handler-until-cor.patch
 
 BuildRequires: git
 BuildRequires: dbus-devel >= 1.6
@@ -179,6 +180,12 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %post hid2hci
 /sbin/udevadm trigger --subsystem-match=usb
 
+%post obexd
+%systemd_user_post obex.service
+
+%preun obexd
+%systemd_user_preun obex.service
+
 %files
 %{!?_licensedir:%global license %%doc}
 %license COPYING
@@ -245,6 +252,10 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_userunitdir}/obex.service
 
 %changelog
+* Fri Feb 3 2017 Don Zickus <dzickus@redhat.com> 5.43-3
+- Configure systemctl settings for bluez-obexd correctly
+- Resolves rhbz#1259827
+
 * Mon Oct 31 2016 Don Zickus <dzickus@redhat.com> 5.43-1
 - Update to 5.43
 
