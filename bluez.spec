@@ -1,12 +1,9 @@
-%global _hardened_build 1
-
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.44
+Version: 5.45
 Release: 1%{?dist}
 License: GPLv2+
-Group: Applications/System
-URL: http://www.bluez.org/
+URL:     http://www.bluez.org/
 
 Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
@@ -26,7 +23,7 @@ BuildRequires: libical-devel
 BuildRequires: readline-devel
 # For cable pairing
 BuildRequires: systemd-devel
-# For cups
+# For printing
 BuildRequires: cups-devel
 
 Requires: dbus >= 1.6
@@ -58,27 +55,22 @@ The BLUETOOTH trademarks are owned by Bluetooth SIG, Inc., U.S.A.
 
 %package libs
 Summary: Libraries for use in Bluetooth applications
-Group: System Environment/Libraries
 
 %package libs-devel
 Summary: Development libraries for Bluetooth applications
-Group: Development/Libraries
 Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
 %package cups
 Summary: CUPS printer backend for Bluetooth printers
-Group: System Environment/Daemons
 Requires: bluez%{?_isa} = %{version}-%{release}
 Requires: cups
 
 %package hid2hci
 Summary: Put HID proxying bluetooth HCI's into HCI mode
-Group: System Environment/Daemons
 Requires: bluez%{?_isa} = %{version}-%{release}
 
 %package obexd
 Summary: Object Exchange daemon for sharing content
-Group: System Environment/Daemons
 Requires: bluez%{?_isa} = %{version}-%{release}
 Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
@@ -128,8 +120,8 @@ git commit -a -q -m "%{version} baseline."
 git am -p1 %{patches} < /dev/null
 
 %build
-%configure --enable-cups --enable-tools --enable-library \
-           --enable-sixaxis --enable-deprecated \
+%configure --enable-tools --enable-library --enable-deprecated \
+           --enable-sixaxis --enable-cups --enable-nfc \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
@@ -233,6 +225,7 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_libdir}/libbluetooth.so.*
 
 %files libs-devel
+%doc doc/*txt
 %{_libdir}/libbluetooth.so
 %{_includedir}/bluetooth
 %{_libdir}/pkgconfig/bluez.pc
@@ -251,6 +244,11 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue May 16 2017 Peter Robinson <pbrobinson@fedoraproject.org> 5.45-1
+- Update to 5.45
+- Minor spec cleanups
+- Include api docs in devel package
+
 * Sun Mar 12 2017 Peter Robinson <pbrobinson@fedoraproject.org> 5.44-1
 - Update to 5.44
 - Enable deprecated option to keep all usual tools
