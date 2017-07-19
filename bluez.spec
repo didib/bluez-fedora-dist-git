@@ -1,6 +1,6 @@
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.45
+Version: 5.46
 Release: 1%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -244,6 +244,9 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Jul 19 2017 Peter Robinson <pbrobinson@fedoraproject.org> 4.46-1
+- Update to 5.46
+
 * Tue May 16 2017 Peter Robinson <pbrobinson@fedoraproject.org> 5.45-1
 - Update to 5.45
 - Minor spec cleanups
