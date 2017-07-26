@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.46
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -244,6 +244,9 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 5.46-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
 * Wed Jul 19 2017 Peter Robinson <pbrobinson@fedoraproject.org> 4.46-1
 - Update to 5.46
 
