@@ -107,17 +107,7 @@ and mouse.
 Object Exchange daemon for sharing files, contacts etc over bluetooth
 
 %prep
-%setup -q
-git init
-if [ -z "$GIT_COMMITTER_NAME" ]; then
-    git config user.email "bluez-owner@fedoraproject.org"
-    git config user.name "Fedora Bluez maintainers"
-fi
-cp %{SOURCE1} .gitignore
-git add .
-git commit -a -q -m "%{version} baseline."
-
-git am -p1 %{patches} < /dev/null
+%autosetup -S git
 
 %build
 %configure --enable-tools --enable-library --enable-deprecated \
