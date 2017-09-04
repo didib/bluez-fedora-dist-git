@@ -8,8 +8,6 @@ URL:     http://www.bluez.org/
 Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
 
-## Ubuntu patches
-Patch1: 0001-work-around-Logitech-diNovo-Edge-keyboard-firmware-i.patch
 # Non-upstream
 Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
 Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
