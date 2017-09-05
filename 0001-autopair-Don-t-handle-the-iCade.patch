@@ -1,7 +1,7 @@
-From c16ae7041c7511d8d1ed8441f696716fa6a9117e Mon Sep 17 00:00:00 2001
+From 8c23335a00bbd6f359702024698a24d45e3c653b Mon Sep 17 00:00:00 2001
 From: Bastien Nocera <hadess@hadess.net>
 Date: Tue, 19 Nov 2013 14:11:39 +0100
-Subject: [PATCH 2/5] autopair: Don't handle the iCade
+Subject: [PATCH] autopair: Don't handle the iCade
 
 We can't easily enter digits other than 1 through 4 (inclusive)
 so leave it up to the agent to figure out a good passcode
@@ -10,14 +10,14 @@ for the iCade.
 Note that we can not use the VID/PID of the device, as it is not
 yet known at that point.
 ---
- plugins/autopair.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ plugins/autopair.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
 diff --git a/plugins/autopair.c b/plugins/autopair.c
-index 8c98c12..5d2f6f7 100644
+index d44cf539b..a9d2a930a 100644
 --- a/plugins/autopair.c
 +++ b/plugins/autopair.c
-@@ -57,13 +57,23 @@ static ssize_t autopair_pincb(struct btd_adapter *adapter,
+@@ -60,13 +60,24 @@ static ssize_t autopair_pincb(struct btd_adapter *adapter,
  {
  	char addr[18];
  	char pinstr[7];
@@ -32,9 +32,10 @@ index 8c98c12..5d2f6f7 100644
 +	device_get_name(device, name, sizeof(name));
 +	name[sizeof(name) - 1] = 0;
 +
-+	DBG("device %s (%s) 0x%x", addr, name, class);
-+
-+	g_message ("vendor 0x%X product: 0x%X", btd_device_get_vendor (device), btd_device_get_product (device));
++	DBG("device '%s' (%s) class: 0x%x vid/pid: 0x%X/0x%X",
++		name, addr, class,
++		btd_device_get_vendor (device),
++		btd_device_get_product (device));
 +
 +	/* The iCade shouldn't use random PINs like normal keyboards */
 +	if (name != NULL && strstr(name, "iCade") != NULL)
@@ -43,5 +44,5 @@ index 8c98c12..5d2f6f7 100644
  	/* This is a class-based pincode guesser. Ignore devices with an
  	 * unknown class.
 -- 
-1.8.4.2
+2.14.1
 

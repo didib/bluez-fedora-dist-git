@@ -1,0 +1,31 @@
+From e45c8fdcb3d7cdb654f6819c02d1bbb5b40b6116 Mon Sep 17 00:00:00 2001
+From: Florian Weimer <fweimer@redhat.com>
+Date: Thu, 7 Nov 2013 09:23:35 +0100
+Subject: [PATCH 1/4] build: Enable BIND_NOW
+
+Partial RELRO means that the object is GNU_RELRO but not BIND_NOW.  This
+reduces the effectiveness of RELRO.  bluez triggers this because it
+enables PIE during the build, and rpmdiff takes this as an indicator
+that the best possible hardening is desired.
+
+https://bugzilla.redhat.com/show_bug.cgi?id=983161
+---
+ acinclude.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index bc39c6d73..efce2f3cb 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -50,7 +50,7 @@ AC_DEFUN([MISC_FLAGS], [
+ 		if (test "${enableval}" = "yes" &&
+ 				test "${ac_cv_prog_cc_pie}" = "yes"); then
+ 			misc_cflags="$misc_cflags -fPIC"
+-			misc_ldflags="$misc_ldflags -pie"
++			misc_ldflags="$misc_ldflags -pie -Wl,-z,now"
+ 		fi
+ 	])
+ 	if (test "$enable_coverage" = "yes"); then
+-- 
+2.14.1
+
