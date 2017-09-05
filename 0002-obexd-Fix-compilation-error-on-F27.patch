@@ -1,0 +1,32 @@
+From 9b760ecfa7d0f96bbac3ff606fbd560d58b2d1a6 Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Thu, 24 Aug 2017 16:58:46 +0200
+Subject: [PATCH 2/4] obexd: Fix compilation error on F27
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+In file included from obexd/plugins/mas.c:41:0:
+./obexd/src/obex.h:37:1: error: unknown type name ‘ssize_t’; did you mean ‘size_t’?
+ ssize_t obex_get_size(struct obex_session *os);
+ ^~~~~~~
+---
+ obexd/src/obex.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/obexd/src/obex.h b/obexd/src/obex.h
+index fc1674755..67593f11b 100644
+--- a/obexd/src/obex.h
++++ b/obexd/src/obex.h
+@@ -22,6 +22,8 @@
+  *
+  */
+ 
++#include <unistd.h>
++
+ #define OBJECT_SIZE_UNKNOWN -1
+ #define OBJECT_SIZE_DELETE -2
+ 
+-- 
+2.14.1
+

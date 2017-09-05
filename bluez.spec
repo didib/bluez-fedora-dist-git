@@ -1,18 +1,39 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.46
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
 Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
 
-# Non-upstream
-Patch2: 0001-Allow-using-obexd-without-systemd-in-the-user-sessio.patch
-Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
-Patch4: 0002-autopair-Don-t-handle-the-iCade.patch
-Patch5: 0004-agent-Assert-possible-infinite-loop.patch
+# https://github.com/hadess/bluez/commits/build-fixes-5.46
+Patch0: 0001-build-Enable-BIND_NOW.patch
+Patch1: 0002-obexd-Fix-compilation-error-on-F27.patch
+Patch2: 0003-tools-csr_usb-Fix-compilation-failure.patch
+Patch3: 0004-obex-Work-around-compilation-failure.patch
+
+# https://github.com/hadess/bluez/commits/obex-5.46
+Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
+# Should not be necessary anymore
+# Patch5: 0002-obex-Allow-using-obexd-w-o-systemd-user-session.patch
+
+# https://github.com/hadess/bluez/commits/autopair-5.46
+Patch5: 0001-autopair-Don-t-handle-the-iCade.patch
+
+# 5.47 patch:
+Patch100: 0001-plugins-sixaxis-Use-the-same-device-name-as-the-kern.patch
+# https://github.com/hadess/bluez/commits/ds4-cable-pairing
+Patch101: 0001-plugins-sixaxis-Remove-LEDs-handling.patch
+Patch102: 0002-adapter-Add-btd_request_authorization_cable_configur.patch
+Patch103: 0003-sixaxis-Ask-user-whether-cable-configuration-should-.patch
+Patch104: 0004-plugins-sixaxis-Move-device-discovery-to-shared-head.patch
+Patch105: 0005-profiles-input-Use-sixaxis-header-to-simplify-device.patch
+Patch106: 0006-profiles-input-Add-DS4-devices-to-the-shared-header.patch
+Patch107: 0007-plugins-sixaxis-Rename-sixaxis-specific-functions.patch
+Patch108: 0008-plugins-sixaxis-Add-support-for-DualShock-4-PS4-cabl.patch
+Patch109: 0009-plugins-sixaxis-Cancel-cable-pairing-if-unplugged.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -232,6 +253,13 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon Sep 04 2017 Bastien Nocera <bnocera@redhat.com> - 5.46-4
++ bluez-5.46-4
+- Patches cleanup
+- Add DualShock4 cable pairing support
+- BIND_NOW support for RELRO
+- iCade autopairing support
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 5.46-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 

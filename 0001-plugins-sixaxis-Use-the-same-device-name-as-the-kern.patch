@@ -1,0 +1,29 @@
+From 7cdfddada0609d0df5cfe3fe3a2fba6355e53d26 Mon Sep 17 00:00:00 2001
+From: Nicolas Werner <nicolas.werner@gmx.net>
+Date: Tue, 8 Aug 2017 00:48:33 +0200
+Subject: [PATCH] plugins/sixaxis: Use the same device name as the kernel
+
+Some games check the device name to recognize a playstation controller.
+This changes the device name, when using a PS3 controller over
+bluetooth, to match the device name, that is advertised when using the
+controller via USB.
+---
+ plugins/sixaxis.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/sixaxis.c b/plugins/sixaxis.c
+index fcc93bc60..7e3c950b4 100644
+--- a/plugins/sixaxis.c
++++ b/plugins/sixaxis.c
+@@ -56,7 +56,7 @@ static const struct {
+ 	uint16_t version;
+ } devices[] = {
+ 	{
+-		.name = "PLAYSTATION(R)3 Controller",
++		.name = "Sony PLAYSTATION(R)3 Controller",
+ 		.source = 0x0002,
+ 		.vid = 0x054c,
+ 		.pid = 0x0268,
+-- 
+2.14.1
+
