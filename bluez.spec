@@ -16,8 +16,6 @@ Patch3: 0004-obex-Work-around-compilation-failure.patch
 
 # https://github.com/hadess/bluez/commits/obex-5.46
 Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
-# Should not be necessary anymore
-# Patch5: 0002-obex-Allow-using-obexd-w-o-systemd-user-session.patch
 
 # https://github.com/hadess/bluez/commits/autopair-5.46
 Patch5: 0001-autopair-Don-t-handle-the-iCade.patch
