@@ -1,12 +1,18 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.46
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
 Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
 Source1: bluez.gitignore
+
+# Scripts for automatically btattach-ing serial ports connected to Broadcom HCIs
+# as found on some Atom based x86 hardware
+Source2: 69-btattach-bcm.rules
+Source3: btattach-bcm@.service
+Source4: btattach-bcm-service.sh
 
 # https://github.com/hadess/bluez/commits/build-fixes-5.46
 Patch0: 0001-build-Enable-BIND_NOW.patch
@@ -162,6 +168,11 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 install -D -p -m0644 src/main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/main.conf
 sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/main.conf
 
+#serial port connected Broadcom HCIs scripts
+install -D -p -m0644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_udevrulesdir}/
+install -D -p -m0644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_unitdir}/
+install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
+
 %post libs -p /sbin/ldconfig
 
 %postun libs -p /sbin/ldconfig
@@ -221,10 +232,13 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/*
 %{_libexecdir}/bluetooth/bluetoothd
+%{_libexecdir}/bluetooth/btattach-bcm-service.sh
 %{_libdir}/bluetooth/
 %{_localstatedir}/lib/bluetooth
 %{_datadir}/dbus-1/system-services/org.bluez.service
 %{_unitdir}/bluetooth.service
+%{_unitdir}/btattach-bcm@.service
+%{_udevrulesdir}/69-btattach-bcm.rules
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -251,6 +265,10 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Sep 07 2017 Hans de Goede <hdegoede@redhat.com> - 5.46-5
+- Add scripts to automatically btattach serial-port / uart connected
+  Broadcom HCIs found on some Atom based x86 hardware
+
 * Mon Sep 04 2017 Bastien Nocera <bnocera@redhat.com> - 5.46-4
 + bluez-5.46-4
 - Patches cleanup
