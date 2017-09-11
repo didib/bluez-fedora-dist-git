@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.46
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -38,6 +38,8 @@ Patch106: 0006-profiles-input-Add-DS4-devices-to-the-shared-header.patch
 Patch107: 0007-plugins-sixaxis-Rename-sixaxis-specific-functions.patch
 Patch108: 0008-plugins-sixaxis-Add-support-for-DualShock-4-PS4-cabl.patch
 Patch109: 0009-plugins-sixaxis-Cancel-cable-pairing-if-unplugged.patch
+
+Patch110: 0010-Out-of-bounds-heap-read-in-service_search_attr_req-f.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -265,6 +267,10 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon Sep 11 2017 Don Zickus <dzickus@redhat.com> - 5.46-6
+- sdpd heap fixes
+Resolves: rhbz#1490911
+
 * Thu Sep 07 2017 Hans de Goede <hdegoede@redhat.com> - 5.46-5
 - Add scripts to automatically btattach serial-port / uart connected
   Broadcom HCIs found on some Atom based x86 hardware
