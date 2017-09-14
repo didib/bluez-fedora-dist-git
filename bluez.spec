@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.46
-Release: 6%{?dist}
+Version: 5.47
+Release: 1%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -27,7 +27,6 @@ Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 Patch5: 0001-autopair-Don-t-handle-the-iCade.patch
 
 # 5.47 patch:
-Patch100: 0001-plugins-sixaxis-Use-the-same-device-name-as-the-kern.patch
 # https://github.com/hadess/bluez/commits/ds4-cable-pairing
 Patch101: 0001-plugins-sixaxis-Remove-LEDs-handling.patch
 Patch102: 0002-adapter-Add-btd_request_authorization_cable_configur.patch
@@ -39,13 +38,13 @@ Patch107: 0007-plugins-sixaxis-Rename-sixaxis-specific-functions.patch
 Patch108: 0008-plugins-sixaxis-Add-support-for-DualShock-4-PS4-cabl.patch
 Patch109: 0009-plugins-sixaxis-Cancel-cable-pairing-if-unplugged.patch
 
-Patch110: 0010-Out-of-bounds-heap-read-in-service_search_attr_req-f.patch
-
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
+# For bluetooth mesh
+BuildRequires: json-c-devel
 # For cable pairing
 BuildRequires: systemd-devel
 # For printing
@@ -136,7 +135,7 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 
 %build
 %configure --enable-tools --enable-library --enable-deprecated \
-           --enable-sixaxis --enable-cups --enable-nfc \
+           --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
@@ -218,6 +217,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/hcidump
 %{_bindir}/l2test
 %{_bindir}/hex2hcd
+%{_bindir}/meshctl
 %{_bindir}/mpris-proxy
 %{_bindir}/gatttool
 %{_bindir}/rctest
@@ -267,6 +267,11 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Sep 14 2017 Peter Robinson <pbrobinson@fedoraproject.org> 5.47-1
+- New upstream 5.47 bugfix release
+- Initial support for Bluetooth LE mesh
+- Blueooth 5 fixes and improvements
+
 * Mon Sep 11 2017 Don Zickus <dzickus@redhat.com> - 5.46-6
 - sdpd heap fixes
 Resolves: rhbz#1490911
