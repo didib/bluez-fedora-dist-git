@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.47
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -36,6 +36,12 @@ Patch106: 0006-profiles-input-Add-DS4-devices-to-the-shared-header.patch
 Patch107: 0007-plugins-sixaxis-Rename-sixaxis-specific-functions.patch
 Patch108: 0008-plugins-sixaxis-Add-support-for-DualShock-4-PS4-cabl.patch
 Patch109: 0009-plugins-sixaxis-Cancel-cable-pairing-if-unplugged.patch
+
+# https://github.com/hadess/bluez/commits/systemd-hardening
+Patch120: 0001-build-Always-define-confdir-and-statedir.patch
+Patch121: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
+Patch122: 0003-systemd-Add-more-filesystem-lockdown.patch
+Patch123: 0004-systemd-More-lockdown.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -266,6 +272,10 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Sep 20 2017 Bastien Nocera <bnocera@redhat.com> - 5.47-2
++ bluez-5.47-2
+- Lockdown Bluetooth systemd service
+
 * Thu Sep 14 2017 Peter Robinson <pbrobinson@fedoraproject.org> 5.47-1
 - New upstream 5.47 bugfix release
 - Initial support for Bluetooth LE mesh
