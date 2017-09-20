@@ -26,7 +26,6 @@ Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 # https://github.com/hadess/bluez/commits/autopair-5.46
 Patch5: 0001-autopair-Don-t-handle-the-iCade.patch
 
-# 5.47 patch:
 # https://github.com/hadess/bluez/commits/ds4-cable-pairing
 Patch101: 0001-plugins-sixaxis-Remove-LEDs-handling.patch
 Patch102: 0002-adapter-Add-btd_request_authorization_cable_configur.patch
