@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.47
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -25,6 +25,9 @@ Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 
 # https://github.com/hadess/bluez/commits/autopair-5.46
 Patch5: 0001-autopair-Don-t-handle-the-iCade.patch
+
+# https://github.com/hadess/bluez/commits/hostname-plugin-5.47
+Patch6: 0001-hostname-Fix-BlueZ-5.XX-adapter-name-on-startup.patch
 
 # https://github.com/hadess/bluez/commits/ds4-cable-pairing
 Patch101: 0001-plugins-sixaxis-Remove-LEDs-handling.patch
@@ -266,6 +269,10 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Sep 20 2017 Bastien Nocera <bnocera@redhat.com> - 5.47-2
++ bluez-5.47-2
+- Fix adapter name not picking up PrettyHostname
+
 * Thu Sep 14 2017 Peter Robinson <pbrobinson@fedoraproject.org> 5.47-1
 - New upstream 5.47 bugfix release
 - Initial support for Bluetooth LE mesh
