@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.47
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -57,6 +57,8 @@ BuildRequires: json-c-devel
 BuildRequires: systemd-devel
 # For printing
 BuildRequires: cups-devel
+# For autoreconf
+BuildRequires: libtool automake autoconf
 
 Requires: dbus >= 1.6
 
@@ -142,6 +144,7 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 %autosetup -S git
 
 %build
+autoreconf -f
 %configure --enable-tools --enable-library --enable-deprecated \
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --with-systemdsystemunitdir=%{_unitdir} \
@@ -275,6 +278,10 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Oct 10 2017 Bastien Nocera <bnocera@redhat.com> - 5.47-4
++ bluez-5.47-4
+- Fix invalid paths in service file (#1499518)
+
 * Wed Sep 20 2017 Bastien Nocera <bnocera@redhat.com> - 5.47-3
 + bluez-5.47-3
 - Fix adapter name not picking up PrettyHostname
