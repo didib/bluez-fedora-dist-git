@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.48
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -46,6 +46,8 @@ BuildRequires: json-c-devel
 BuildRequires: systemd-devel
 # For printing
 BuildRequires: cups-devel
+# For autoreconf
+BuildRequires: libtool automake autoconf
 
 Requires: dbus >= 1.6
 
@@ -131,6 +133,7 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 %autosetup -S git
 
 %build
+autoreconf -f
 %configure --enable-tools --enable-library --enable-deprecated \
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --with-systemdsystemunitdir=%{_unitdir} \
@@ -264,6 +267,10 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Fri Feb 16 2018 Bastien Nocera <bnocera@redhat.com> - 5.48-3
++ bluez-5.48-3
+- Fix invalid paths in service file (#1546182)
+
 * Fri Feb 09 2018 Bastien Nocera <bnocera@redhat.com> - 5.48-2
 - Fix PulseAudio interaction on resume (#1534857)
 - Re-add lockdown patches, they're still not upstream
