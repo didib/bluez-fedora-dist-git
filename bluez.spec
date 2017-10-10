@@ -144,7 +144,8 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 %autosetup -S git
 
 %build
-autoreconf -f
+libtoolize -f
+autoreconf -f -i
 %configure --enable-tools --enable-library --enable-deprecated \
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --with-systemdsystemunitdir=%{_unitdir} \
