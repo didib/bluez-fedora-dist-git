@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.47
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -186,6 +186,9 @@ install -D -p -m0644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_udevrulesdir}/
 install -D -p -m0644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_unitdir}/
 install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 
+%check
+make check
+
 %post libs -p /sbin/ldconfig
 
 %postun libs -p /sbin/ldconfig
@@ -279,6 +282,10 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Fri Oct 27 2017 Don Zickus <dzickus@redhat.com> - 5.47-5
+- Enable unit tests (Marek Kasik)
+- Resolves: #1502677
+
 * Tue Oct 10 2017 Bastien Nocera <bnocera@redhat.com> - 5.47-4
 + bluez-5.47-4
 - Fix invalid paths in service file (#1499518)
