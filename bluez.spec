@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.47
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -282,6 +282,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Fri Nov 10 2017 Leigh Scott <leigh123linux@googlemail.com> - 5.47-6
+- Rebuild for libical 3.x
+
 * Fri Oct 27 2017 Don Zickus <dzickus@redhat.com> - 5.47-5
 - Enable unit tests (Marek Kasik)
 - Resolves: #1502677
