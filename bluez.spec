@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.47
-Release: 2%{?dist}
+Version: 5.48
+Release: 1%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -16,29 +16,14 @@ Source4: btattach-bcm-service.sh
 
 # https://github.com/hadess/bluez/commits/build-fixes-5.46
 Patch0: 0001-build-Enable-BIND_NOW.patch
-Patch1: 0002-obexd-Fix-compilation-error-on-F27.patch
 Patch2: 0003-tools-csr_usb-Fix-compilation-failure.patch
 Patch3: 0004-obex-Work-around-compilation-failure.patch
 
 # https://github.com/hadess/bluez/commits/obex-5.46
 Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 
-# https://github.com/hadess/bluez/commits/autopair-5.46
-Patch5: 0001-autopair-Don-t-handle-the-iCade.patch
-
 # https://github.com/hadess/bluez/commits/hostname-plugin-5.47
 Patch6: 0001-hostname-Fix-BlueZ-5.XX-adapter-name-on-startup.patch
-
-# https://github.com/hadess/bluez/commits/ds4-cable-pairing
-Patch101: 0001-plugins-sixaxis-Remove-LEDs-handling.patch
-Patch102: 0002-adapter-Add-btd_request_authorization_cable_configur.patch
-Patch103: 0003-sixaxis-Ask-user-whether-cable-configuration-should-.patch
-Patch104: 0004-plugins-sixaxis-Move-device-discovery-to-shared-head.patch
-Patch105: 0005-profiles-input-Use-sixaxis-header-to-simplify-device.patch
-Patch106: 0006-profiles-input-Add-DS4-devices-to-the-shared-header.patch
-Patch107: 0007-plugins-sixaxis-Rename-sixaxis-specific-functions.patch
-Patch108: 0008-plugins-sixaxis-Add-support-for-DualShock-4-PS4-cabl.patch
-Patch109: 0009-plugins-sixaxis-Cancel-cable-pairing-if-unplugged.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -269,6 +254,9 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Dec 28 2017 Pete Walter <pwalter@fedoraproject.org> - 5.48-1
+- Update to 5.48
+
 * Wed Sep 20 2017 Bastien Nocera <bnocera@redhat.com> - 5.47-2
 + bluez-5.47-2
 - Fix adapter name not picking up PrettyHostname
