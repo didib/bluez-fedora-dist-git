@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.48
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -174,9 +174,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %check
 make check
 
-%post libs -p /sbin/ldconfig
-
-%postun libs -p /sbin/ldconfig
+%ldconfig_scriptlets libs
 
 %post
 %systemd_post bluetooth.service
@@ -267,6 +265,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Sat Feb 03 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 5.48-2
+- Switch to %%ldconfig_scriptlets
+
 * Thu Dec 28 2017 Pete Walter <pwalter@fedoraproject.org> - 5.48-1
 - Update to 5.48
 
