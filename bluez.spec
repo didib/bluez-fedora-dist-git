@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.48
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -265,6 +265,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 5.48-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
 * Sat Feb 03 2018 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 5.48-2
 - Switch to %%ldconfig_scriptlets
 
