@@ -25,6 +25,12 @@ Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 # https://github.com/hadess/bluez/commits/hostname-plugin-5.47
 Patch6: 0001-hostname-Fix-BlueZ-5.XX-adapter-name-on-startup.patch
 
+# https://github.com/hadess/bluez/commits/systemd-hardening
+Patch120: 0001-build-Always-define-confdir-and-statedir.patch
+Patch121: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
+Patch122: 0003-systemd-Add-more-filesystem-lockdown.patch
+Patch123: 0004-systemd-More-lockdown.patch
+
 # https://bugzilla.redhat.com/show_bug.cgi?id=1534857
 Patch200: 0001-core-Fixes-order-InterfaceAdded.patch
 Patch201: 0002-shared-gatt-client-Reset-callbacks-when-unregisterin.patch
@@ -260,6 +266,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %changelog
 * Fri Feb 09 2018 Bastien Nocera <bnocera@redhat.com> - 5.48-2
 - Fix PulseAudio interaction on resume (#1534857)
+- Re-add lockdown patches, they're still not upstream
 
 * Thu Dec 28 2017 Pete Walter <pwalter@fedoraproject.org> - 5.48-1
 - Update to 5.48

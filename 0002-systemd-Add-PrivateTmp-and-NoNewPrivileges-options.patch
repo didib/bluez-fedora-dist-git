@@ -1,0 +1,38 @@
+From 4570164f0c90603bd07eb9e7c07e17bbafb5b5da Mon Sep 17 00:00:00 2001
+From: Craig Andrews <candrews@integralblue.com>
+Date: Wed, 13 Sep 2017 15:23:09 +0200
+Subject: [PATCH 2/4] systemd: Add PrivateTmp and NoNewPrivileges options
+
+PrivateTmp makes bluetoothd's /tmp and /var/tmp be inside a different
+namespace. This is useful to secure access to temporary files of the
+process.
+
+NoNewPrivileges ensures that service process and all its children
+can never gain new privileges through execve(), lowering the risk of
+possible privilege escalations.
+---
+ src/bluetooth.service.in | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/bluetooth.service.in b/src/bluetooth.service.in
+index f799f65f0..a6f3030f9 100644
+--- a/src/bluetooth.service.in
++++ b/src/bluetooth.service.in
+@@ -12,8 +12,14 @@ NotifyAccess=main
+ #Restart=on-failure
+ CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+ LimitNPROC=1
++
++# Filesystem lockdown
+ ProtectHome=true
+ ProtectSystem=full
++PrivateTmp=true
++
++# Privilege escalation
++NoNewPrivileges=true
+ 
+ [Install]
+ WantedBy=bluetooth.target
+-- 
+2.14.1
+
