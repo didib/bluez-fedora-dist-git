@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.48
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -30,6 +30,10 @@ Patch120: 0001-build-Always-define-confdir-and-statedir.patch
 Patch121: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch122: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch123: 0004-systemd-More-lockdown.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1534857
+Patch200: 0001-core-Fixes-order-InterfaceAdded.patch
+Patch201: 0002-shared-gatt-client-Reset-callbacks-when-unregisterin.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -265,6 +269,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Fri Feb 09 2018 Bastien Nocera <bnocera@redhat.com> - 5.48-4
+- Fix PulseAudio interaction on resume (#1534857)
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 5.48-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
