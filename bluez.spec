@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.48
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -269,6 +269,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Mar 06 2018 Björn Esser <besser82@fedoraproject.org> - 5.48-5
+- Rebuilt for libjson-c.so.4 (json-c v0.13.1)
+
 * Fri Feb 09 2018 Bastien Nocera <bnocera@redhat.com> - 5.48-4
 - Fix PulseAudio interaction on resume (#1534857)
 
