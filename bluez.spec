@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
-Version: 5.48
-Release: 3%{?dist}
+Version: 5.49
+Release: 1%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -15,25 +15,20 @@ Source3: btattach-bcm@.service
 Source4: btattach-bcm-service.sh
 
 # https://github.com/hadess/bluez/commits/build-fixes-5.46
-Patch0: 0001-build-Enable-BIND_NOW.patch
+Patch1: 0001-build-Enable-BIND_NOW.patch
 Patch2: 0003-tools-csr_usb-Fix-compilation-failure.patch
-Patch3: 0004-obex-Work-around-compilation-failure.patch
 
 # https://github.com/hadess/bluez/commits/obex-5.46
-Patch4: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
+Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 
 # https://github.com/hadess/bluez/commits/hostname-plugin-5.47
-Patch6: 0001-hostname-Fix-BlueZ-5.XX-adapter-name-on-startup.patch
+Patch4: 0001-hostname-Fix-BlueZ-5.XX-adapter-name-on-startup.patch
 
 # https://github.com/hadess/bluez/commits/systemd-hardening
-Patch120: 0001-build-Always-define-confdir-and-statedir.patch
-Patch121: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
-Patch122: 0003-systemd-Add-more-filesystem-lockdown.patch
-Patch123: 0004-systemd-More-lockdown.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=1534857
-Patch200: 0001-core-Fixes-order-InterfaceAdded.patch
-Patch201: 0002-shared-gatt-client-Reset-callbacks-when-unregisterin.patch
+Patch20: 0001-build-Always-define-confdir-and-statedir.patch
+Patch21: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
+Patch22: 0003-systemd-Add-more-filesystem-lockdown.patch
+Patch23: 0004-systemd-More-lockdown.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -268,6 +263,9 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Mar 20 2018 Peter Robinson <pbrobinson@fedoraproject.org> 5.49-1
+- Update to 5.49
+
 * Fri Feb 16 2018 Bastien Nocera <bnocera@redhat.com> - 5.48-3
 + bluez-5.48-3
 - Fix invalid paths in service file (#1546182)
