@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.49
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -264,6 +264,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Mar 27 2018 Björn Esser <besser82@fedoraproject.org> - 5.49-2
+- Rebuilt for libjson-c.so.4 (json-c v0.13.1) on fc28
+
 * Tue Mar 20 2018 Peter Robinson <pbrobinson@fedoraproject.org> 5.49-1
 - Update to 5.49
 
