@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.50
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -26,6 +26,9 @@ Patch20: 0001-build-Always-define-confdir-and-statedir.patch
 Patch21: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch22: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch23: 0004-systemd-More-lockdown.patch
+
+# Fix A2DP disconnection with some headsets
+Patch30: 0001-policy-Add-logic-to-connect-a-Sink.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -262,6 +265,10 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Jun 27 2018 Bastien Nocera <bnocera@redhat.com> - 5.50-2
++ bluez-5.50-2
+- Fix A2DP disconnections with some headsets
+
 * Mon Jun 04 2018 Bastien Nocera <bnocera@redhat.com> - 5.50-1
 + bluez-5.50-1
 - Update to 5.50
