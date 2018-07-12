@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.50
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -265,6 +265,9 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 5.50-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Wed Jun 27 2018 Bastien Nocera <bnocera@redhat.com> - 5.50-2
 + bluez-5.50-2
 - Fix A2DP disconnections with some headsets
