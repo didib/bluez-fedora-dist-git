@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.50
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -69,6 +69,7 @@ Utilities for use in Bluetooth applications:
 	- gatttool
 	- start scripts (Red Hat)
 	- pcmcia configuration files
+	- avinfo
 
 The BLUETOOTH trademarks are owned by Bluetooth SIG, Inc., U.S.A.
 
@@ -146,6 +147,10 @@ make install DESTDIR=$RPM_BUILD_ROOT
 # Debian bug #720486
 install -m0755 attrib/gatttool $RPM_BUILD_ROOT%{_bindir}
 
+# "make install" fails to install avinfo
+# Red Hat Bugzilla bug #1699680
+install -m0755 tools/avinfo $RPM_BUILD_ROOT%{_bindir}
+
 # Remove autocrap and libtool droppings
 find $RPM_BUILD_ROOT -name '*.la' -delete
 
@@ -219,6 +224,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/mpris-proxy
 %{_bindir}/gatttool
 %{_bindir}/rctest
+%{_bindir}/avinfo
 %{_mandir}/man1/btattach.1.gz
 %{_mandir}/man1/ciptool.1.gz
 %{_mandir}/man1/hcitool.1.gz
@@ -265,6 +271,9 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Apr 16 2019 Eduardo Minguez <edu@linux.com> - 5.50-7
+- Added avinfo
+
 * Sun Feb 17 2019 Igor Gnatenko <ignatenkobrain@fedoraproject.org> - 5.50-6
 - Disable tests temporarily
 
