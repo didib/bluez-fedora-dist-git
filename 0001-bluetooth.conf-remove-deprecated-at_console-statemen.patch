@@ -1,0 +1,43 @@
+From 74174217fc3f15255be875659d1e1d9403646bba Mon Sep 17 00:00:00 2001
+From: Tom Gundersen <teg@jklm.no>
+Date: Tue, 6 Nov 2018 12:07:17 +0100
+Subject: [PATCH] bluetooth.conf: remove deprecated at_console statement
+
+As described in [0], this likely did not have the intended effect, so
+simply remove it. The change in behavior is that up until this patch
+it would be possible for root, lp, and any non-system user to potentially
+gain access to bluez' dbus interface. Now this is extended to also allow
+any system user.
+
+[0]: <https://www.spinics.net/lists/linux-bluetooth/msg75267.html>
+---
+ src/bluetooth.conf | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/src/bluetooth.conf b/src/bluetooth.conf
+index 0c0b221bb..05f407d1a 100644
+--- a/src/bluetooth.conf
++++ b/src/bluetooth.conf
+@@ -21,18 +21,8 @@
+     <allow send_interface="org.freedesktop.DBus.Properties"/>
+   </policy>
+ 
+-  <policy at_console="true">
+-    <allow send_destination="org.bluez"/>
+-  </policy>
+-
+-  <!-- allow users of lp group (printing subsystem) to 
+-       communicate with bluetoothd -->
+-  <policy group="lp">
+-    <allow send_destination="org.bluez"/>
+-  </policy>
+-
+   <policy context="default">
+-    <deny send_destination="org.bluez"/>
++    <allow send_destination="org.bluez"/>
+   </policy>
+ 
+ </busconfig>
+-- 
+2.21.0
+
