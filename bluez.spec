@@ -41,6 +41,8 @@ Patch42: bluez-5.50-discoverability-backports.patch
 Patch43: bluez-5.50-a2dp-backports.patch
 # sixaxis pairing fixes
 Patch44: bluez-5.50-sixaxis-fixes.patch
+# y2038 build fix
+Patch45: 0001-tools-Fix-build-after-y2038-changes-in-glibc.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
