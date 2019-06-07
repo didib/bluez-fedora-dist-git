@@ -1,0 +1,1243 @@
+From c43718e84e290eaf8846baae0c1f6f1a4d464b78 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Tue, 24 Jul 2018 16:03:07 +0300
+Subject: [PATCH 01/15] client: Add discoverable-timeout command
+
+This adds discoverable-timeout command which can be used to get/set
+DiscoverableTimeout property:
+
+[bluetooth]# discoverable-timeout 180
+Changing discoverable-timeout 180 succeeded
+---
+ client/main.c | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/client/main.c b/client/main.c
+index 87323d8f7..59820c6d9 100644
+--- a/client/main.c
++++ b/client/main.c
+@@ -1061,6 +1061,47 @@ static void cmd_discoverable(int argc, char *argv[])
+ 	return bt_shell_noninteractive_quit(EXIT_FAILURE);
+ }
+ 
++static void cmd_discoverable_timeout(int argc, char *argv[])
++{
++	uint32_t value;
++	char *endptr = NULL;
++	char *str;
++
++	if (argc < 2) {
++		DBusMessageIter iter;
++
++		if (!g_dbus_proxy_get_property(default_ctrl->proxy,
++					"DiscoverableTimeout", &iter)) {
++			bt_shell_printf("Unable to get DiscoverableTimeout\n");
++			return bt_shell_noninteractive_quit(EXIT_FAILURE);
++		}
++
++		dbus_message_iter_get_basic(&iter, &value);
++
++		bt_shell_printf("DiscoverableTimeout: %d seconds\n", value);
++
++		return;
++	}
++
++	value = strtol(argv[1], &endptr, 0);
++	if (!endptr || *endptr != '\0' || value > UINT32_MAX) {
++		bt_shell_printf("Invalid argument\n");
++		return bt_shell_noninteractive_quit(EXIT_FAILURE);
++	}
++
++	str = g_strdup_printf("discoverable-timeout %d", value);
++
++	if (g_dbus_proxy_set_property_basic(default_ctrl->proxy,
++					"DiscoverableTimeout",
++					DBUS_TYPE_UINT32, &value,
++					generic_callback, str, g_free))
++		return;
++
++	g_free(str);
++
++	return bt_shell_noninteractive_quit(EXIT_FAILURE);
++}
++
+ static void cmd_agent(int argc, char *argv[])
+ {
+ 	dbus_bool_t enable;
+@@ -2549,6 +2590,8 @@ static const struct bt_shell_menu main_menu = {
+ 	{ "discoverable", "<on/off>", cmd_discoverable,
+ 					"Set controller discoverable mode",
+ 							NULL },
++	{ "discoverable-timeout", "[value]", cmd_discoverable_timeout,
++					"Set discoverable timeout", NULL },
+ 	{ "agent",        "<on/off/capability>", cmd_agent,
+ 				"Enable/disable agent with given capability",
+ 							capability_generator},
+-- 
+2.21.0
+
+
+From 8d6f314f517b88fa286c888281a3d70797c94135 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Wed, 25 Jul 2018 10:22:45 +0300
+Subject: [PATCH 02/15] client: Make show command print DiscoverableTimeout
+
+Controller XX:XX:XX:XX:XX:XX (public)
+	Name: Vudentz's T460s
+	Alias: Intel-1
+	Class: 0x004c010c
+	Powered: yes
+	Discoverable: no
+	DiscoverableTimeout: 0x00000000
+	Pairable: yes
+	UUID: Headset AG                (00001112-0000-1000-8000-00805f9b34fb)
+	UUID: Generic Attribute Profile (00001801-0000-1000-8000-00805f9b34fb)
+	UUID: A/V Remote Control        (0000110e-0000-1000-8000-00805f9b34fb)
+	UUID: SIM Access                (0000112d-0000-1000-8000-00805f9b34fb)
+	UUID: Generic Access Profile    (00001800-0000-1000-8000-00805f9b34fb)
+	UUID: PnP Information           (00001200-0000-1000-8000-00805f9b34fb)
+	UUID: A/V Remote Control Target (0000110c-0000-1000-8000-00805f9b34fb)
+	UUID: Audio Source              (0000110a-0000-1000-8000-00805f9b34fb)
+	UUID: Audio Sink                (0000110b-0000-1000-8000-00805f9b34fb)
+	UUID: Headset                   (00001108-0000-1000-8000-00805f9b34fb)
+	Modalias: usb:v1D6Bp0246d0532
+	Discovering: no
+---
+ client/main.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/client/main.c b/client/main.c
+index 59820c6d9..6f472d050 100644
+--- a/client/main.c
++++ b/client/main.c
+@@ -877,6 +877,7 @@ static void cmd_show(int argc, char *argv[])
+ 	print_property(proxy, "Class");
+ 	print_property(proxy, "Powered");
+ 	print_property(proxy, "Discoverable");
++	print_property(proxy, "DiscoverableTimeout");
+ 	print_property(proxy, "Pairable");
+ 	print_uuids(proxy);
+ 	print_property(proxy, "Modalias");
+-- 
+2.21.0
+
+
+From 4dfe6d7691395dda5c711c290ec2087b3d4b79ee Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Wed, 25 Jul 2018 11:27:37 +0300
+Subject: [PATCH 03/15] adapter: Track pending settings
+
+This tracks settings being changed and in case the settings is already
+pending considered it to be done.
+---
+ src/adapter.c | 30 ++++++++++++++++++++++++++++--
+ 1 file changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/src/adapter.c b/src/adapter.c
+index af340fd6e..20c20f9e9 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -196,6 +196,7 @@ struct btd_adapter {
+ 	char *name;			/* controller device name */
+ 	char *short_name;		/* controller short name */
+ 	uint32_t supported_settings;	/* controller supported settings */
++	uint32_t pending_settings;	/* pending controller settings */
+ 	uint32_t current_settings;	/* current controller settings */
+ 
+ 	char *path;			/* adapter object path */
+@@ -509,8 +510,10 @@ static void settings_changed(struct btd_adapter *adapter, uint32_t settings)
+ 	changed_mask = adapter->current_settings ^ settings;
+ 
+ 	adapter->current_settings = settings;
++	adapter->pending_settings &= ~changed_mask;
+ 
+ 	DBG("Changed settings: 0x%08x", changed_mask);
++	DBG("Pending settings: 0x%08x", adapter->pending_settings);
+ 
+ 	if (changed_mask & MGMT_SETTING_POWERED) {
+ 	        g_dbus_emit_property_changed(dbus_conn, adapter->path,
+@@ -596,10 +599,31 @@ static bool set_mode(struct btd_adapter *adapter, uint16_t opcode,
+ 							uint8_t mode)
+ {
+ 	struct mgmt_mode cp;
++	uint32_t setting = 0;
+ 
+ 	memset(&cp, 0, sizeof(cp));
+ 	cp.val = mode;
+ 
++	switch (mode) {
++	case MGMT_OP_SET_POWERED:
++		setting = MGMT_SETTING_POWERED;
++		break;
++	case MGMT_OP_SET_CONNECTABLE:
++		setting = MGMT_SETTING_CONNECTABLE;
++		break;
++	case MGMT_OP_SET_FAST_CONNECTABLE:
++		setting = MGMT_SETTING_FAST_CONNECTABLE;
++		break;
++	case MGMT_OP_SET_DISCOVERABLE:
++		setting = MGMT_SETTING_DISCOVERABLE;
++		break;
++	case MGMT_OP_SET_BONDABLE:
++		setting = MGMT_SETTING_DISCOVERABLE;
++		break;
++	}
++
++	adapter->pending_settings |= setting;
++
+ 	DBG("sending set mode command for index %u", adapter->dev_id);
+ 
+ 	if (mgmt_send(adapter->mgmt, opcode,
+@@ -2739,13 +2763,15 @@ static void property_set_mode(struct btd_adapter *adapter, uint32_t setting,
+ 	else
+ 		current_enable = FALSE;
+ 
+-	if (enable == current_enable) {
++	if (enable == current_enable || adapter->pending_settings & setting) {
+ 		g_dbus_pending_property_success(id);
+ 		return;
+ 	}
+ 
+ 	mode = (enable == TRUE) ? 0x01 : 0x00;
+ 
++	adapter->pending_settings |= setting;
++
+ 	switch (setting) {
+ 	case MGMT_SETTING_POWERED:
+ 		opcode = MGMT_OP_SET_POWERED;
+@@ -2798,7 +2824,7 @@ static void property_set_mode(struct btd_adapter *adapter, uint32_t setting,
+ 	data->id = id;
+ 
+ 	if (mgmt_send(adapter->mgmt, opcode, adapter->dev_id, len, param,
+-				property_set_mode_complete, data, g_free) > 0)
++			property_set_mode_complete, data, g_free) > 0)
+ 		return;
+ 
+ 	g_free(data);
+-- 
+2.21.0
+
+
+From 307f81edd84cb104989154ec0d8f1c9ece3e048a Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Wed, 25 Jul 2018 11:39:55 +0300
+Subject: [PATCH 04/15] adapter: Check pending when setting DiscoverableTimeout
+
+This makes DiscoverableTimeout check if discoverable is already pending
+and don't attempt to set it once again which may cause discoverable to
+be re-enabled when in fact the application just want to set the timeout
+alone.
+---
+ src/adapter.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/src/adapter.c b/src/adapter.c
+index 20c20f9e9..f92c897c7 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -2901,6 +2901,7 @@ static void property_set_discoverable_timeout(
+ 				GDBusPendingPropertySet id, void *user_data)
+ {
+ 	struct btd_adapter *adapter = user_data;
++	bool enabled;
+ 	dbus_uint32_t value;
+ 
+ 	dbus_message_iter_get_basic(iter, &value);
+@@ -2914,8 +2915,19 @@ static void property_set_discoverable_timeout(
+ 	g_dbus_emit_property_changed(dbus_conn, adapter->path,
+ 				ADAPTER_INTERFACE, "DiscoverableTimeout");
+ 
++	if (adapter->pending_settings & MGMT_SETTING_DISCOVERABLE) {
++		if (adapter->current_settings & MGMT_SETTING_DISCOVERABLE)
++			enabled = false;
++		else
++			enabled = true;
++	} else {
++		if (adapter->current_settings & MGMT_SETTING_DISCOVERABLE)
++			enabled = true;
++		else
++			enabled = false;
++	}
+ 
+-	if (adapter->current_settings & MGMT_SETTING_DISCOVERABLE)
++	if (enabled)
+ 		set_discoverable(adapter, 0x01, adapter->discoverable_timeout);
+ }
+ 
+-- 
+2.21.0
+
+
+From 17070fc01c9734fd4c63704fbf08f81aac49d1b6 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Fri, 27 Jul 2018 11:14:04 +0300
+Subject: [PATCH 05/15] core: Add AlwaysPairable to main.conf
+
+This adds a new option called AlwaysPairable to main.conf, it can be
+used to enable Adapter.Pairable even in case there is no Agent
+available.
+
+Since that could be consider a security problem to allow pairing
+without user's consent the option defaults to false.
+---
+ src/adapter.c | 16 +++++++++++++++-
+ src/agent.h   |  7 +++++++
+ src/device.c  |  2 --
+ src/hcid.h    |  1 +
+ src/main.c    | 11 +++++++++++
+ src/main.conf |  5 +++++
+ 6 files changed, 39 insertions(+), 3 deletions(-)
+
+diff --git a/src/adapter.c b/src/adapter.c
+index f92c897c7..f730c1639 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -7792,6 +7792,19 @@ int adapter_set_io_capability(struct btd_adapter *adapter, uint8_t io_cap)
+ {
+ 	struct mgmt_cp_set_io_capability cp;
+ 
++	if (!main_opts.pairable) {
++		if (io_cap == IO_CAPABILITY_INVALID) {
++			if (adapter->current_settings & MGMT_SETTING_BONDABLE)
++				set_mode(adapter, MGMT_OP_SET_BONDABLE, 0x00);
++
++			return 0;
++		}
++
++		if (!(adapter->current_settings & MGMT_SETTING_BONDABLE))
++			set_mode(adapter, MGMT_OP_SET_BONDABLE, 0x01);
++	} else if (io_cap == IO_CAPABILITY_INVALID)
++		io_cap = IO_CAPABILITY_NOINPUTNOOUTPUT;
++
+ 	memset(&cp, 0, sizeof(cp));
+ 	cp.io_capability = io_cap;
+ 
+@@ -8720,7 +8733,8 @@ static void read_info_complete(uint8_t status, uint16_t length,
+ 
+ 	set_name(adapter, btd_adapter_get_name(adapter));
+ 
+-	if (!(adapter->current_settings & MGMT_SETTING_BONDABLE))
++	if (main_opts.pairable &&
++			!(adapter->current_settings & MGMT_SETTING_BONDABLE))
+ 		set_mode(adapter, MGMT_OP_SET_BONDABLE, 0x01);
+ 
+ 	if (!kernel_conn_control)
+diff --git a/src/agent.h b/src/agent.h
+index 1e4692036..f14d14325 100644
+--- a/src/agent.h
++++ b/src/agent.h
+@@ -22,6 +22,13 @@
+  *
+  */
+ 
++#define IO_CAPABILITY_DISPLAYONLY	0x00
++#define IO_CAPABILITY_DISPLAYYESNO	0x01
++#define IO_CAPABILITY_KEYBOARDONLY	0x02
++#define IO_CAPABILITY_NOINPUTNOOUTPUT	0x03
++#define IO_CAPABILITY_KEYBOARDDISPLAY	0x04
++#define IO_CAPABILITY_INVALID		0xFF
++
+ struct agent;
+ 
+ typedef void (*agent_cb) (struct agent *agent, DBusError *err,
+diff --git a/src/device.c b/src/device.c
+index 4f1af7012..0d7907a69 100644
+--- a/src/device.c
++++ b/src/device.c
+@@ -75,8 +75,6 @@
+ #include "attrib-server.h"
+ #include "eir.h"
+ 
+-#define IO_CAPABILITY_NOINPUTNOOUTPUT	0x03
+-
+ #define DISCONNECT_TIMER	2
+ #define DISCOVERY_TIMER		1
+ #define INVALID_FLAGS		0xff
+diff --git a/src/hcid.h b/src/hcid.h
+index 2c2b89d9c..ba250578a 100644
+--- a/src/hcid.h
++++ b/src/hcid.h
+@@ -38,6 +38,7 @@ typedef enum {
+ struct main_opts {
+ 	char		*name;
+ 	uint32_t	class;
++	gboolean	pairable;
+ 	uint32_t	pairto;
+ 	uint32_t	discovto;
+ 	uint8_t		privacy;
+diff --git a/src/main.c b/src/main.c
+index 7e6af42cd..156406343 100644
+--- a/src/main.c
++++ b/src/main.c
+@@ -81,6 +81,7 @@ static const char *supported_options[] = {
+ 	"Name",
+ 	"Class",
+ 	"DiscoverableTimeout",
++	"AlwaysPairable"
+ 	"PairableTimeout",
+ 	"DeviceID",
+ 	"ReverseServiceDiscovery",
+@@ -287,6 +288,16 @@ static void parse_config(GKeyFile *config)
+ 		main_opts.discovto = val;
+ 	}
+ 
++	boolean = g_key_file_get_boolean(config, "General",
++						"AlwaysPairable", &err);
++	if (err) {
++		DBG("%s", err->message);
++		g_clear_error(&err);
++	} else {
++		DBG("pairable=%s", boolean ? "true" : "false");
++		main_opts.pairable = boolean;
++	}
++
+ 	val = g_key_file_get_integer(config, "General",
+ 						"PairableTimeout", &err);
+ 	if (err) {
+diff --git a/src/main.conf b/src/main.conf
+index cbae32ec5..0d480d183 100644
+--- a/src/main.conf
++++ b/src/main.conf
+@@ -13,6 +13,11 @@
+ # 0 = disable timer, i.e. stay discoverable forever
+ #DiscoverableTimeout = 0
+ 
++# Always allow pairing even if there are no agent registered
++# Possible values: true, false
++# Default: false
++#AlwaysPairable = false
++
+ # How long to stay in pairable mode before going back to non-discoverable
+ # The value is in seconds. Default is 0.
+ # 0 = disable timer, i.e. stay pairable forever
+-- 
+2.21.0
+
+
+From 27a5db2185864d7d4a8b51199c86b5c69ecc6fa3 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Fri, 27 Jul 2018 11:01:04 +0300
+Subject: [PATCH 06/15] agent: Make the first agent to register the default
+
+This simplifies the handling of default agent and enforce the IO
+capabilities to be set whenever there is an agent available in the
+system.
+---
+ src/agent.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
+
+diff --git a/src/agent.c b/src/agent.c
+index ff44d5755..183e2f190 100644
+--- a/src/agent.c
++++ b/src/agent.c
+@@ -50,13 +50,6 @@
+ #include "agent.h"
+ #include "shared/queue.h"
+ 
+-#define IO_CAPABILITY_DISPLAYONLY	0x00
+-#define IO_CAPABILITY_DISPLAYYESNO	0x01
+-#define IO_CAPABILITY_KEYBOARDONLY	0x02
+-#define IO_CAPABILITY_NOINPUTNOOUTPUT	0x03
+-#define IO_CAPABILITY_KEYBOARDDISPLAY	0x04
+-#define IO_CAPABILITY_INVALID		0xFF
+-
+ #define REQUEST_TIMEOUT (60 * 1000)		/* 60 seconds */
+ #define AGENT_INTERFACE "org.bluez.Agent1"
+ 
+@@ -150,7 +143,7 @@ static void set_io_cap(struct btd_adapter *adapter, gpointer user_data)
+ 	if (agent)
+ 		io_cap = agent->capability;
+ 	else
+-		io_cap = IO_CAPABILITY_NOINPUTNOOUTPUT;
++		io_cap = IO_CAPABILITY_INVALID;
+ 
+ 	adapter_set_io_capability(adapter, io_cap);
+ }
+@@ -294,6 +287,11 @@ static struct agent *agent_create( const char *name, const char *path,
+ 							name, agent_disconnect,
+ 							agent, NULL);
+ 
++	if (queue_isempty(default_agents))
++		add_default_agent(agent);
++	else
++		queue_push_tail(default_agents, agent);
++
+ 	return agent_ref(agent);
+ }
+ 
+-- 
+2.21.0
+
+
+From dc29a486f90e437de541f0e5644465a8f91121aa Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Thu, 26 Jul 2018 15:15:12 +0300
+Subject: [PATCH 07/15] doc/adapter-api: Add Discoverable option to
+ SetDiscoveryFilter
+
+This enables the client to set its discoverable setting while
+discovering which is very typical situation as usually the setings
+application would allow incoming pairing request while scanning, so
+this would reduce the number of calls setting Discoverable and
+DiscoverableTimeout and restoring after done with discovery.
+---
+ doc/adapter-api.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/doc/adapter-api.txt b/doc/adapter-api.txt
+index d14d0ca50..4791af2c7 100644
+--- a/doc/adapter-api.txt
++++ b/doc/adapter-api.txt
+@@ -113,6 +113,12 @@ Methods		void StartDiscovery()
+ 				generated for either ManufacturerData and
+ 				ServiceData everytime they are discovered.
+ 
++			bool Discoverable (Default: false)
++
++				Make adapter discoverable while discovering,
++				if the adapter is already discoverable this
++				setting this filter won't do anything.
++
+ 			When discovery filter is set, Device objects will be
+ 			created as new devices with matching criteria are
+ 			discovered regardless of they are connectable or
+-- 
+2.21.0
+
+
+From febbee4d7eee29a8e69039ec2aa82b7ea68163d1 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Thu, 26 Jul 2018 15:23:05 +0300
+Subject: [PATCH 08/15] adapter: Discovery filter discoverable
+
+This implements the discovery filter discoverable and tracks which
+clients had enabled it and restores the settings when the last client
+enabling it exits.
+---
+ src/adapter.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 54 insertions(+), 2 deletions(-)
+
+diff --git a/src/adapter.c b/src/adapter.c
+index f730c1639..ecd2c40ae 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -157,6 +157,7 @@ struct discovery_filter {
+ 	int16_t rssi;
+ 	GSList *uuids;
+ 	bool duplicate;
++	bool discoverable;
+ };
+ 
+ struct watch_client {
+@@ -219,6 +220,7 @@ struct btd_adapter {
+ 	uint8_t discovery_type;		/* current active discovery type */
+ 	uint8_t discovery_enable;	/* discovery enabled/disabled */
+ 	bool discovery_suspended;	/* discovery has been suspended */
++	bool discovery_discoverable;	/* discoverable while discovering */
+ 	GSList *discovery_list;		/* list of discovery clients */
+ 	GSList *set_filter_list;	/* list of clients that specified
+ 					 * filter, but don't scan yet
+@@ -1842,6 +1844,20 @@ static void discovery_free(void *user_data)
+ 	g_free(client);
+ }
+ 
++static bool set_discovery_discoverable(struct btd_adapter *adapter, bool enable)
++{
++	if (adapter->discovery_discoverable == enable)
++		return true;
++
++	/* Reset discoverable filter if already set */
++	if (enable && (adapter->current_settings & MGMT_OP_SET_DISCOVERABLE))
++		return true;
++
++	adapter->discovery_discoverable = enable;
++
++	return set_discoverable(adapter, enable, 0);
++}
++
+ static void discovery_remove(struct watch_client *client)
+ {
+ 	struct btd_adapter *adapter = client->adapter;
+@@ -2090,6 +2106,8 @@ static bool filters_equal(struct mgmt_cp_start_service_discovery *a,
+ static int update_discovery_filter(struct btd_adapter *adapter)
+ {
+ 	struct mgmt_cp_start_service_discovery *sd_cp;
++	GSList *l;
++
+ 
+ 	DBG("");
+ 
+@@ -2099,6 +2117,18 @@ static int update_discovery_filter(struct btd_adapter *adapter)
+ 		return -ENOMEM;
+ 	}
+ 
++	for (l = adapter->discovery_list; l; l = g_slist_next(l)) {
++		struct watch_client *client = l->data;
++
++		if (!client->discovery_filter)
++			continue;
++
++		if (client->discovery_filter->discoverable)
++			break;
++	}
++
++	set_discovery_discoverable(adapter, l ? true : false);
++
+ 	/*
+ 	 * If filters are equal, then don't update scan, except for when
+ 	 * starting discovery.
+@@ -2130,6 +2160,9 @@ static int discovery_stop(struct watch_client *client)
+ 		return 0;
+ 	}
+ 
++	if (adapter->discovery_discoverable)
++		set_discovery_discoverable(adapter, false);
++
+ 	/*
+ 	 * In the idle phase of a discovery, there is no need to stop it
+ 	 * and so it is enough to send out the signal and just return.
+@@ -2224,6 +2257,7 @@ static DBusMessage *start_discovery(DBusConnection *conn,
+ 					     adapter->set_filter_list, client);
+ 		adapter->discovery_list = g_slist_prepend(
+ 					      adapter->discovery_list, client);
++
+ 		goto done;
+ 	}
+ 
+@@ -2348,6 +2382,17 @@ static bool parse_duplicate_data(DBusMessageIter *value,
+ 	return true;
+ }
+ 
++static bool parse_discoverable(DBusMessageIter *value,
++					struct discovery_filter *filter)
++{
++	if (dbus_message_iter_get_arg_type(value) != DBUS_TYPE_BOOLEAN)
++		return false;
++
++	dbus_message_iter_get_basic(value, &filter->discoverable);
++
++	return true;
++}
++
+ struct filter_parser {
+ 	const char *name;
+ 	bool (*func)(DBusMessageIter *iter, struct discovery_filter *filter);
+@@ -2357,6 +2402,7 @@ struct filter_parser {
+ 	{ "Pathloss", parse_pathloss },
+ 	{ "Transport", parse_transport },
+ 	{ "DuplicateData", parse_duplicate_data },
++	{ "Discoverable", parse_discoverable },
+ 	{ }
+ };
+ 
+@@ -2396,6 +2442,7 @@ static bool parse_discovery_filter_dict(struct btd_adapter *adapter,
+ 	(*filter)->rssi = DISTANCE_VAL_INVALID;
+ 	(*filter)->type = get_scan_type(adapter);
+ 	(*filter)->duplicate = false;
++	(*filter)->discoverable = false;
+ 
+ 	dbus_message_iter_init(msg, &iter);
+ 	if (dbus_message_iter_get_arg_type(&iter) != DBUS_TYPE_ARRAY ||
+@@ -2441,8 +2488,10 @@ static bool parse_discovery_filter_dict(struct btd_adapter *adapter,
+ 		goto invalid_args;
+ 
+ 	DBG("filtered discovery params: transport: %d rssi: %d pathloss: %d "
+-		" duplicate data: %s ", (*filter)->type, (*filter)->rssi,
+-		(*filter)->pathloss, (*filter)->duplicate ? "true" : "false");
++		" duplicate data: %s discoverable %s", (*filter)->type,
++		(*filter)->rssi, (*filter)->pathloss,
++		(*filter)->duplicate ? "true" : "false",
++		(*filter)->discoverable ? "true" : "false");
+ 
+ 	return true;
+ 
+@@ -2880,6 +2929,9 @@ static void property_set_discoverable(const GDBusPropertyTable *property,
+ 		return;
+ 	}
+ 
++	/* Reset discovery_discoverable as Discoverable takes precedence */
++	adapter->discovery_discoverable = false;
++
+ 	property_set_mode(adapter, MGMT_SETTING_DISCOVERABLE, iter, id);
+ }
+ 
+-- 
+2.21.0
+
+
+From c3ac3db663fe09c6c6b12a0738001e53d6971e29 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Thu, 26 Jul 2018 15:26:30 +0300
+Subject: [PATCH 09/15] client: Add scan.discoverable command
+
+This adds discoverable command to scan menu which can be used to set
+if adapter should become discoverable while scanning:
+
+[bluetooth]# scan.discoverable on
+[bluetooth]# scan on
+SetDiscoveryFilter success
+[CHG] Controller XX:XX:XX:XX:XX:XX Discoverable: yes
+Discovery started
+[CHG] Controller XX:XX:XX:XX:XX:XX Discovering: yes
+[bluetooth]# scan off
+Discovery stopped
+[CHG] Controller XX:XX:XX:XX:XX:XX Discoverable: no
+---
+ client/main.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/client/main.c b/client/main.c
+index 6f472d050..6e6f6d2fb 100644
+--- a/client/main.c
++++ b/client/main.c
+@@ -1166,6 +1166,7 @@ static struct set_discovery_filter_args {
+ 	char **uuids;
+ 	size_t uuids_len;
+ 	dbus_bool_t duplicate;
++	dbus_bool_t discoverable;
+ 	bool set;
+ } filter = {
+ 	.rssi = DISTANCE_VAL_INVALID,
+@@ -1205,6 +1206,11 @@ static void set_discovery_filter_setup(DBusMessageIter *iter, void *user_data)
+ 						DBUS_TYPE_BOOLEAN,
+ 						&args->duplicate);
+ 
++	if (args->discoverable)
++		g_dbus_dict_append_entry(&dict, "Discoverable",
++						DBUS_TYPE_BOOLEAN,
++						&args->discoverable);
++
+ 	dbus_message_iter_close_container(iter, &dict);
+ }
+ 
+@@ -1362,6 +1368,26 @@ static void cmd_scan_filter_duplicate_data(int argc, char *argv[])
+ 	filter.set = false;
+ }
+ 
++static void cmd_scan_filter_discoverable(int argc, char *argv[])
++{
++	if (argc < 2 || !strlen(argv[1])) {
++		bt_shell_printf("Discoverable: %s\n",
++				filter.discoverable ? "on" : "off");
++		return bt_shell_noninteractive_quit(EXIT_SUCCESS);
++	}
++
++	if (!strcmp(argv[1], "on"))
++		filter.discoverable = true;
++	else if (!strcmp(argv[1], "off"))
++		filter.discoverable = false;
++	else {
++		bt_shell_printf("Invalid option: %s\n", argv[1]);
++		return bt_shell_noninteractive_quit(EXIT_FAILURE);
++	}
++
++	filter.set = false;
++}
++
+ static void filter_clear_uuids(void)
+ {
+ 	g_strfreev(filter.uuids);
+@@ -2510,6 +2536,9 @@ static const struct bt_shell_menu scan_menu = {
+ 	{ "duplicate-data", "[on/off]", cmd_scan_filter_duplicate_data,
+ 				"Set/Get duplicate data filter",
+ 				NULL },
++	{ "discoverable", "[on/off]", cmd_scan_filter_discoverable,
++				"Set/Get discoverable filter",
++				NULL },
+ 	{ "clear", "[uuids/rssi/pathloss/transport/duplicate-data]",
+ 				cmd_scan_filter_clear,
+ 				"Clears discovery filter.",
+-- 
+2.21.0
+
+
+From a8f14e570ab1b39c360ff194d0df54f7190704cf Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Thu, 26 Jul 2018 15:40:55 +0300
+Subject: [PATCH 10/15] client: Add scan.clear discoverable
+
+This implements scan.clear for discoverable filter.
+---
+ client/main.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/client/main.c b/client/main.c
+index 6e6f6d2fb..1a66a3ab4 100644
+--- a/client/main.c
++++ b/client/main.c
+@@ -1416,6 +1416,11 @@ static void filter_clear_duplicate(void)
+ 	filter.duplicate = false;
+ }
+ 
++static void filter_clear_discoverable(void)
++{
++	filter.discoverable = false;
++}
++
+ struct clear_entry {
+ 	const char *name;
+ 	void (*clear) (void);
+@@ -1427,6 +1432,7 @@ static const struct clear_entry filter_clear[] = {
+ 	{ "pathloss", filter_clear_pathloss },
+ 	{ "transport", filter_clear_transport },
+ 	{ "duplicate-data", filter_clear_duplicate },
++	{ "discoverable", filter_clear_discoverable },
+ 	{}
+ };
+ 
+@@ -2539,7 +2545,8 @@ static const struct bt_shell_menu scan_menu = {
+ 	{ "discoverable", "[on/off]", cmd_scan_filter_discoverable,
+ 				"Set/Get discoverable filter",
+ 				NULL },
+-	{ "clear", "[uuids/rssi/pathloss/transport/duplicate-data]",
++	{ "clear",
++		"[uuids/rssi/pathloss/transport/duplicate-data/discoverable]",
+ 				cmd_scan_filter_clear,
+ 				"Clears discovery filter.",
+ 				filter_clear_generator },
+-- 
+2.21.0
+
+
+From 1ab3a106737f6b71dd6ebb5f180a25491212a5b7 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Thu, 26 Jul 2018 17:13:12 +0300
+Subject: [PATCH 11/15] adapter: Fix not keeping discovery filters
+
+If the discovery has been stopped and the client has set filters those
+should be put back into filter list since the client may still be
+interested in using them the next time it start a scanning.
+---
+ src/adapter.c | 25 ++++++++++++++++---------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
+
+diff --git a/src/adapter.c b/src/adapter.c
+index ecd2c40ae..c24432125 100644
+--- a/src/adapter.c
++++ b/src/adapter.c
+@@ -1858,7 +1858,7 @@ static bool set_discovery_discoverable(struct btd_adapter *adapter, bool enable)
+ 	return set_discoverable(adapter, enable, 0);
+ }
+ 
+-static void discovery_remove(struct watch_client *client)
++static void discovery_remove(struct watch_client *client, bool exit)
+ {
+ 	struct btd_adapter *adapter = client->adapter;
+ 
+@@ -1870,7 +1870,11 @@ static void discovery_remove(struct watch_client *client)
+ 	adapter->discovery_list = g_slist_remove(adapter->discovery_list,
+ 								client);
+ 
+-	discovery_free(client);
++	if (!exit && client->discovery_filter)
++		adapter->set_filter_list = g_slist_prepend(
++					adapter->set_filter_list, client);
++	else
++		discovery_free(client);
+ 
+ 	/*
+ 	 * If there are other client discoveries in progress, then leave
+@@ -1899,8 +1903,11 @@ static void stop_discovery_complete(uint8_t status, uint16_t length,
+ 		goto done;
+ 	}
+ 
+-	if (client->msg)
++	if (client->msg) {
+ 		g_dbus_send_reply(dbus_conn, client->msg, DBUS_TYPE_INVALID);
++		dbus_message_unref(client->msg);
++		client->msg = NULL;
++	}
+ 
+ 	adapter->discovery_type = 0x00;
+ 	adapter->discovery_enable = 0x00;
+@@ -1913,7 +1920,7 @@ static void stop_discovery_complete(uint8_t status, uint16_t length,
+ 	trigger_passive_scanning(adapter);
+ 
+ done:
+-	discovery_remove(client);
++	discovery_remove(client, false);
+ }
+ 
+ static int compare_sender(gconstpointer a, gconstpointer b)
+@@ -2148,14 +2155,14 @@ static int update_discovery_filter(struct btd_adapter *adapter)
+ 	return -EINPROGRESS;
+ }
+ 
+-static int discovery_stop(struct watch_client *client)
++static int discovery_stop(struct watch_client *client, bool exit)
+ {
+ 	struct btd_adapter *adapter = client->adapter;
+ 	struct mgmt_cp_stop_discovery cp;
+ 
+ 	/* Check if there are more client discovering */
+ 	if (g_slist_next(adapter->discovery_list)) {
+-		discovery_remove(client);
++		discovery_remove(client, exit);
+ 		update_discovery_filter(adapter);
+ 		return 0;
+ 	}
+@@ -2168,7 +2175,7 @@ static int discovery_stop(struct watch_client *client)
+ 	 * and so it is enough to send out the signal and just return.
+ 	 */
+ 	if (adapter->discovery_enable == 0x00) {
+-		discovery_remove(client);
++		discovery_remove(client, exit);
+ 		adapter->discovering = false;
+ 		g_dbus_emit_property_changed(dbus_conn, adapter->path,
+ 					ADAPTER_INTERFACE, "Discovering");
+@@ -2193,7 +2200,7 @@ static void discovery_disconnect(DBusConnection *conn, void *user_data)
+ 
+ 	DBG("owner %s", client->owner);
+ 
+-	discovery_stop(client);
++	discovery_stop(client, true);
+ }
+ 
+ /*
+@@ -2583,7 +2590,7 @@ static DBusMessage *stop_discovery(DBusConnection *conn,
+ 	if (client->msg)
+ 		return btd_error_busy(msg);
+ 
+-	err = discovery_stop(client);
++	err = discovery_stop(client, false);
+ 	switch (err) {
+ 	case 0:
+ 		return dbus_message_new_method_return(msg);
+-- 
+2.21.0
+
+
+From 38706123e9bf05169793589e7f452f3600ce4980 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Mon, 30 Jul 2018 14:11:38 +0300
+Subject: [PATCH 12/15] client: Commit changes to scan filter if active
+
+This detects if the command scan has been triggered and if so commit
+changes to filter immediately so they take effect in the current
+session.
+---
+ client/main.c | 55 +++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 38 insertions(+), 17 deletions(-)
+
+diff --git a/client/main.c b/client/main.c
+index 1a66a3ab4..4d848176c 100644
+--- a/client/main.c
++++ b/client/main.c
+@@ -1139,6 +1139,24 @@ static void cmd_default_agent(int argc, char *argv[])
+ 	agent_default(dbus_conn, agent_manager);
+ }
+ 
++#define	DISTANCE_VAL_INVALID	0x7FFF
++
++static struct set_discovery_filter_args {
++	char *transport;
++	dbus_uint16_t rssi;
++	dbus_int16_t pathloss;
++	char **uuids;
++	size_t uuids_len;
++	dbus_bool_t duplicate;
++	dbus_bool_t discoverable;
++	bool set;
++	bool active;
++} filter = {
++	.rssi = DISTANCE_VAL_INVALID,
++	.pathloss = DISTANCE_VAL_INVALID,
++	.set = true,
++};
++
+ static void start_discovery_reply(DBusMessage *message, void *user_data)
+ {
+ 	dbus_bool_t enable = GPOINTER_TO_UINT(user_data);
+@@ -1154,26 +1172,11 @@ static void start_discovery_reply(DBusMessage *message, void *user_data)
+ 	}
+ 
+ 	bt_shell_printf("Discovery %s\n", enable ? "started" : "stopped");
++
++	filter.active = enable;
+ 	/* Leave the discovery running even on noninteractive mode */
+ }
+ 
+-#define	DISTANCE_VAL_INVALID	0x7FFF
+-
+-static struct set_discovery_filter_args {
+-	char *transport;
+-	dbus_uint16_t rssi;
+-	dbus_int16_t pathloss;
+-	char **uuids;
+-	size_t uuids_len;
+-	dbus_bool_t duplicate;
+-	dbus_bool_t discoverable;
+-	bool set;
+-} filter = {
+-	.rssi = DISTANCE_VAL_INVALID,
+-	.pathloss = DISTANCE_VAL_INVALID,
+-	.set = true,
+-};
+-
+ static void set_discovery_filter_setup(DBusMessageIter *iter, void *user_data)
+ {
+ 	struct set_discovery_filter_args *args = user_data;
+@@ -1302,6 +1305,9 @@ static void cmd_scan_filter_uuids(int argc, char *argv[])
+ 
+ commit:
+ 	filter.set = false;
++
++	if (filter.active)
++		set_discovery_filter();
+ }
+ 
+ static void cmd_scan_filter_rssi(int argc, char *argv[])
+@@ -1316,6 +1322,9 @@ static void cmd_scan_filter_rssi(int argc, char *argv[])
+ 	filter.rssi = atoi(argv[1]);
+ 
+ 	filter.set = false;
++
++	if (filter.active)
++		set_discovery_filter();
+ }
+ 
+ static void cmd_scan_filter_pathloss(int argc, char *argv[])
+@@ -1331,6 +1340,9 @@ static void cmd_scan_filter_pathloss(int argc, char *argv[])
+ 	filter.pathloss = atoi(argv[1]);
+ 
+ 	filter.set = false;
++
++	if (filter.active)
++		set_discovery_filter();
+ }
+ 
+ static void cmd_scan_filter_transport(int argc, char *argv[])
+@@ -1346,6 +1358,9 @@ static void cmd_scan_filter_transport(int argc, char *argv[])
+ 	filter.transport = g_strdup(argv[1]);
+ 
+ 	filter.set = false;
++
++	if (filter.active)
++		set_discovery_filter();
+ }
+ 
+ static void cmd_scan_filter_duplicate_data(int argc, char *argv[])
+@@ -1366,6 +1381,9 @@ static void cmd_scan_filter_duplicate_data(int argc, char *argv[])
+ 	}
+ 
+ 	filter.set = false;
++
++	if (filter.active)
++		set_discovery_filter();
+ }
+ 
+ static void cmd_scan_filter_discoverable(int argc, char *argv[])
+@@ -1386,6 +1404,9 @@ static void cmd_scan_filter_discoverable(int argc, char *argv[])
+ 	}
+ 
+ 	filter.set = false;
++
++	if (filter.active)
++		set_discovery_filter();
+ }
+ 
+ static void filter_clear_uuids(void)
+-- 
+2.21.0
+
+
+From 43e27149272b09159a9d15af74099fe901b24d66 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Wed, 1 Aug 2018 14:21:55 +0300
+Subject: [PATCH 13/15] client: Fix not resetting filters on scan.clear
+
+If call to SetDiscoveryFilter comes with any value set the daemon will
+not attempt to clear the filters, instead the client is suppose to send
+an empty dict.
+---
+ client/main.c | 39 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/client/main.c b/client/main.c
+index 4d848176c..196b31a4d 100644
+--- a/client/main.c
++++ b/client/main.c
+@@ -1177,6 +1177,19 @@ static void start_discovery_reply(DBusMessage *message, void *user_data)
+ 	/* Leave the discovery running even on noninteractive mode */
+ }
+ 
++static void clear_discovery_filter(DBusMessageIter *iter, void *user_data)
++{
++	DBusMessageIter dict;
++
++	dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY,
++				DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING
++				DBUS_TYPE_STRING_AS_STRING
++				DBUS_TYPE_VARIANT_AS_STRING
++				DBUS_DICT_ENTRY_END_CHAR_AS_STRING, &dict);
++
++	dbus_message_iter_close_container(iter, &dict);
++}
++
+ static void set_discovery_filter_setup(DBusMessageIter *iter, void *user_data)
+ {
+ 	struct set_discovery_filter_args *args = user_data;
+@@ -1236,14 +1249,18 @@ static void set_discovery_filter_reply(DBusMessage *message, void *user_data)
+ 	return bt_shell_noninteractive_quit(EXIT_SUCCESS);
+ }
+ 
+-static void set_discovery_filter(void)
++static void set_discovery_filter(bool cleared)
+ {
++	GDBusSetupFunction func;
++
+ 	if (check_default_ctrl() == FALSE || filter.set)
+ 		return;
+ 
++	func = cleared ? clear_discovery_filter : set_discovery_filter_setup;
++
+ 	if (g_dbus_proxy_method_call(default_ctrl->proxy, "SetDiscoveryFilter",
+-		set_discovery_filter_setup, set_discovery_filter_reply,
+-		&filter, NULL) == FALSE) {
++					func, set_discovery_filter_reply,
++					&filter, NULL) == FALSE) {
+ 		bt_shell_printf("Failed to set discovery filter\n");
+ 		return bt_shell_noninteractive_quit(EXIT_FAILURE);
+ 	}
+@@ -1263,7 +1280,7 @@ static void cmd_scan(int argc, char *argv[])
+ 		return bt_shell_noninteractive_quit(EXIT_FAILURE);
+ 
+ 	if (enable == TRUE) {
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ 		method = "StartDiscovery";
+ 	} else
+ 		method = "StopDiscovery";
+@@ -1307,7 +1324,7 @@ commit:
+ 	filter.set = false;
+ 
+ 	if (filter.active)
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ }
+ 
+ static void cmd_scan_filter_rssi(int argc, char *argv[])
+@@ -1324,7 +1341,7 @@ static void cmd_scan_filter_rssi(int argc, char *argv[])
+ 	filter.set = false;
+ 
+ 	if (filter.active)
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ }
+ 
+ static void cmd_scan_filter_pathloss(int argc, char *argv[])
+@@ -1342,7 +1359,7 @@ static void cmd_scan_filter_pathloss(int argc, char *argv[])
+ 	filter.set = false;
+ 
+ 	if (filter.active)
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ }
+ 
+ static void cmd_scan_filter_transport(int argc, char *argv[])
+@@ -1360,7 +1377,7 @@ static void cmd_scan_filter_transport(int argc, char *argv[])
+ 	filter.set = false;
+ 
+ 	if (filter.active)
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ }
+ 
+ static void cmd_scan_filter_duplicate_data(int argc, char *argv[])
+@@ -1383,7 +1400,7 @@ static void cmd_scan_filter_duplicate_data(int argc, char *argv[])
+ 	filter.set = false;
+ 
+ 	if (filter.active)
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ }
+ 
+ static void cmd_scan_filter_discoverable(int argc, char *argv[])
+@@ -1406,7 +1423,7 @@ static void cmd_scan_filter_discoverable(int argc, char *argv[])
+ 	filter.set = false;
+ 
+ 	if (filter.active)
+-		set_discovery_filter();
++		set_discovery_filter(false);
+ }
+ 
+ static void filter_clear_uuids(void)
+@@ -1518,7 +1535,7 @@ static void cmd_scan_filter_clear(int argc, char *argv[])
+ 	if (check_default_ctrl() == FALSE)
+ 		return bt_shell_noninteractive_quit(EXIT_FAILURE);
+ 
+-	set_discovery_filter();
++	set_discovery_filter(all);
+ }
+ 
+ static struct GDBusProxy *find_device(int argc, char *argv[])
+-- 
+2.21.0
+
+
+From b47955a4003910c9eacac3d6e96bfb4f545e33e0 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Wed, 1 Aug 2018 16:08:36 +0300
+Subject: [PATCH 14/15] doc/adapter-api: Fix working of Discoverable filter
+
+---
+ doc/adapter-api.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/doc/adapter-api.txt b/doc/adapter-api.txt
+index 4791af2c7..2afd61bc3 100644
+--- a/doc/adapter-api.txt
++++ b/doc/adapter-api.txt
+@@ -116,8 +116,8 @@ Methods		void StartDiscovery()
+ 			bool Discoverable (Default: false)
+ 
+ 				Make adapter discoverable while discovering,
+-				if the adapter is already discoverable this
+-				setting this filter won't do anything.
++				if the adapter is already discoverable setting
++				this filter won't do anything.
+ 
+ 			When discovery filter is set, Device objects will be
+ 			created as new devices with matching criteria are
+-- 
+2.21.0
+
+
+From 608b35d6354d22092af7f6907ce7a974f9cfb3d2 Mon Sep 17 00:00:00 2001
+From: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Date: Fri, 28 Sep 2018 16:08:32 +0300
+Subject: [PATCH 15/15] sdp: Fix buffer overflow
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+sdp_append_buf shall check if there is enough space to store the data
+before copying it.
+
+An independent security researcher, Julian Rauchberger, has reported
+this vulnerability to Beyond Security’s SecuriTeam Secure Disclosure
+program.
+---
+ lib/sdp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/lib/sdp.c b/lib/sdp.c
+index eb408a948..84311eda1 100644
+--- a/lib/sdp.c
++++ b/lib/sdp.c
+@@ -2834,6 +2834,12 @@ void sdp_append_to_buf(sdp_buf_t *dst, uint8_t *data, uint32_t len)
+ 	SDPDBG("Append src size: %d", len);
+ 	SDPDBG("Append dst size: %d", dst->data_size);
+ 	SDPDBG("Dst buffer size: %d", dst->buf_size);
++
++	if (dst->data_size + len > dst->buf_size) {
++		SDPERR("Cannot append");
++		return;
++	}
++
+ 	if (dst->data_size == 0 && dtd == 0) {
+ 		/* create initial sequence */
+ 		*p = SDP_SEQ8;
+-- 
+2.21.0
+

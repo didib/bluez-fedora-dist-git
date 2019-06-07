@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.50
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -29,6 +29,18 @@ Patch23: 0004-systemd-More-lockdown.patch
 
 # Fix A2DP disconnection with some headsets
 Patch30: 0001-policy-Add-logic-to-connect-a-Sink.patch
+
+# Backports:
+# https://bugzilla.redhat.com/show_bug.cgi?id=1711594
+Patch40: 0001-bluetooth.conf-remove-deprecated-at_console-statemen.patch
+# autopair enhancements
+Patch41: bluez-5.50-autopair-backports.patch
+# Discoverable filters support, as used in gnome-bluetooth
+Patch42: bluez-5.50-discoverability-backports.patch
+# a2dp fixes for newer codecs
+Patch43: bluez-5.50-a2dp-backports.patch
+# sixaxis pairing fixes
+Patch44: bluez-5.50-sixaxis-fixes.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -265,6 +277,14 @@ make check
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Aug 21 2019 Bastien Nocera <bnocera@redhat.com> - 5.50-4
++ bluez-5.50-4
+- Backport loads of fixes from upstream, including:
+  - dbus-broker support (#1711594)
+  - a2dp codecs discovery
+  - discoverability filter support (used in gnome-bluetooth, #1583442)
+  - sixaxis pairing fixes
+
 * Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 5.50-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
