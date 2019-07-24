@@ -1,7 +1,7 @@
 Name:    bluez
 Summary: Bluetooth utilities
 Version: 5.50
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -285,6 +285,9 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 5.50-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
 * Thu Jun 06 2019 Bastien Nocera <bnocera@redhat.com> - 5.50-8
 + bluez-5.50-8
 - Backport loads of fixes from upstream, including:
