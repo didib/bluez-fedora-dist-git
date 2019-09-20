@@ -1,4 +1,4 @@
-From 4570164f0c90603bd07eb9e7c07e17bbafb5b5da Mon Sep 17 00:00:00 2001
+From 36a44fc05feebe1aab16c33a1121f952986b2801 Mon Sep 17 00:00:00 2001
 From: Craig Andrews <candrews@integralblue.com>
 Date: Wed, 13 Sep 2017 15:23:09 +0200
 Subject: [PATCH 2/4] systemd: Add PrivateTmp and NoNewPrivileges options
@@ -15,7 +15,7 @@ possible privilege escalations.
  1 file changed, 6 insertions(+)
 
 diff --git a/src/bluetooth.service.in b/src/bluetooth.service.in
-index f799f65f0..a6f3030f9 100644
+index f9faaa452..7c2f60bb4 100644
 --- a/src/bluetooth.service.in
 +++ b/src/bluetooth.service.in
 @@ -12,8 +12,14 @@ NotifyAccess=main
@@ -34,5 +34,5 @@ index f799f65f0..a6f3030f9 100644
  [Install]
  WantedBy=bluetooth.target
 -- 
-2.14.1
+2.21.0
 

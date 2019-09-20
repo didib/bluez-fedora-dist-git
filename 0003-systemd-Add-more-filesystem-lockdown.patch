@@ -1,4 +1,4 @@
-From 73a9c0902e7c97adf96e735407a75033152c04a9 Mon Sep 17 00:00:00 2001
+From 13a348670fef0047555395ce6977e86e0005f8bd Mon Sep 17 00:00:00 2001
 From: Bastien Nocera <hadess@hadess.net>
 Date: Wed, 13 Sep 2017 15:37:11 +0200
 Subject: [PATCH 3/4] systemd: Add more filesystem lockdown
@@ -6,25 +6,26 @@ Subject: [PATCH 3/4] systemd: Add more filesystem lockdown
 We can only access the configuration file as read-only and read-write
 to the Bluetooth cache directory and sub-directories.
 ---
- Makefile.am              | 2 ++
+ Makefile.am              | 3 +++
  src/bluetooth.service.in | 4 ++++
- 2 files changed, 6 insertions(+)
+ 2 files changed, 7 insertions(+)
 
 diff --git a/Makefile.am b/Makefile.am
-index 1c38d94e5..13ccf9079 100644
+index ac88c12e0..0a6d09847 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -478,6 +478,8 @@ MAINTAINERCLEANFILES = Makefile.in \
+@@ -562,6 +562,9 @@ MAINTAINERCLEANFILES = Makefile.in \
  
  SED_PROCESS = $(AM_V_GEN)$(MKDIR_P) $(dir $@) && \
- 		$(SED) -e 's,@libexecdir\@,$(libexecdir),g' \
+ 		$(SED) -e 's,@pkglibexecdir\@,$(pkglibexecdir),g' \
++		       -e 's,@libexecdir\@,$(libexecdir),g' \
 +		       -e 's,@statedir\@,$(statedir),g' \
 +		       -e 's,@confdir\@,$(confdir),g' \
  		< $< > $@
  
  %.service: %.service.in Makefile
 diff --git a/src/bluetooth.service.in b/src/bluetooth.service.in
-index a6f3030f9..7e55b5043 100644
+index 7c2f60bb4..4daedef2a 100644
 --- a/src/bluetooth.service.in
 +++ b/src/bluetooth.service.in
 @@ -17,6 +17,10 @@ LimitNPROC=1
@@ -39,5 +40,5 @@ index a6f3030f9..7e55b5043 100644
  # Privilege escalation
  NoNewPrivileges=true
 -- 
-2.14.1
+2.21.0
 
