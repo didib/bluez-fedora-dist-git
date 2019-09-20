@@ -1,4 +1,4 @@
-From 171d812218883281fed57b57fafd5c18eac441ac Mon Sep 17 00:00:00 2001
+From a6963e0402695d7b6a89c1b1c75c40dbd8fcde52 Mon Sep 17 00:00:00 2001
 From: Bastien Nocera <hadess@hadess.net>
 Date: Wed, 13 Sep 2017 15:38:26 +0200
 Subject: [PATCH 4/4] systemd: More lockdown
@@ -10,7 +10,7 @@ access, so block those.
  1 file changed, 6 insertions(+)
 
 diff --git a/src/bluetooth.service.in b/src/bluetooth.service.in
-index 7e55b5043..e8267b338 100644
+index 4daedef2a..f18801866 100644
 --- a/src/bluetooth.service.in
 +++ b/src/bluetooth.service.in
 @@ -22,9 +22,15 @@ ProtectControlGroups=true
@@ -30,5 +30,5 @@ index 7e55b5043..e8267b338 100644
  WantedBy=bluetooth.target
  Alias=dbus-org.bluez.service
 -- 
-2.14.1
+2.21.0
 

@@ -1,7 +1,7 @@
 Name:    bluez
+Version: 5.51
+Release: 1%{?dist}
 Summary: Bluetooth utilities
-Version: 5.50
-Release: 8%{?dist}
 License: GPLv2+
 URL:     http://www.bluez.org/
 
@@ -14,35 +14,14 @@ Source2: 69-btattach-bcm.rules
 Source3: btattach-bcm@.service
 Source4: btattach-bcm-service.sh
 
-# https://github.com/hadess/bluez/commits/build-fixes-5.46
-Patch1: 0001-build-Enable-BIND_NOW.patch
-Patch2: 0003-tools-csr_usb-Fix-compilation-failure.patch
-
 # https://github.com/hadess/bluez/commits/obex-5.46
-Patch3: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
+Patch1: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 
 # https://github.com/hadess/bluez/commits/systemd-hardening
-Patch20: 0001-build-Always-define-confdir-and-statedir.patch
-Patch21: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
-Patch22: 0003-systemd-Add-more-filesystem-lockdown.patch
-Patch23: 0004-systemd-More-lockdown.patch
-
-# Fix A2DP disconnection with some headsets
-Patch30: 0001-policy-Add-logic-to-connect-a-Sink.patch
-
-# Backports:
-# https://bugzilla.redhat.com/show_bug.cgi?id=1711594
-Patch40: 0001-bluetooth.conf-remove-deprecated-at_console-statemen.patch
-# autopair enhancements
-Patch41: bluez-5.50-autopair-backports.patch
-# Discoverable filters support, as used in gnome-bluetooth
-Patch42: bluez-5.50-discoverability-backports.patch
-# a2dp fixes for newer codecs
-Patch43: bluez-5.50-a2dp-backports.patch
-# sixaxis pairing fixes
-Patch44: bluez-5.50-sixaxis-fixes.patch
-# y2038 build fix
-Patch45: 0001-tools-Fix-build-after-y2038-changes-in-glibc.patch
+Patch10: 0001-build-Always-define-confdir-and-statedir.patch
+Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
+Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
+Patch13: 0004-systemd-More-lockdown.patch
 
 BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
@@ -103,6 +82,10 @@ Requires: cups
 Summary: Put HID proxying bluetooth HCI's into HCI mode
 Requires: bluez%{?_isa} = %{version}-%{release}
 
+%package mesh
+Summary: Bluetooth mesh
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
+
 %package obexd
 Summary: Object Exchange daemon for sharing content
 Requires: bluez%{?_isa} = %{version}-%{release}
@@ -137,6 +120,9 @@ them again. Since you cannot use your bluetooth keyboard and mouse until
 they are paired, this will require the use of a regular (wired) USB keyboard
 and mouse.
 
+%description mesh
+Services for bluetooth mesh
+
 %description obexd
 Object Exchange daemon for sharing files, contacts etc over bluetooth
 
@@ -151,10 +137,10 @@ autoreconf -f -i
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
-make %{?_smp_mflags} V=1
+%{make_build}
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+%{make_install}
 
 # "make install" fails to install gatttool, necessary for Bluetooth Low Energy
 # Red Hat Bugzilla bug #1141909
@@ -207,6 +193,12 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %post hid2hci
 /sbin/udevadm trigger --subsystem-match=usb
 
+%post mesh
+%systemd_user_post bluetooth-mesh.service
+
+%preun mesh
+%systemd_user_preun bluetooth-mesh.service
+
 %post obexd
 %systemd_user_post obex.service
 
@@ -214,7 +206,6 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %systemd_user_preun obex.service
 
 %files
-%{!?_licensedir:%global license %%doc}
 %license COPYING
 %doc AUTHORS ChangeLog
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
@@ -234,7 +225,6 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/hcidump
 %{_bindir}/l2test
 %{_bindir}/hex2hcd
-%{_bindir}/meshctl
 %{_bindir}/mpris-proxy
 %{_bindir}/gatttool
 %{_bindir}/rctest
@@ -259,6 +249,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_unitdir}/bluetooth.service
 %{_unitdir}/btattach-bcm@.service
 %{_udevrulesdir}/69-btattach-bcm.rules
+%{_datadir}/zsh/site-functions/_bluetoothctl
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -279,12 +270,22 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_mandir}/man1/hid2hci.1*
 %{_udevrulesdir}/97-hid2hci.rules
 
+%files mesh
+%config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
+%{_bindir}/meshctl
+%{_datadir}/dbus-1/system-services/org.bluez.mesh.service
+%{_libexecdir}/bluetooth/bluetooth-meshd
+%{_unitdir}/bluetooth-mesh.service
+
 %files obexd
 %{_libexecdir}/bluetooth/obexd
 %{_datadir}/dbus-1/services/org.bluez.obex.service
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon Sep 23 2019 Bastien Nocera <bnocera@redhat.com> - 5.51-1
++ bluez-5.51-1
+
 * Thu Jun 06 2019 Bastien Nocera <bnocera@redhat.com> - 5.50-8
 + bluez-5.50-8
 - Backport loads of fixes from upstream, including:
