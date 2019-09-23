@@ -1,25 +1,26 @@
-From 5a65aa9b9d4035f94cee1016a256cec017a42aad Mon Sep 17 00:00:00 2001
-From: Peter Robinson <pbrobinson@gmail.com>
-Date: Fri, 20 Sep 2019 14:55:28 +0100
+From 13a348670fef0047555395ce6977e86e0005f8bd Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Wed, 13 Sep 2017 15:37:11 +0200
 Subject: [PATCH 3/4] systemd: Add more filesystem lockdown
 
 We can only access the configuration file as read-only and read-write
 to the Bluetooth cache directory and sub-directories.
 ---
- Makefile.am              | 2 ++
+ Makefile.am              | 3 +++
  src/bluetooth.service.in | 4 ++++
- 2 files changed, 6 insertions(+)
+ 2 files changed, 7 insertions(+)
 
 diff --git a/Makefile.am b/Makefile.am
-index 033faf3bf..f6347a14b 100644
+index ac88c12e0..0a6d09847 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -563,6 +563,8 @@ MAINTAINERCLEANFILES = Makefile.in \
+@@ -562,6 +562,9 @@ MAINTAINERCLEANFILES = Makefile.in \
  
  SED_PROCESS = $(AM_V_GEN)$(MKDIR_P) $(dir $@) && \
  		$(SED) -e 's,@pkglibexecdir\@,$(pkglibexecdir),g' \
-+		-e 's,@statedir\@,$(statedir),g' \
-+		-e 's,@confdir\@,$(confdir),g' \
++		       -e 's,@libexecdir\@,$(libexecdir),g' \
++		       -e 's,@statedir\@,$(statedir),g' \
++		       -e 's,@confdir\@,$(confdir),g' \
  		< $< > $@
  
  %.service: %.service.in Makefile
