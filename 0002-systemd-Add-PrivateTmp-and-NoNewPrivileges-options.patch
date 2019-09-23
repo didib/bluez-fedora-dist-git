@@ -1,4 +1,4 @@
-From 4e027d3c019846e216c6f76496d71c89f063ed59 Mon Sep 17 00:00:00 2001
+From 36a44fc05feebe1aab16c33a1121f952986b2801 Mon Sep 17 00:00:00 2001
 From: Craig Andrews <candrews@integralblue.com>
 Date: Wed, 13 Sep 2017 15:23:09 +0200
 Subject: [PATCH 2/4] systemd: Add PrivateTmp and NoNewPrivileges options
