@@ -1,6 +1,6 @@
 Name:    bluez
 Version: 5.52
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -134,6 +134,7 @@ libtoolize -f
 autoreconf -f -i
 %configure --enable-tools --enable-library --enable-deprecated \
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
+           --enable-testing \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
@@ -175,6 +176,9 @@ sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_
 install -D -p -m0644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_udevrulesdir}/
 install -D -p -m0644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_unitdir}/
 install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
+
+# Install the HCI emulator, useful for testing
+install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 
 #check
 #make check
@@ -241,6 +245,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_mandir}/man1/l2ping.1.*
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/*
+%dir %{_libexecdir}/bluetooth
 %{_libexecdir}/bluetooth/bluetoothd
 %{_libexecdir}/bluetooth/btattach-bcm-service.sh
 %{_libdir}/bluetooth/
@@ -261,6 +266,8 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_libdir}/libbluetooth.so
 %{_includedir}/bluetooth
 %{_libdir}/pkgconfig/bluez.pc
+%dir %{_libexecdir}/bluetooth
+%{_libexecdir}/bluetooth/btvirt
 
 %files cups
 %_cups_serverbin/backend/bluetooth
@@ -283,6 +290,9 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon Dec 02 2019 Lubomir Rintel <lkundrak@v3.sk> - 5.52-2
+- Package the btvirt binary
+
 * Sun Nov  3 2019 Peter Robinson <pbrobinson@fedoraproject.org> 5.52-1
 - bluez 5.52
 
