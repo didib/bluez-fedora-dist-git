@@ -28,7 +28,7 @@ BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
-BuildRequires: libell-devel
+BuildRequires: libell-devel >= 0.26
 # For bluetooth mesh
 BuildRequires: json-c-devel
 # For cable pairing
