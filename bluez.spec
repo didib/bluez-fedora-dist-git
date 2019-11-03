@@ -1,5 +1,5 @@
 Name:    bluez
-Version: 5.51
+Version: 5.52
 Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
@@ -28,7 +28,7 @@ BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
-BuildRequires: libell-devel
+BuildRequires: libell-devel >= 0.26
 # For bluetooth mesh
 BuildRequires: json-c-devel
 # For cable pairing
@@ -283,8 +283,11 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Nov  3 2019 Peter Robinson <pbrobinson@fedoraproject.org> 5.52-1
+- bluez 5.52
+
 * Fri Sep 20 2019 Peter Robinson <pbrobinson@fedoraproject.org> 5.51-1
-+ bluez 5.51
+- bluez 5.51
 
 * Wed Jul 24 2019 Fedora Release Engineering <releng@fedoraproject.org> - 5.50-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
