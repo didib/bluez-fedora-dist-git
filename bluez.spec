@@ -1,6 +1,6 @@
 Name:    bluez
 Version: 5.52
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -84,6 +84,7 @@ Requires: bluez%{?_isa} = %{version}-%{release}
 
 %package mesh
 Summary: Bluetooth mesh
+Requires: bluez%{?_isa} = %{version}-%{release}
 Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
 %package obexd
@@ -165,6 +166,7 @@ rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/usr/lib/ud
 install -D -p -m0644 tools/hid2hci.rules ${RPM_BUILD_ROOT}/%{_udevrulesdir}/97-hid2hci.rules
 
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
+install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth/mesh
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
@@ -278,11 +280,13 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_udevrulesdir}/97-hid2hci.rules
 
 %files mesh
+%doc tools/mesh/*.json
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
 %{_bindir}/meshctl
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
 %{_libexecdir}/bluetooth/bluetooth-meshd
 %{_unitdir}/bluetooth-mesh.service
+%{_localstatedir}/lib/bluetooth/mesh
 
 %files obexd
 %{_libexecdir}/bluetooth/obexd
@@ -290,6 +294,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Dec 12 2019 Peter Robinson <pbrobinson@fedoraproject.org> 5.52-3
+- Minor bluetooth mesh improvements
+
 * Mon Dec 02 2019 Lubomir Rintel <lkundrak@v3.sk> - 5.52-2
 - Package the btvirt binary
 
