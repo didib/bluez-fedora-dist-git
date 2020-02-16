@@ -281,9 +281,10 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_udevrulesdir}/97-hid2hci.rules
 
 %files mesh
-%doc tools/mesh/*.json
+%doc tools/mesh-gatt/*.json
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
 %{_bindir}/meshctl
+%{_bindir}/mesh-cfgclient
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
 %{_libexecdir}/bluetooth/bluetooth-meshd
 %{_unitdir}/bluetooth-mesh.service
