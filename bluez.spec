@@ -1,6 +1,6 @@
 Name:    bluez
 Version: 5.53
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -28,7 +28,7 @@ BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
-BuildRequires: libell-devel >= 0.26
+BuildRequires: libell-devel >= 0.28
 # For bluetooth mesh
 BuildRequires: json-c-devel
 # For cable pairing
@@ -172,6 +172,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
 #copy bluetooth config file and setup auto enable
 install -D -p -m0644 src/main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/main.conf
+install -D -p -m0644 mesh/mesh-main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/mesh-main.conf
 sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/main.conf
 
 #serial port connected Broadcom HCIs scripts
@@ -283,6 +284,7 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %files mesh
 %doc tools/mesh-gatt/*.json
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
+%config %{_sysconfdir}/bluetooth/mesh-main.conf
 %{_bindir}/meshctl
 %{_bindir}/mesh-cfgclient
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
@@ -296,6 +298,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Feb 16 2020 Peter Robinson <pbrobinson@fedoraproject.org> 5.53-2
+- Minor mesh updates
+
 * Sun Feb 16 2020 Peter Robinson <pbrobinson@fedoraproject.org> 5.53-1
 - bluez 5.53
 
