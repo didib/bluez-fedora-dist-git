@@ -1,11 +1,11 @@
 Name:    bluez
-Version: 5.52
-Release: 4%{?dist}
+Version: 5.53
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
 
-Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
+Source0: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.xz
 Source1: bluez.gitignore
 
 # Scripts for automatically btattach-ing serial ports connected to Broadcom HCIs
@@ -294,6 +294,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Feb 16 2020 Peter Robinson <pbrobinson@fedoraproject.org> 5.53-1
+- bluez 5.53
+
 * Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5.52-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
