@@ -1,11 +1,11 @@
 Name:    bluez
-Version: 5.52
-Release: 1%{?dist}
+Version: 5.53
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
 
-Source0: http://www.kernel.org/pub/linux/bluetooth/bluez-%{version}.tar.xz
+Source0: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.xz
 Source1: bluez.gitignore
 
 # Scripts for automatically btattach-ing serial ports connected to Broadcom HCIs
@@ -28,7 +28,7 @@ BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
 BuildRequires: readline-devel
-BuildRequires: libell-devel >= 0.26
+BuildRequires: libell-devel >= 0.28
 # For bluetooth mesh
 BuildRequires: json-c-devel
 # For cable pairing
@@ -84,6 +84,7 @@ Requires: bluez%{?_isa} = %{version}-%{release}
 
 %package mesh
 Summary: Bluetooth mesh
+Requires: bluez%{?_isa} = %{version}-%{release}
 Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
 %package obexd
@@ -134,6 +135,7 @@ libtoolize -f
 autoreconf -f -i
 %configure --enable-tools --enable-library --enable-deprecated \
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
+           --enable-testing \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
@@ -164,17 +166,22 @@ rm -f ${RPM_BUILD_ROOT}/%{_sysconfdir}/udev/*.rules ${RPM_BUILD_ROOT}/usr/lib/ud
 install -D -p -m0644 tools/hid2hci.rules ${RPM_BUILD_ROOT}/%{_udevrulesdir}/97-hid2hci.rules
 
 install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth
+install -d -m0755 $RPM_BUILD_ROOT/%{_localstatedir}/lib/bluetooth/mesh
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 
 #copy bluetooth config file and setup auto enable
 install -D -p -m0644 src/main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/main.conf
+install -D -p -m0644 mesh/mesh-main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/mesh-main.conf
 sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/main.conf
 
 #serial port connected Broadcom HCIs scripts
 install -D -p -m0644 %{SOURCE2} ${RPM_BUILD_ROOT}/%{_udevrulesdir}/
 install -D -p -m0644 %{SOURCE3} ${RPM_BUILD_ROOT}/%{_unitdir}/
 install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
+
+# Install the HCI emulator, useful for testing
+install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 
 #check
 #make check
@@ -209,6 +216,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %license COPYING
 %doc AUTHORS ChangeLog
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
+%dir %{_sysconfdir}/bluetooth
 %config %{_sysconfdir}/bluetooth/main.conf
 %{_bindir}/btattach
 %{_bindir}/ciptool
@@ -241,6 +249,7 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_mandir}/man1/l2ping.1.*
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/*
+%dir %{_libexecdir}/bluetooth
 %{_libexecdir}/bluetooth/bluetoothd
 %{_libexecdir}/bluetooth/btattach-bcm-service.sh
 %{_libdir}/bluetooth/
@@ -261,6 +270,8 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_libdir}/libbluetooth.so
 %{_includedir}/bluetooth
 %{_libdir}/pkgconfig/bluez.pc
+%dir %{_libexecdir}/bluetooth
+%{_libexecdir}/bluetooth/btvirt
 
 %files cups
 %_cups_serverbin/backend/bluetooth
@@ -271,11 +282,15 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_udevrulesdir}/97-hid2hci.rules
 
 %files mesh
+%doc tools/mesh-gatt/*.json
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
+%config %{_sysconfdir}/bluetooth/mesh-main.conf
 %{_bindir}/meshctl
+%{_bindir}/mesh-cfgclient
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
 %{_libexecdir}/bluetooth/bluetooth-meshd
 %{_unitdir}/bluetooth-mesh.service
+%{_localstatedir}/lib/bluetooth/mesh
 
 %files obexd
 %{_libexecdir}/bluetooth/obexd
@@ -283,6 +298,21 @@ install -D -p -m0755 %{SOURCE4} ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Feb 16 2020 Peter Robinson <pbrobinson@fedoraproject.org> 5.53-2
+- Minor mesh updates
+
+* Sun Feb 16 2020 Peter Robinson <pbrobinson@fedoraproject.org> 5.53-1
+- bluez 5.53
+
+* Tue Jan 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5.52-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Thu Dec 12 2019 Peter Robinson <pbrobinson@fedoraproject.org> 5.52-3
+- Minor bluetooth mesh improvements
+
+* Mon Dec 02 2019 Lubomir Rintel <lkundrak@v3.sk> - 5.52-2
+- Package the btvirt binary
+
 * Sun Nov  3 2019 Peter Robinson <pbrobinson@fedoraproject.org> 5.52-1
 - bluez 5.52
 
