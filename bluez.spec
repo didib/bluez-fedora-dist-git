@@ -215,6 +215,7 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %license COPYING
 %doc AUTHORS ChangeLog
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
+%dir %{_sysconfdir}/bluetooth
 %config %{_sysconfdir}/bluetooth/main.conf
 %{_bindir}/btattach
 %{_bindir}/ciptool
