@@ -1,6 +1,6 @@
 Name:    bluez
 Version: 5.54
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -298,6 +298,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Apr 21 2020 Björn Esser <besser82@fedoraproject.org> - 5.54-2
+- Rebuild (json-c)
+
 * Sun Mar 15 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 5.54-1
 - bluez 5.54
 
