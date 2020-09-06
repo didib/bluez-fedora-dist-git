@@ -1,5 +1,5 @@
 Name:    bluez
-Version: 5.54
+Version: 5.55
 Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
@@ -135,7 +135,7 @@ libtoolize -f
 autoreconf -f -i
 %configure --enable-tools --enable-library --enable-deprecated \
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
-           --enable-testing \
+           --enable-hid2hci --enable-testing \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
@@ -298,6 +298,19 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Sep 06 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 5.55-1
+- Update to 5.55
+
+* Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5.54-4
+- Second attempt - Rebuilt for
+  https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Mon Jul 27 2020 Fedora Release Engineering <releng@fedoraproject.org> - 5.54-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Tue Apr 21 2020 Björn Esser <besser82@fedoraproject.org> - 5.54-2
+- Rebuild (json-c)
+
 * Sun Mar 15 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 5.54-1
 - bluez 5.54
 
