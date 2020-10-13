@@ -1,6 +1,12 @@
+%if 0%{?fedora} || 0%{?rhel} <= 8
+%bcond_without deprecated
+%else
+%bcond_with deprecated
+%endif
+
 Name:    bluez
 Version: 5.55
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -9,7 +15,6 @@ Source0: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.xz
 Source1: bluez.gitignore
 
 # Scripts for automatically btattach-ing serial ports connected to Broadcom HCIs
-# as found on some Atom based x86 hardware
 Source2: 69-btattach-bcm.rules
 Source3: btattach-bcm@.service
 Source4: btattach-bcm-service.sh
@@ -23,7 +28,6 @@ Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch13: 0004-systemd-More-lockdown.patch
 
-BuildRequires: git-core
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
 BuildRequires: libical-devel
@@ -46,61 +50,66 @@ Requires(postun): systemd
 
 %description
 Utilities for use in Bluetooth applications:
-	- hcitool
-	- hciattach
-	- hciconfig
-	- bluetoothd
-	- l2ping
-	- rfcomm
-	- sdptool
-	- bccmd
-	- bluetoothctl
-	- btmon
-	- hcidump
-	- l2test
-	- rctest
-	- gatttool
-	- start scripts (Red Hat)
-	- pcmcia configuration files
 	- avinfo
+	- bccmd
+	- bluemoon
+	- bluetoothctl
+	- bluetoothd
+	- btattach
+	- btmon
+	- hex2hcd
+	- l2ping
+	- l2test
+	- mpris-proxy
+	- rctest
 
 The BLUETOOTH trademarks are owned by Bluetooth SIG, Inc., U.S.A.
-
-%package libs
-Summary: Libraries for use in Bluetooth applications
-
-%package libs-devel
-Summary: Development libraries for Bluetooth applications
-Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
 %package cups
 Summary: CUPS printer backend for Bluetooth printers
 Requires: bluez%{?_isa} = %{version}-%{release}
 Requires: cups
 
-%package hid2hci
-Summary: Put HID proxying bluetooth HCI's into HCI mode
-Requires: bluez%{?_isa} = %{version}-%{release}
-
-%package mesh
-Summary: Bluetooth mesh
-Requires: bluez%{?_isa} = %{version}-%{release}
-Requires: bluez-libs%{?_isa} = %{version}-%{release}
-
-%package obexd
-Summary: Object Exchange daemon for sharing content
-Requires: bluez%{?_isa} = %{version}-%{release}
-Requires: bluez-libs%{?_isa} = %{version}-%{release}
-
 %description cups
 This package contains the CUPS backend
+
+%if %{with deprecated}
+%package deprecated
+Summary: Deprecated Bluetooth applications
+Requires: bluez%{?_isa} = %{version}-%{release}
+Obsoletes: bluez < 5.55-2
+
+%description deprecated
+Bluetooth applications that have bee deprecated by upstream. They have been
+replaced by funcationality in the core bluetoothctl and will eventually
+be dropped by upstream. Utilities include:
+	- ciptool
+	- gatttool
+	- hciattach
+	- hciconfig
+	- hcidump
+	- hcitool
+	- rfcomm
+	- sdptool
+%endif
+
+%package libs
+Summary: Libraries for use in Bluetooth applications
 
 %description libs
 Libraries for use in Bluetooth applications.
 
+%package libs-devel
+Summary: Development libraries for Bluetooth applications
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
+
 %description libs-devel
 bluez-libs-devel contains development libraries and headers for
 use in Bluetooth applications.
+
+%package hid2hci
+Summary: Put HID proxying bluetooth HCI's into HCI mode
+Requires: bluez%{?_isa} = %{version}-%{release}
 
 %description hid2hci
 Most allinone PC's and bluetooth keyboard / mouse sets which include a
@@ -121,19 +130,32 @@ them again. Since you cannot use your bluetooth keyboard and mouse until
 they are paired, this will require the use of a regular (wired) USB keyboard
 and mouse.
 
+%package mesh
+Summary: Bluetooth mesh
+Requires: bluez%{?_isa} = %{version}-%{release}
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
+
 %description mesh
 Services for bluetooth mesh
+
+%package obexd
+Summary: Object Exchange daemon for sharing content
+Requires: bluez%{?_isa} = %{version}-%{release}
+Requires: bluez-libs%{?_isa} = %{version}-%{release}
 
 %description obexd
 Object Exchange daemon for sharing files, contacts etc over bluetooth
 
 %prep
-%autosetup -S git
+%autosetup -p1
 
 %build
 libtoolize -f
 autoreconf -f -i
-%configure --enable-tools --enable-library --enable-deprecated \
+%configure --enable-tools --enable-library \
+%if %{with deprecated}
+           --enable-deprecated \
+%endif
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --enable-hid2hci --enable-testing \
            --with-systemdsystemunitdir=%{_unitdir} \
@@ -144,16 +166,17 @@ autoreconf -f -i
 %install
 %{make_install}
 
+%if %{with deprecated}
 # "make install" fails to install gatttool, necessary for Bluetooth Low Energy
-# Red Hat Bugzilla bug #1141909
-# Debian bug #720486
+# Red Hat Bugzilla bug #1141909, Debian bug #720486
 install -m0755 attrib/gatttool $RPM_BUILD_ROOT%{_bindir}
+%endif
 
 # "make install" fails to install avinfo
 # Red Hat Bugzilla bug #1699680
 install -m0755 tools/avinfo $RPM_BUILD_ROOT%{_bindir}
 
-# Remove autocrap and libtool droppings
+# Remove libtool archive
 find $RPM_BUILD_ROOT -name '*.la' -delete
 
 # Remove the cups backend from libdir, and install it in /usr/lib whatever the install
@@ -215,40 +238,25 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %files
 %license COPYING
 %doc AUTHORS ChangeLog
-%config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %dir %{_sysconfdir}/bluetooth
 %config %{_sysconfdir}/bluetooth/main.conf
-%{_bindir}/btattach
-%{_bindir}/ciptool
-%{_bindir}/hcitool
-%{_bindir}/l2ping
-%{_bindir}/rfcomm
-%{_bindir}/sdptool
-%{_bindir}/bccmd
-%{_bindir}/bluetoothctl
-%{_bindir}/bluemoon
-%{_bindir}/btmon
-%{_bindir}/hciattach
-%{_bindir}/hciconfig
-%{_bindir}/hcidump
-%{_bindir}/l2test
-%{_bindir}/hex2hcd
-%{_bindir}/mpris-proxy
-%{_bindir}/gatttool
-%{_bindir}/rctest
+%config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_bindir}/avinfo
-%{_mandir}/man1/btattach.1.gz
-%{_mandir}/man1/ciptool.1.gz
-%{_mandir}/man1/hcitool.1.gz
-%{_mandir}/man1/rfcomm.1.gz
-%{_mandir}/man1/sdptool.1.gz
+%{_bindir}/bccmd
+%{_bindir}/bluemoon
+%{_bindir}/bluetoothctl
+%{_bindir}/btattach
+%{_bindir}/btmon
+%{_bindir}/hex2hcd
+%{_bindir}/l2ping
+%{_bindir}/l2test
+%{_bindir}/mpris-proxy
+%{_bindir}/rctest
+%{_mandir}/man1/btattach.1.*
 %{_mandir}/man1/bccmd.1.*
-%{_mandir}/man1/hciattach.1.*
-%{_mandir}/man1/hciconfig.1.*
-%{_mandir}/man1/hcidump.1.*
 %{_mandir}/man1/l2ping.1.*
 %{_mandir}/man1/rctest.1.*
-%{_mandir}/man8/*
+%{_mandir}/man8/bluetoothd.8.*
 %dir %{_libexecdir}/bluetooth
 %{_libexecdir}/bluetooth/bluetoothd
 %{_libexecdir}/bluetooth/btattach-bcm-service.sh
@@ -259,6 +267,25 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_unitdir}/btattach-bcm@.service
 %{_udevrulesdir}/69-btattach-bcm.rules
 %{_datadir}/zsh/site-functions/_bluetoothctl
+
+%if %{with deprecated}
+%files deprecated
+%{_bindir}/ciptool
+%{_bindir}/gatttool
+%{_bindir}/hciattach
+%{_bindir}/hciconfig
+%{_bindir}/hcidump
+%{_bindir}/hcitool
+%{_bindir}/rfcomm
+%{_bindir}/sdptool
+%{_mandir}/man1/ciptool.1.*
+%{_mandir}/man1/hciattach.1.*
+%{_mandir}/man1/hciconfig.1.*
+%{_mandir}/man1/hcidump.1.*
+%{_mandir}/man1/hcitool.1.*
+%{_mandir}/man1/rfcomm.1.*
+%{_mandir}/man1/sdptool.1.*
+%endif
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -283,8 +310,8 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 
 %files mesh
 %doc tools/mesh-gatt/*.json
-%config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
 %config %{_sysconfdir}/bluetooth/mesh-main.conf
+%config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
 %{_bindir}/meshctl
 %{_bindir}/mesh-cfgclient
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
@@ -298,6 +325,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Sep 13 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 5.55-2
+- Split tools marked as deprecated to separate sub package (rhbz #1887569)
+
 * Sun Sep 06 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 5.55-1
 - Update to 5.55
 
