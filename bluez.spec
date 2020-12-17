@@ -41,6 +41,7 @@ BuildRequires: systemd-devel
 BuildRequires: cups-devel
 # For autoreconf
 BuildRequires: libtool automake autoconf
+BuildRequires: make
 
 Requires: dbus >= 1.6
 
