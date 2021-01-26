@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.55
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -326,6 +326,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5.55-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Sun Sep 13 2020 Peter Robinson <pbrobinson@fedoraproject.org> - 5.55-2
 - Split tools marked as deprecated to separate sub package (rhbz #1887569)
 
