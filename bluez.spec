@@ -5,15 +5,14 @@
 %endif
 
 Name:    bluez
-Version: 5.55
-Release: 3%{?dist}
+Version: 5.56
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
 
 Source0: http://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.xz
 Source1: bluez.gitignore
-
 # Scripts for automatically btattach-ing serial ports connected to Broadcom HCIs
 Source2: 69-btattach-bcm.rules
 Source3: btattach-bcm@.service
@@ -21,7 +20,6 @@ Source4: btattach-bcm-service.sh
 
 # https://github.com/hadess/bluez/commits/obex-5.46
 Patch1: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
-
 # https://github.com/hadess/bluez/commits/systemd-hardening
 Patch10: 0001-build-Always-define-confdir-and-statedir.patch
 Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
@@ -30,9 +28,10 @@ Patch13: 0004-systemd-More-lockdown.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
+BuildRequires: libell-devel >= 0.37
 BuildRequires: libical-devel
+BuildRequires: make
 BuildRequires: readline-devel
-BuildRequires: libell-devel >= 0.28
 # For bluetooth mesh
 BuildRequires: json-c-devel
 # For cable pairing
@@ -41,10 +40,8 @@ BuildRequires: systemd-devel
 BuildRequires: cups-devel
 # For autoreconf
 BuildRequires: libtool automake autoconf
-BuildRequires: make
 
 Requires: dbus >= 1.6
-
 Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
@@ -52,7 +49,6 @@ Requires(postun): systemd
 %description
 Utilities for use in Bluetooth applications:
 	- avinfo
-	- bccmd
 	- bluemoon
 	- bluetoothctl
 	- bluetoothd
@@ -151,8 +147,7 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 %autosetup -p1
 
 %build
-libtoolize -f
-autoreconf -f -i
+autoreconf -vif
 %configure --enable-tools --enable-library \
 %if %{with deprecated}
            --enable-deprecated \
@@ -243,7 +238,6 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %config %{_sysconfdir}/bluetooth/main.conf
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth.conf
 %{_bindir}/avinfo
-%{_bindir}/bccmd
 %{_bindir}/bluemoon
 %{_bindir}/bluetoothctl
 %{_bindir}/btattach
@@ -254,7 +248,6 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/mpris-proxy
 %{_bindir}/rctest
 %{_mandir}/man1/btattach.1.*
-%{_mandir}/man1/bccmd.1.*
 %{_mandir}/man1/l2ping.1.*
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/bluetoothd.8.*
@@ -326,6 +319,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sat Feb 27 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.56-1
+- Update to 5.56
+
 * Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5.55-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
