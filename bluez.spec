@@ -169,6 +169,11 @@ install -m0755 attrib/gatttool $RPM_BUILD_ROOT%{_bindir}
 # Red Hat Bugzilla bug #1699680
 install -m0755 tools/avinfo $RPM_BUILD_ROOT%{_bindir}
 
+# btmgmt is not installed by "make install", but it is useful for debugging
+# some issues and to set the MAC address on HCIs which don't have their
+# MAC address configured 
+install -m0755 tools/btmgmt $RPM_BUILD_ROOT%{_bindir}
+
 # Remove libtool archive
 find $RPM_BUILD_ROOT -name '*.la' -delete
 
@@ -233,6 +238,7 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/bluemoon
 %{_bindir}/bluetoothctl
 %{_bindir}/btattach
+%{_bindir}/btmgmt
 %{_bindir}/btmon
 %{_bindir}/hex2hcd
 %{_bindir}/l2ping
@@ -311,6 +317,7 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 * Sun Mar 14 2021 Hans de Goede <hdegoede@redhat.com> - 5.56-3
 - Drop obsolete udev rule + systemd service to call btattach on BT-HCIs
   connected via UART from userspace, this is all handled in the kernel now
+- Add the btmgmt util to the packaged files
 
 * Tue Mar 02 2021 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl> - 5.56-2
 - Rebuilt for updated systemd-rpm-macros
