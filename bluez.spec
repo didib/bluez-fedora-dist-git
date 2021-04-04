@@ -5,8 +5,8 @@
 %endif
 
 Name:    bluez
-Version: 5.56
-Release: 4%{?dist}
+Version: 5.58
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -22,7 +22,6 @@ Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch13: 0004-systemd-More-lockdown.patch
 Patch14: 0005-media-rename-local-function-conflicting-with-pause-2.patch
-Patch15: bluez-avdtp-fix-removing-all-seps-when-loading-from-cache.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -315,6 +314,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Apr 04 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.58-1
+- Update to 5.58
+
 * Sun Mar 14 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.56-4
 - Fix for avdtp audio disconnexts
 
