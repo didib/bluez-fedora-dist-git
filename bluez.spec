@@ -1,5 +1,5 @@
 Name:    bluez
-Version: 5.56
+Version: 5.58
 Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
@@ -292,6 +292,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Sun Apr 04 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.58-1
+- Update to 5.58
+
 * Sat Feb 27 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.56-1
 - Update to 5.56
 
