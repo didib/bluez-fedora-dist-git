@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.58
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -22,6 +22,12 @@ Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch13: 0004-systemd-More-lockdown.patch
 Patch14: 0005-media-rename-local-function-conflicting-with-pause-2.patch
+
+# Fix rfkill reading from newer kernels
+Patch15: 0001-rfkill-Fix-reading-from-rfkill-socket.patch
+
+# Fix FTBFS with newer glib versions
+Patch16: 0002-Use-g_memdup2-everywhere.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -314,6 +320,11 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon May 03 2021 Benjamin Berg <bberg@redhat.com> - 5.58-2
+- Fix rfkill reading
+  Resolves: #1944482
+- Change all g_memdup calls to use g_memdup2
+
 * Sun Apr 04 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.58-1
 - Update to 5.58
 
