@@ -5,8 +5,8 @@
 %endif
 
 Name:    bluez
-Version: 5.58
-Release: 2%{?dist}
+Version: 5.59
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -320,6 +320,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Jun 15 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.59-1
+- Update to 5.59
+
 * Mon May 03 2021 Benjamin Berg <bberg@redhat.com> - 5.58-2
 - Fix rfkill reading
   Resolves: #1944482
