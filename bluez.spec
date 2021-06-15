@@ -254,6 +254,7 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/mpris-proxy
 %{_bindir}/rctest
 %{_mandir}/man1/btattach.1.*
+%{_mandir}/man1/btmon.1.*
 %{_mandir}/man1/l2ping.1.*
 %{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/bluetoothd.8.*
@@ -311,10 +312,12 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
 %{_bindir}/meshctl
 %{_bindir}/mesh-cfgclient
+%{_bindir}/mesh-cfgtest
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
 %{_libexecdir}/bluetooth/bluetooth-meshd
 %{_unitdir}/bluetooth-mesh.service
 %{_localstatedir}/lib/bluetooth/mesh
+%{_mandir}/man8/bluetooth-meshd.8*
 
 %files obexd
 %{_libexecdir}/bluetooth/obexd
