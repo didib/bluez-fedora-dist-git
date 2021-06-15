@@ -43,6 +43,8 @@ BuildRequires: systemd-devel
 BuildRequires: cups-devel
 # For autoreconf
 BuildRequires: libtool automake autoconf
+# For man pages
+BuildRequires: python3-docutils
 
 Requires: dbus >= 1.6
 Requires(post): systemd
