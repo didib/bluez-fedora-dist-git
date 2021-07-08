@@ -5,7 +5,7 @@
 %endif
 
 Name:    bluez
-Version: 5.59
+Version: 5.60
 Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
@@ -22,9 +22,6 @@ Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch13: 0004-systemd-More-lockdown.patch
 Patch14: 0005-media-rename-local-function-conflicting-with-pause-2.patch
-
-# Fix rfkill reading from newer kernels
-Patch15: 0001-rfkill-Fix-reading-from-rfkill-socket.patch
 
 # Fix FTBFS with newer glib versions
 Patch16: 0002-Use-g_memdup2-everywhere.patch
@@ -153,7 +150,7 @@ Object Exchange daemon for sharing files, contacts etc over bluetooth
 
 %build
 autoreconf -vif
-%configure --enable-tools --enable-library \
+%configure --enable-tools --enable-library --disable-optimization \
 %if %{with deprecated}
            --enable-deprecated \
 %endif
@@ -325,6 +322,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Jul 08 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.60-1
+- Update to 5.60
+
 * Tue Jun 15 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.59-1
 - Update to 5.59
 
