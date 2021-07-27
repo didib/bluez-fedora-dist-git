@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.60
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -22,9 +22,10 @@ Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
 Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
 Patch13: 0004-systemd-More-lockdown.patch
 Patch14: 0005-media-rename-local-function-conflicting-with-pause-2.patch
-
 # Fix FTBFS with newer glib versions
 Patch16: 0002-Use-g_memdup2-everywhere.patch
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=b497b5942a8beb8f89ca1c359c54ad67ec843055
+Patch20: 0001-adapter-Fix-storing-discoverable-setting.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -322,6 +323,10 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Jul 27 2021 Bastien Nocera <bnocera@redhat.com> - 5.60-2
++ bluez-5.60-2
+- Fix for CVE-2021-3658 (rhbz#1986232)
+
 * Thu Jul 08 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.60-1
 - Update to 5.60
 
