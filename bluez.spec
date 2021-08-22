@@ -24,8 +24,6 @@ Patch13: 0004-systemd-More-lockdown.patch
 Patch14: 0005-media-rename-local-function-conflicting-with-pause-2.patch
 # Fix FTBFS with newer glib versions
 Patch16: 0002-Use-g_memdup2-everywhere.patch
-# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=b497b5942a8beb8f89ca1c359c54ad67ec843055
-Patch20: 0001-adapter-Fix-storing-discoverable-setting.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
