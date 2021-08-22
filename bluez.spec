@@ -5,8 +5,8 @@
 %endif
 
 Name:    bluez
-Version: 5.60
-Release: 2%{?dist}
+Version: 5.61
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -323,9 +323,18 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
-* Tue Jul 27 2021 Bastien Nocera <bnocera@redhat.com> - 5.60-2
-+ bluez-5.60-2
-- Fix for CVE-2021-3658 (rhbz#1986232)
+* Sun Aug 22 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.61-1
+- Update to 5.61
+
+* Tue Jul 27 2021 Bastien Nocera <bnocera@redhat.com> - 5.60-4
++ bluez-5.60-4
+- Fix for CVE-2021-3658 (see rhbz#1984728)
+
+* Wed Jul 21 2021 Fedora Release Engineering <releng@fedoraproject.org> - 5.60-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Sat Jul 10 2021 Björn Esser <besser82@fedoraproject.org> - 5.60-2
+- Rebuild for versioned symbols in json-c
 
 * Thu Jul 08 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.60-1
 - Update to 5.60
