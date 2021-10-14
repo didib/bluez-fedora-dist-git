@@ -5,7 +5,7 @@
 %endif
 
 Name:    bluez
-Version: 5.61
+Version: 5.62
 Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
@@ -17,13 +17,12 @@ Source1: bluez.gitignore
 # https://github.com/hadess/bluez/commits/obex-5.46
 Patch1: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 # https://github.com/hadess/bluez/commits/systemd-hardening
-Patch10: 0001-build-Always-define-confdir-and-statedir.patch
-Patch11: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
-Patch12: 0003-systemd-Add-more-filesystem-lockdown.patch
-Patch13: 0004-systemd-More-lockdown.patch
-Patch14: 0005-media-rename-local-function-conflicting-with-pause-2.patch
+Patch2: 0001-build-Always-define-confdir-and-statedir.patch
+Patch3: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
+Patch4: 0003-systemd-Add-more-filesystem-lockdown.patch
+Patch5: 0004-systemd-More-lockdown.patch
 # Fix FTBFS with newer glib versions
-Patch16: 0002-Use-g_memdup2-everywhere.patch
+Patch6: 0002-Use-g_memdup2-everywhere.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -321,6 +320,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Oct 13 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.62-1
+- Update to 5.62
+
 * Sun Aug 22 2021 Peter Robinson <pbrobinson@fedoraproject.org> - 5.61-1
 - Update to 5.61
 
