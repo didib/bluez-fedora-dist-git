@@ -5,8 +5,8 @@
 %endif
 
 Name:    bluez
-Version: 5.62
-Release: 2%{?dist}
+Version: 5.63
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -324,6 +324,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Wed Jan 05 2022 Peter Robinson <pbrobinson@fedoraproject.org> - 5.63-1
+- Update to 5.63
+
 * Sun Nov 07 2021 Adam Williamson <awilliam@redhat.com> - 5.62-2
 - Revert an upstream change to fix problems with Logitech MX mice (#2019970)
 
