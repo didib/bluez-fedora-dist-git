@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.63
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -26,7 +26,9 @@ Patch6: 0002-Use-g_memdup2-everywhere.patch
 # Fix initialization problems with Logitech MX Master mice
 # https://bugzilla.redhat.com/show_bug.cgi?id=2019970
 # https://github.com/bluez/bluez/issues/220
-Patch7: 0001-Revert-attrib-Make-use-of-bt_att_resend.patch
+# Both patches have one rediff necessary to apply to 5.63
+Patch7: 0001-hog-Fix-read-order-of-attributes-rediffed.patch
+Patch8: 0002-hog-Add-input-queue-while-uhid-device-has-not-been-c-rediffed.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -324,6 +326,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Jan 13 2022 Adam Williamson <awilliam@redhat.com> - 5.63-2
+- Update fix for MX mice to the one merged upstream
+
 * Wed Jan 05 2022 Peter Robinson <pbrobinson@fedoraproject.org> - 5.63-1
 - Update to 5.63
 
