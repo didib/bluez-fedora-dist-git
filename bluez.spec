@@ -5,8 +5,8 @@
 %endif
 
 Name:    bluez
-Version: 5.63
-Release: 3%{?dist}
+Version: 5.64
+Release: 1%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -16,19 +16,6 @@ Source1: bluez.gitignore
 
 # https://github.com/hadess/bluez/commits/obex-5.46
 Patch1: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
-# https://github.com/hadess/bluez/commits/systemd-hardening
-Patch2: 0001-build-Always-define-confdir-and-statedir.patch
-Patch3: 0002-systemd-Add-PrivateTmp-and-NoNewPrivileges-options.patch
-Patch4: 0003-systemd-Add-more-filesystem-lockdown.patch
-Patch5: 0004-systemd-More-lockdown.patch
-# Fix FTBFS with newer glib versions
-Patch6: 0002-Use-g_memdup2-everywhere.patch
-# Fix initialization problems with Logitech MX Master mice
-# https://bugzilla.redhat.com/show_bug.cgi?id=2019970
-# https://github.com/bluez/bluez/issues/220
-# Both patches have one rediff necessary to apply to 5.63
-Patch7: 0001-hog-Fix-read-order-of-attributes-rediffed.patch
-Patch8: 0002-hog-Add-input-queue-while-uhid-device-has-not-been-c-rediffed.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -326,6 +313,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Mon Mar 21 2022 Peter Robinson <pbrobinson@fedoraproject.org> - 5.64-1
+- Update to 5.64
+
 * Wed Jan 19 2022 Fedora Release Engineering <releng@fedoraproject.org> - 5.63-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
