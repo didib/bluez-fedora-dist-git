@@ -31,6 +31,8 @@ BuildRequires: readline-devel
 BuildRequires: json-c-devel
 # For cable pairing
 BuildRequires: systemd-devel
+# For udev rules
+BuildRequires: systemd
 # For printing
 BuildRequires: cups-devel
 # For autoreconf
