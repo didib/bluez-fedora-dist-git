@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.65
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -17,8 +17,14 @@ Source1: bluez.gitignore
 # https://github.com/hadess/bluez/commits/obex-5.46
 Patch1: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 
-# https://lore.kernel.org/linux-bluetooth/20220831091912.47894-1-hadess@hadess.net/T/#t
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=ede7b915980f
 Patch2: 0001-adapter-Reset-pending-settings-when-receiving-MGMT-e.patch
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=abf5ba6b80ad
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=58021a665b7f
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=48992da64f52
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=6e49216ad47d
+# https://git.kernel.org/pub/scm/bluetooth/bluez.git/commit/?id=61f4f2895882
+# https://lore.kernel.org/linux-bluetooth/20220901110719.176944-1-hadess@hadess.net/T/#m9c08d004cd5422783ee1d93154f42303bba9169f
 Patch3: power-state-adapter-property.patch
 
 BuildRequires: dbus-devel >= 1.6
@@ -321,6 +327,10 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Sep 01 2022 Bastien Nocera <bnocera@redhat.com> - 5.65-3
++ bluez-5.65-3
+- Update PowerState property patch to upstream version
+
 * Wed Aug 31 2022 Bastien Nocera <bnocera@redhat.com> - 5.65-2
 + bluez-5.65-2
 - Add PowerState property implementation
