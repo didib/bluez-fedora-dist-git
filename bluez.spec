@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.66
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -268,6 +268,7 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/hciconfig
 %{_bindir}/hcidump
 %{_bindir}/hcitool
+%{_bindir}/meshctl
 %{_bindir}/rfcomm
 %{_bindir}/sdptool
 %{_mandir}/man1/ciptool.1.*
@@ -306,7 +307,6 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 #%doc tools/mesh-gatt/*.json
 %config %{_sysconfdir}/bluetooth/mesh-main.conf
 %config %{_sysconfdir}/dbus-1/system.d/bluetooth-mesh.conf
-%{_bindir}/meshctl
 %{_bindir}/mesh-cfgclient
 %{_bindir}/mesh-cfgtest
 %{_datadir}/dbus-1/system-services/org.bluez.mesh.service
@@ -321,6 +321,9 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Thu Nov 17 2022 Peter Robinson <pbrobinson@fedoraproject.org> - 5.66-4
+- Move meshctl to deprecated
+
 * Thu Nov 17 2022 Bastien Nocera <bnocera@redhat.com> - 5.66-3
 - Fix handling of transient hostnames (#2143488)
 
