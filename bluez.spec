@@ -6,7 +6,7 @@
 
 Name:    bluez
 Version: 5.66
-Release: 4%{?dist}
+Release: 4.1_midi%{?dist}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     http://www.bluez.org/
@@ -153,6 +153,7 @@ autoreconf -vif
 %endif
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --enable-hid2hci --enable-testing \
+           --enable-midi \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
